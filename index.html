@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kalender">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="description" content="Universalkalender – Gregorianisch, IFC, Swarog, Mondphasen">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Universalkalender 2026</title>
+<style>
+:root {
+  --bg: #0d0d1a;
+  --surface: #151528;
+  --surface2: #1d1d38;
+  --surface3: #252545;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --gold: #e8c87a;
+  --gold2: #f5dfa0;
+  --blue: #5b8dee;
+  --blue2: #7aa5f5;
+  --purple: #9b7fe8;
+  --teal: #4ecdc4;
+  --red: #e05c5c;
+  --text: #f0eee8;
+  --text2: rgba(240,238,232,0.65);
+  --text3: rgba(240,238,232,0.38);
+  --moon: #e8c87a;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+  --tab-h: 64px;
+  --header-h: 56px;
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-body)}
+body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
+
+/* HEADER */
+.app-header{
+  height:var(--header-h);flex-shrink:0;
+  background:rgba(13,13,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  position:relative;z-index:10;
+}
+.header-title{font-family:var(--font-display);font-size:17px;font-weight:500;color:var(--gold);letter-spacing:.06em}
+.header-clock{text-align:right}
+.clock-time{font-family:var(--font-body);font-size:20px;font-weight:300;letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--text)}
+.clock-tz{font-size:10px;color:var(--gold);font-weight:500;letter-spacing:.08em;margin-top:1px}
+
+/* SCROLL AREA */
+.app-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--tab-h) + var(--safe-bot) + 8px)}
+
+/* TAB BAR */
+.tab-bar{
+  height:calc(var(--tab-h) + var(--safe-bot));
+  padding-bottom:var(--safe-bot);
+  flex-shrink:0;
+  background:rgba(13,13,26,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-around;padding-top:8px;
+  position:relative;z-index:10;
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;padding:4px 0;
+  color:var(--text3);transition:color .2s;
+  -webkit-user-select:none;user-select:none;
+}
+.tab-btn.active{color:var(--gold)}
+.tab-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tab-label{font-size:9px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+
+/* VIEWS */
+.view{display:none;padding:16px}
+.view.active{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION HEADER */
+.section-label{font-family:var(--font-display);font-size:10px;letter-spacing:.14em;color:var(--text3);text-transform:uppercase;margin:0 0 8px 2px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+.card-sm{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px}
+
+/* CLOCK CARD */
+.clock-card{background:linear-gradient(135deg,#1a1a38 0%,#111126 100%);border:1px solid rgba(232,200,122,0.2);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.clock-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(232,200,122,0.07) 0%,transparent 70%);pointer-events:none}
+.clock-main{font-size:48px;font-weight:200;letter-spacing:.04em;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
+.clock-date-full{font-size:14px;color:var(--text2);margin-top:6px}
+.clock-badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;letter-spacing:.03em}
+.badge-gold{background:rgba(232,200,122,0.15);color:var(--gold);border:1px solid rgba(232,200,122,0.25)}
+.badge-blue{background:rgba(91,141,238,0.15);color:var(--blue2);border:1px solid rgba(91,141,238,0.25)}
+.badge-teal{background:rgba(78,205,196,0.15);color:var(--teal);border:1px solid rgba(78,205,196,0.25)}
+.badge-purple{background:rgba(155,127,232,0.15);color:var(--purple);border:1px solid rgba(155,127,232,0.25)}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav-btn{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
+.cal-nav-btn:active{background:var(--surface3)}
+.cal-month{font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--gold);letter-spacing:.05em}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.04em;padding:6px 0 8px}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:13px;position:relative;cursor:default}
+.cal-cell.today{background:rgba(232,200,122,0.18);color:var(--gold);font-weight:600}
+.cal-cell.holiday{color:var(--red)}
+.cal-cell.other{color:var(--text3)}
+.cal-cell .moon-dot{font-size:9px;line-height:1;margin-top:1px}
+
+/* MOON */
+.moon-big{text-align:center;padding:20px 0 12px}
+.moon-icon-big{font-size:72px;line-height:1;margin-bottom:8px;display:block;filter:drop-shadow(0 0 16px rgba(232,200,122,0.35))}
+.moon-phase-name{font-family:var(--font-display);font-size:20px;color:var(--gold);margin-bottom:4px}
+.moon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.stat-val{font-size:20px;font-weight:300;color:var(--text);margin-bottom:2px}
+.stat-label{font-size:10px;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
+.progress-bar{height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:2px;transition:width .5s ease}
+.next-phase-list{display:flex;flex-direction:column;gap:6px}
+.next-phase-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)}
+.np-icon{font-size:22px;width:28px;text-align:center}
+.np-info{flex:1}
+.np-name{font-size:13px;color:var(--text);font-weight:400}
+.np-date{font-size:12px;color:var(--gold);margin-top:1px}
+.moon-year-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.moon-month-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px}
+.moon-month-title{font-size:11px;color:var(--text3);letter-spacing:.04em;margin-bottom:6px;text-transform:uppercase}
+.moon-event-row{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);padding:2px 0}
+.moon-event-icon{font-size:13px;width:16px;text-align:center}
+
+/* IFC */
+.ifc-big{text-align:center;padding:16px 0 8px}
+.ifc-day-big{font-family:var(--font-display);font-size:52px;font-weight:400;color:var(--blue2);line-height:1}
+.ifc-month-big{font-family:var(--font-display);font-size:22px;color:var(--gold);margin-top:4px}
+.ifc-sub{font-size:13px;color:var(--text2);margin-top:6px}
+.ifc-months-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
+.ifc-m{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;cursor:default}
+.ifc-m.active{background:rgba(91,141,238,0.18);border-color:rgba(91,141,238,0.4)}
+.ifc-m-name{font-size:10px;color:var(--text3);letter-spacing:.04em;text-transform:uppercase}
+.ifc-m.active .ifc-m-name{color:var(--blue2)}
+.ifc-m-num{font-size:18px;font-weight:300;color:var(--text);margin-top:2px}
+.ifc-m.active .ifc-m-num{color:var(--blue2)}
+.ifc-m-start{font-size:9px;color:var(--text3);margin-top:2px}
+.ifc-info-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:13px;color:var(--text2);line-height:1.7}
+.ifc-info-box strong{color:var(--text);font-weight:500}
+
+/* SWAROG */
+.swarog-year{text-align:center;padding:16px 0 8px}
+.efst-big{font-family:var(--font-display);font-size:52px;font-weight:400;color:var(--purple);line-height:1}
+.efst-label{font-size:12px;color:var(--text3);letter-spacing:.06em;margin-top:4px;text-transform:uppercase}
+.efst-sub{font-size:13px;color:var(--text2);margin-top:8px}
+.epoch-current{background:linear-gradient(135deg,rgba(155,127,232,0.15),rgba(91,141,238,0.1));border:1px solid rgba(155,127,232,0.3);border-radius:14px;padding:14px;margin-bottom:8px}
+.epoch-next{background:rgba(232,200,122,0.07);border:1px solid rgba(232,200,122,0.2);border-radius:14px;padding:14px;margin-bottom:12px}
+.epoch-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.epoch-current .epoch-label{color:var(--purple)}
+.epoch-next .epoch-label{color:var(--gold)}
+.epoch-name{font-family:var(--font-display);font-size:17px;color:var(--text);font-weight:500}
+.epoch-god{font-size:13px;color:var(--text2);margin-top:3px}
+.epoch-time{font-size:11px;color:var(--text3);margin-top:3px}
+.swarog-wheel{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.sw-item{padding:7px 4px;border-radius:8px;text-align:center;background:var(--surface2);border:1px solid var(--border);cursor:default}
+.sw-item.sw-cur{background:rgba(155,127,232,0.2);border-color:rgba(155,127,232,0.4)}
+.sw-item.sw-next{background:rgba(232,200,122,0.1);border-color:rgba(232,200,122,0.3)}
+.sw-num{font-size:10px;color:var(--text3);margin-bottom:2px}
+.sw-tier{font-size:10px;color:var(--text2);line-height:1.3}
+.sw-item.sw-cur .sw-tier{color:var(--purple)}
+.sw-item.sw-next .sw-tier{color:var(--gold)}
+
+/* HOLIDAYS */
+.hday-row{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border)}
+.hday-row:last-child{border-bottom:none}
+.hday-date{font-size:12px;color:var(--text3);min-width:60px;flex-shrink:0}
+.hday-name{font-size:14px;color:var(--text);flex:1}
+.hday-badge{font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(224,92,92,0.15);color:var(--red);border:1px solid rgba(224,92,92,0.2);flex-shrink:0}
+
+/* SOLSTICE */
+.solstice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sol-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px}
+.sol-icon{font-size:24px;margin-bottom:6px}
+.sol-name{font-size:11px;color:var(--text3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.sol-date{font-size:14px;color:var(--gold);font-weight:400}
+.sol-time{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:0;height:0}
+
+/* INSTALL BANNER */
+.install-banner{display:none;background:rgba(91,141,238,0.12);border:1px solid rgba(91,141,238,0.25);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--text2);line-height:1.5}
+.install-banner.visible{display:block}
+.install-banner strong{color:var(--blue2)}
+.install-close{float:right;background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;margin-left:8px}
+
+/* RESPONSIVE: larger screens (Mac) */
+@media(min-width:600px){
+  .app-scroll{padding:20px;padding-bottom:calc(var(--tab-h) + var(--safe-bot) + 12px)}
+  .view{max-width:680px;margin:0 auto;padding:0}
+  .clock-main{font-size:56px}
+  .moon-stats{grid-template-columns:repeat(3,1fr)}
+  .ifc-months-grid{grid-template-columns:repeat(7,1fr)}
+  .swarog-wheel{grid-template-columns:repeat(8,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-title">Universalkalender</div>
+  <div class="header-clock">
+    <div class="clock-time" id="h-clock">--:--</div>
+    <div class="clock-tz" id="h-tz">MEZ</div>
+  </div>
+</header>
+
+<div class="app-scroll">
+
+  <!-- VIEW: GREGORIANISCH -->
+  <div class="view active" id="view-greg">
+    <div class="clock-card">
+      <div class="clock-main" id="clock-big">--:--:--</div>
+      <div class="clock-date-full" id="clock-date">Laden…</div>
+      <div class="clock-badges">
+        <span class="badge badge-gold" id="tz-badge">MEZ UTC+1</span>
+        <span class="badge badge-teal" id="dst-badge">Winterzeit</span>
+        <span class="badge badge-blue" id="moon-badge-small">🌑 Neumond</span>
+      </div>
+    </div>
+
+    <div id="install-banner" class="install-banner">
+      <button class="install-close" onclick="this.parentElement.classList.remove('visible')">×</button>
+      <strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.
+    </div>
+
+    <div class="section-label">Kalender</div>
+    <div class="card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="shiftMonth(-1)">‹</button>
+        <div class="cal-month" id="cal-title">Mai 2026</div>
+        <button class="cal-nav-btn" onclick="shiftMonth(1)">›</button>
+      </div>
+      <div class="cal-grid" id="cal-dow"></div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <div class="section-label">Feiertage dieses Monats</div>
+    <div class="card" id="hday-month"></div>
+
+    <div class="section-label">Sonnenwenden &amp; Äquinoktien 2026</div>
+    <div class="card">
+      <div class="solstice-grid" id="solstice-grid"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: MONDPHASEN -->
+  <div class="view" id="view-moon">
+    <div class="card">
+      <div class="moon-big">
+        <span class="moon-icon-big" id="moon-icon">🌑</span>
+        <div class="moon-phase-name" id="moon-phase-name">–</div>
+        <div style="font-size:13px;color:var(--text2)" id="moon-date-now">–</div>
+      </div>
+      <div class="moon-stats">
+        <div class="stat-card">
+          <div class="stat-val" id="moon-age">–</div>
+          <div class="stat-label">Tage alt</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="moon-illum">–</div>
+          <div class="stat-label">Beleuchtg.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="moon-remain">–</div>
+          <div class="stat-label">Tage bis VM</div>
+        </div>
+      </div>
+      <div class="progress-bar" style="margin-top:14px">
+        <div class="progress-fill" id="moon-progress" style="width:0%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
+        <span>🌑 Neumond</span><span>🌕 Vollmond</span><span>🌑 Neumond</span>
+      </div>
+    </div>
+
+    <div class="section-label">Nächste Ereignisse</div>
+    <div class="card">
+      <div class="next-phase-list" id="next-phase-list"></div>
+    </div>
+
+    <div class="section-label">Mondphasen 2026 – Überblick</div>
+    <div class="moon-year-grid" id="moon-year-grid"></div>
+  </div>
+
+  <!-- VIEW: IFC KALENDER -->
+  <div class="view" id="view-ifc">
+    <div class="card">
+      <div class="ifc-big">
+        <div class="ifc-day-big" id="ifc-day">–</div>
+        <div class="ifc-month-big" id="ifc-month">–</div>
+        <div class="ifc-sub" id="ifc-sub">–</div>
+      </div>
+    </div>
+    <div class="section-label">Alle 13 IFC-Monate</div>
+    <div class="card">
+      <div class="ifc-months-grid" id="ifc-months-grid"></div>
+    </div>
+    <div class="section-label">Über den IFC-Kalender</div>
+    <div class="ifc-info-box">
+      Der <strong>Internationale Feste Kalender</strong> (IFC) hat <strong>13 Monate</strong> à <strong>28 Tage</strong> (= 364 Tage). Der 13. Monat heißt <strong>Sol</strong> und liegt zwischen Juni und Juli. Jeder Monat beginnt stets auf einen <strong>Sonntag</strong>. Der <strong>Jahrestag</strong> (1. Januar) steht außerhalb der Wochenstruktur. In Schaltjahren gibt es am Ende von Juni einen Schalttag.
+    </div>
+  </div>
+
+  <!-- VIEW: SWAROG -->
+  <div class="view" id="view-swarog">
+    <div class="card">
+      <div class="swarog-year">
+        <div class="efst-big" id="efst-year">7534</div>
+        <div class="efst-label">Jahr nach EFST</div>
+        <div class="efst-sub">2026 greg. = 7534 EFST (+ 5508)<br>Neujahr: 22. September (Herbstäquinoktium)</div>
+      </div>
+    </div>
+    <div class="section-label">Aktuelle Epoche</div>
+    <div class="epoch-current" id="epoch-current"></div>
+    <div class="section-label">Nächste Epoche</div>
+    <div class="epoch-next" id="epoch-next"></div>
+    <div class="section-label">Der Große Swarog-Kreis (25.920 Jahre · 16 Epochen)</div>
+    <div class="card">
+      <div class="swarog-wheel" id="swarog-wheel"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:4px;padding:0 2px">
+      Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 n.Chr. befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.
+    </div>
+  </div>
+
+</div>
+
+<!-- TAB BAR -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('greg')" id="tab-greg">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span class="tab-label">Kalender</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('moon')" id="tab-moon">
+    <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <span class="tab-label">Mond</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('ifc')" id="tab-ifc">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <span class="tab-label">IFC</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('swarog')" id="tab-swarog">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20M2 12h20M12 2c-4 6-4 14 0 20M12 2c4 6 4 14 0 20"/></svg>
+    <span class="tab-label">Swarog</span>
+  </button>
+</nav>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const DE_MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const DE_DAYS_SHORT=['So','Mo','Di','Mi','Do','Fr','Sa'];
+const DE_DAYS_LONG=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+
+const HOLIDAYS=[
+  {d:'2026-01-01',n:'Neujahr',l:true},{d:'2026-01-06',n:'Heilige Drei Könige',l:false},
+  {d:'2026-02-14',n:'Valentinstag',l:false},{d:'2026-02-16',n:'Rosenmontag',l:false},
+  {d:'2026-02-17',n:'Faschingsdienstag',l:false},{d:'2026-02-18',n:'Aschermittwoch',l:false},
+  {d:'2026-04-03',n:'Karfreitag',l:true},{d:'2026-04-05',n:'Ostersonntag',l:true},
+  {d:'2026-04-06',n:'Ostermontag',l:true},{d:'2026-05-01',n:'Maifeiertag',l:true},
+  {d:'2026-05-14',n:'Christi Himmelfahrt',l:true},{d:'2026-05-24',n:'Pfingstsonntag',l:true},
+  {d:'2026-05-25',n:'Pfingstmontag',l:true},{d:'2026-06-04',n:'Fronleichnam',l:true},
+  {d:'2026-08-15',n:'Mariä Himmelfahrt',l:true},{d:'2026-10-03',n:'Tag der deutschen Einheit',l:true},
+  {d:'2026-10-31',n:'Reformationstag/Halloween',l:false},{d:'2026-11-01',n:'Allerheiligen',l:true},
+  {d:'2026-11-29',n:'1. Advent',l:false},{d:'2026-12-06',n:'Nikolaus / 2. Advent',l:false},
+  {d:'2026-12-13',n:'3. Advent',l:false},{d:'2026-12-20',n:'4. Advent',l:false},
+  {d:'2026-12-24',n:'Heilig Abend',l:false},{d:'2026-12-25',n:'1. Weihnachtstag',l:true},
+  {d:'2026-12-26',n:'2. Weihnachtstag',l:true},{d:'2026-12-31',n:'Silvester',l:false},
+];
+
+const SOLSTICES=[
+  {icon:'🌱',name:'März-Äquinoktium',date:'20.03.2026',time:'15:41 MEZ'},
+  {icon:'☀️',name:'Juni-Sonnenwende',date:'21.06.2026',time:'20:24 MESZ'},
+  {icon:'🍂',name:'Sept.-Äquinoktium',date:'22.09.2026',time:'12:13 MESZ'},
+  {icon:'❄️',name:'Dez.-Sonnenwende',date:'21.12.2026',time:'09:50 MEZ'},
+];
+
+const MOON_EVENTS=[
+  {d:'2026-01-03',p:'Vollmond',i:'🌕'},{d:'2026-01-10',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-01-18',p:'Neumond',i:'🌑'},{d:'2026-01-26',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-02-04',p:'Vollmond',i:'🌕'},{d:'2026-02-12',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-02-17',p:'Neumond',i:'🌑'},{d:'2026-02-25',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-03-06',p:'Vollmond',i:'🌕'},{d:'2026-03-14',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-03-22',p:'Neumond',i:'🌑'},{d:'2026-03-28',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-04-05',p:'Vollmond',i:'🌕'},{d:'2026-04-13',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-04-20',p:'Neumond',i:'🌑'},{d:'2026-04-28',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-05-05',p:'Vollmond',i:'🌕'},{d:'2026-05-12',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-05-20',p:'Neumond',i:'🌑'},{d:'2026-05-27',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-06-04',p:'Vollmond',i:'🌕'},{d:'2026-06-11',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-06-18',p:'Neumond',i:'🌑'},{d:'2026-06-26',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-07-04',p:'Vollmond',i:'🌕'},{d:'2026-07-11',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-07-18',p:'Neumond',i:'🌑'},{d:'2026-07-26',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-08-02',p:'Vollmond',i:'🌕'},{d:'2026-08-10',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-08-17',p:'Neumond',i:'🌑'},{d:'2026-08-24',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-09-01',p:'Vollmond',i:'🌕'},{d:'2026-09-08',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-09-15',p:'Neumond',i:'🌑'},{d:'2026-09-22',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-10-01',p:'Vollmond',i:'🌕'},{d:'2026-10-08',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-10-14',p:'Neumond',i:'🌑'},{d:'2026-10-21',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-10-31',p:'Vollmond',i:'🌕'},{d:'2026-11-07',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-11-13',p:'Neumond',i:'🌑'},{d:'2026-11-19',p:'Erstes Viertel',i:'🌓'},
+  {d:'2026-11-30',p:'Vollmond',i:'🌕'},{d:'2026-12-07',p:'Letztes Viertel',i:'🌗'},
+  {d:'2026-12-13',p:'Neumond',i:'🌑'},{d:'2026-12-20',p:'Erstes Viertel',i:'🌓'},
+];
+
+const IFC_MONTHS=['Januar','Februar','März','April','Mai','Juni','Sol','Juli','August','September','Oktober','November','Dezember'];
+
+const SWAROG=[
+  {n:1,tier:'Jungfrau',gott:'Dshiwa ~ Jiva',von:-10948,bis:-9328},
+  {n:2,tier:'Leopard',gott:'Dahdbog (Tarch)',von:-9328,bis:-7708},
+  {n:3,tier:'Adler',gott:'Perun',von:-7708,bis:-6088},
+  {n:4,tier:'Pferd',gott:'Kupala',von:-6088,bis:-4468},
+  {n:5,tier:'Falke',gott:'Wyschen ~ Vishnu',von:-4468,bis:-2848},
+  {n:6,tier:'Elch',gott:'Lada',von:-2848,bis:-1228},
+  {n:7,tier:'Auerochse',gott:'Kryshen ~ Krishna',von:-1228,bis:392},
+  {n:8,tier:'Fuchs',gott:'Marena',von:392,bis:2012},
+  {n:9,tier:'Wolf',gott:'Weles ~ Veles',von:2012,bis:3632},
+  {n:10,tier:'Storch',gott:'Rod (der Ur-Ahn)',von:3632,bis:5252},
+  {n:11,tier:'Bär',gott:'Swarog',von:5252,bis:6872},
+  {n:12,tier:'Rabe',gott:'Waruna ~ Varuna',von:6872,bis:8492},
+  {n:13,tier:'Schlange',gott:'Semargl',von:8492,bis:10112},
+  {n:14,tier:'Schwan',gott:'Makosch',von:10112,bis:11732},
+  {n:15,tier:'Hecht',gott:'Roshana',von:11732,bis:13352},
+  {n:16,tier:'Wildschwein',gott:'Ramchat',von:13352,bis:14972},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let viewM = new Date().getMonth(), viewY = new Date().getFullYear();
+let activeTab = 'greg';
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function isDST(d) {
+  const y=d.getFullYear();
+  const s=new Date(Date.UTC(y,2,31-(new Date(Date.UTC(y,2,31)).getUTCDay())));
+  const e=new Date(Date.UTC(y,9,31-(new Date(Date.UTC(y,9,31)).getUTCDay())));
+  return d>=s && d<e;
+}
+function localNow() {
+  const now=new Date(), off=isDST(now)?2:1;
+  return new Date(now.getTime()+off*3600000);
+}
+function fmtDate(d){return `${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`}
+function pad(n){return String(n).padStart(2,'0')}
+function todayStr(){const l=localNow();return `${l.getUTCFullYear()}-${pad(l.getUTCMonth()+1)}-${pad(l.getUTCDate())}`}
+
+function moonCalc(date) {
+  const ref=new Date('2000-01-06T18:14:00Z');
+  const syn=29.530588853;
+  const diff=(date-ref)/86400000;
+  let age=((diff%syn)+syn)%syn;
+  const illum=(1-Math.cos(2*Math.PI*age/syn))/2;
+  let phase,icon;
+  if(age<1.85){phase='Neumond';icon='🌑';}
+  else if(age<7.38){phase='Zun. Sichel';icon='🌒';}
+  else if(age<9.22){phase='Erstes Viertel';icon='🌓';}
+  else if(age<14.77){phase='Zun. Dreiviertel';icon='🌔';}
+  else if(age<16.61){phase='Vollmond';icon='🌕';}
+  else if(age<22.15){phase='Abn. Dreiviertel';icon='🌖';}
+  else if(age<23.99){phase='Letztes Viertel';icon='🌗';}
+  else{phase='Abn. Sichel';icon='🌘';}
+  return {age:+age.toFixed(1),phase,icon,illum:Math.round(illum*100)};
+}
+
+function getHolidayMap(){const m={};for(const h of HOLIDAYS){if(!m[h.d])m[h.d]=[];m[h.d].push(h);}return m;}
+function getMoonForDate(ds){for(const e of MOON_EVENTS)if(e.d===ds)return e.i;return '';}
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
+function tick() {
+  const now=new Date(), dst=isDST(now), off=dst?2:1;
+  const l=new Date(now.getTime()+off*3600000);
+  const t=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())}`;
+  const t2=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}`;
+  const tz=dst?'MESZ':'MEZ';
+  document.getElementById('clock-big').textContent=t;
+  document.getElementById('h-clock').textContent=t2;
+  document.getElementById('h-tz').textContent=tz;
+  document.getElementById('tz-badge').textContent=`${tz} UTC+${off}`;
+  document.getElementById('dst-badge').textContent=dst?'☀️ Sommerzeit':'❄️ Winterzeit';
+  const wd=l.getUTCDay(), day=l.getUTCDate(), mo=l.getUTCMonth(), yr=l.getUTCFullYear();
+  document.getElementById('clock-date').textContent=`${DE_DAYS_LONG[wd]}, ${day}. ${DE_MONTHS[mo]} ${yr}`;
+  const m=moonCalc(now);
+  document.getElementById('moon-badge-small').textContent=`${m.icon} ${m.phase}`;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+function renderCal() {
+  const hmap=getHolidayMap(), ts=todayStr();
+  const first=new Date(Date.UTC(viewY,viewM,1));
+  const last=new Date(Date.UTC(viewY,viewM+1,0)).getUTCDate();
+  const startDow=first.getUTCDay();
+  document.getElementById('cal-title').textContent=`${DE_MONTHS[viewM]} ${viewY}`;
+  let dow='';
+  for(const d of DE_DAYS_SHORT) dow+=`<div class="cal-dow">${d}</div>`;
+  document.getElementById('cal-dow').innerHTML=dow;
+  let g='';
+  for(let i=0;i<startDow;i++) g+=`<div class="cal-cell other"></div>`;
+  for(let day=1;day<=last;day++){
+    const ds=`${viewY}-${pad(viewM+1)}-${pad(day)}`;
+    const isT=ds===ts, hols=hmap[ds], moon=getMoonForDate(ds);
+    const isH=hols&&hols.some(h=>h.l);
+    let cls='cal-cell';
+    if(isT)cls+=' today';else if(isH)cls+=' holiday';
+    const title=hols?hols.map(h=>h.n).join(', '):'';
+    g+=`<div class="${cls}" title="${title}">${day}${moon?`<div class="moon-dot">${moon}</div>`:''}` + `</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=g;
+
+  const month_hdays=HOLIDAYS.filter(h=>h.d.startsWith(`${viewY}-${pad(viewM+1)}`));
+  if(!month_hdays.length){
+    document.getElementById('hday-month').innerHTML='<div style="font-size:13px;color:var(--text3)">Keine Feiertage in diesem Monat</div>';
+  } else {
+    document.getElementById('hday-month').innerHTML=month_hdays.map(h=>{
+      const d=new Date(h.d+'T12:00:00Z');
+      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]}</span><span class="hday-name">${h.n}</span>${h.l?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
+    }).join('');
+  }
+}
+
+function shiftMonth(delta){
+  viewM+=delta;
+  if(viewM<0){viewM=11;viewY--;}
+  if(viewM>11){viewM=0;viewY++;}
+  renderCal();
+}
+
+// ── SOLSTICES ─────────────────────────────────────────────────────────────────
+function renderSolstices(){
+  document.getElementById('solstice-grid').innerHTML=SOLSTICES.map(s=>`
+    <div class="sol-card">
+      <div class="sol-icon">${s.icon}</div>
+      <div class="sol-name">${s.name}</div>
+      <div class="sol-date">${s.date}</div>
+      <div class="sol-time">${s.time}</div>
+    </div>`).join('');
+}
+
+// ── MOON VIEW ─────────────────────────────────────────────────────────────────
+function renderMoon(){
+  const now=new Date(), m=moonCalc(now), l=localNow();
+  document.getElementById('moon-icon').textContent=m.icon;
+  document.getElementById('moon-phase-name').textContent=m.phase;
+  document.getElementById('moon-date-now').textContent=`${DE_DAYS_LONG[l.getUTCDay()]}, ${fmtDate(l)}`;
+  document.getElementById('moon-age').textContent=m.age;
+  document.getElementById('moon-illum').textContent=m.illum+'%';
+  const ts=todayStr();
+  let daysToFull='–';
+  for(const e of MOON_EVENTS){
+    if(e.p==='Vollmond'&&e.d>=ts){
+      const diff=Math.round((new Date(e.d)-new Date(ts+'T12:00:00Z'))/86400000);
+      daysToFull=diff===0?'Heute':diff;
+      break;
+    }
+  }
+  document.getElementById('moon-remain').textContent=daysToFull;
+  document.getElementById('moon-progress').style.width=(m.age/29.53*100).toFixed(1)+'%';
+
+  const next={};
+  const prios=['Vollmond','Neumond','Erstes Viertel','Letztes Viertel'];
+  for(const e of MOON_EVENTS){
+    if(e.d>=ts&&!next[e.p]) next[e.p]=e;
+  }
+  document.getElementById('next-phase-list').innerHTML=prios.map(p=>{
+    const ev=next[p]||MOON_EVENTS.find(e=>e.p===p);
+    const d=ev?new Date(ev.d):null;
+    const ds=d?fmtDate(d):'–';
+    const icon=ev?ev.i:'';
+    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${p}</div><div class="np-date">${ds}</div></div></div>`;
+  }).join('');
+
+  const byMonth={};
+  for(const e of MOON_EVENTS){
+    const mo=parseInt(e.d.slice(5,7))-1;
+    if(!byMonth[mo])byMonth[mo]=[];
+    byMonth[mo].push(e);
+  }
+  let yg='';
+  for(let mo=0;mo<12;mo++){
+    yg+=`<div class="moon-month-card"><div class="moon-month-title">${DE_MONTHS[mo]}</div>`;
+    for(const e of (byMonth[mo]||[])){
+      const day=parseInt(e.d.slice(8,10));
+      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${e.p}</span></div>`;
+    }
+    yg+='</div>';
+  }
+  document.getElementById('moon-year-grid').innerHTML=yg;
+}
+
+// ── IFC ───────────────────────────────────────────────────────────────────────
+function renderIFC(){
+  const l=localNow();
+  const year=l.getUTCFullYear();
+  const yearStart=new Date(Date.UTC(year,0,1));
+  const dayOfYear=Math.floor((l-yearStart)/86400000)+1;
+  const dow=l.getUTCDay();
+  let ifcMonth,ifcDay,dowLabel;
+  if(dayOfYear===1){ifcMonth=-1;ifcDay='★';dowLabel='Jahrestag';}
+  else{
+    const d=dayOfYear-1;
+    ifcMonth=Math.floor((d-1)/28);
+    ifcDay=((d-1)%28)+1;
+    dowLabel=DE_DAYS_LONG[dow];
+  }
+  document.getElementById('ifc-day').textContent=typeof ifcDay==='number'?ifcDay:'★';
+  document.getElementById('ifc-month').textContent=ifcMonth>=0?IFC_MONTHS[ifcMonth]:'Jahrestag';
+  document.getElementById('ifc-sub').textContent=`${dowLabel} · IFC ${year}`;
+
+  let g='';
+  for(let m=0;m<13;m++){
+    const active=m===ifcMonth;
+    const gregStart=new Date(Date.UTC(year,0,m*28+2));
+    const label=`${gregStart.getUTCDate()}. ${DE_MONTHS[gregStart.getUTCMonth()].slice(0,3)}`;
+    g+=`<div class="ifc-m${active?' active':''}">
+      <div class="ifc-m-name">${IFC_MONTHS[m].slice(0,3)}</div>
+      <div class="ifc-m-num">${m+1}</div>
+      <div class="ifc-m-start">${label}</div>
+    </div>`;
+  }
+  document.getElementById('ifc-months-grid').innerHTML=g;
+}
+
+// ── SWAROG ────────────────────────────────────────────────────────────────────
+function renderSwarog(){
+  const cur=SWAROG.find(e=>2026>=e.von&&2026<e.bis)||SWAROG[8];
+  const nxt=SWAROG.find(e=>e.n===cur.n+1)||SWAROG[0];
+  const fmtEra=e=>`${e.von<0?Math.abs(e.von)+' v.Chr.':e.von+' n.Chr.'} – ${e.bis} n.Chr.`;
+  document.getElementById('epoch-current').innerHTML=`
+    <div class="epoch-label">◆ Aktuelle Epoche (${cur.n}/16)</div>
+    <div class="epoch-name">${cur.tier}</div>
+    <div class="epoch-god">${cur.gott}</div>
+    <div class="epoch-time">${fmtEra(cur)}</div>`;
+  document.getElementById('epoch-next').innerHTML=`
+    <div class="epoch-label">→ Nächste Epoche (${nxt.n}/16)</div>
+    <div class="epoch-name">${nxt.tier}</div>
+    <div class="epoch-god">${nxt.gott}</div>
+    <div class="epoch-time">${fmtEra(nxt)}</div>`;
+  document.getElementById('swarog-wheel').innerHTML=SWAROG.map(e=>{
+    const isc=e.n===cur.n, isn=e.n===nxt.n;
+    return `<div class="sw-item${isc?' sw-cur':isn?' sw-next':''}">
+      <div class="sw-num">${e.n}</div>
+      <div class="sw-tier">${e.tier}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function switchTab(id){
+  activeTab=id;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelector('.app-scroll').scrollTop=0;
+  if(id==='moon')renderMoon();
+  if(id==='ifc')renderIFC();
+  if(id==='swarog')renderSwarog();
+}
+
+// ── INSTALL HINT ──────────────────────────────────────────────────────────────
+function checkInstallHint(){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+  if(!isStandalone&&(isIOS||isSafari)){
+    document.getElementById('install-banner').classList.add('visible');
+  }
+}
+
+// ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
+const TABS=['greg','moon','ifc','swarog'];
+let touchX=null;
+document.querySelector('.app-scroll').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
+document.querySelector('.app-scroll').addEventListener('touchend',e=>{
+  if(touchX===null)return;
+  const dx=e.changedTouches[0].clientX-touchX;
+  if(Math.abs(dx)>60){
+    const cur=TABS.indexOf(activeTab);
+    const next=dx<0?Math.min(cur+1,TABS.length-1):Math.max(cur-1,0);
+    if(next!==cur)switchTab(TABS[next]);
+  }
+  touchX=null;
+},{passive:true});
+
+// ── SERVICE WORKER ────────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+// ── DEEP LINK ─────────────────────────────────────────────────────────────────
+const hash=location.hash.replace('#','');
+if(TABS.includes(hash))switchTab(hash);
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+tick();
+setInterval(tick,1000);
+renderCal();
+renderSolstices();
+checkInstallHint();
+</script>
+</body>
+</html>

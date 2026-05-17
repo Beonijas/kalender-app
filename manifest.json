@@ -1,0 +1,21 @@
+{
+  "name": "Universalkalender 2026",
+  "short_name": "Kalender",
+  "description": "Gregorianisch, IFC, Swarog-Kreis, Mondphasen & MEZ/MESZ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0d1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "lang": "de",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "categories": ["utilities", "lifestyle"],
+  "shortcuts": [
+    { "name": "Mondphase heute", "url": "./index.html#moon", "description": "Aktuelle Mondphase anzeigen" },
+    { "name": "Swarog-Kreis", "url": "./index.html#swarog", "description": "Swarog-Epoche anzeigen" }
+  ]
+}
