@@ -69,16 +69,22 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   border-top:1px solid var(--border);
   display:flex;align-items:flex-start;justify-content:space-around;padding-top:8px;
   position:relative;z-index:10;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
+.tab-bar::-webkit-scrollbar{display:none}
 .tab-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  background:none;border:none;cursor:pointer;padding:4px 0;
+  flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;padding:4px 8px;
   color:var(--text3);transition:color .2s;
   -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
 .tab-btn.active{color:var(--gold)}
-.tab-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.tab-label{font-size:9px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.tab-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tab-label{font-size:8px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+/* nav arrow buttons in header */
+.nav-arrow{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px 8px;line-height:1;-webkit-tap-highlight-color:transparent}
+.nav-arrow:active{color:var(--gold)}
 
 /* VIEWS */
 .view{display:none;padding:16px}
@@ -215,11 +221,13 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 <body>
 
 <header class="app-header">
+  <button class="nav-arrow" onclick="prevTab()" title="Vorheriger Tab">‹</button>
   <div class="header-title">Universalkalender</div>
   <div class="header-clock">
     <div class="clock-time" id="h-clock">--:--</div>
     <div class="clock-tz" id="h-tz">MEZ</div>
   </div>
+  <button class="nav-arrow" onclick="nextTab()" title="Nächster Tab">›</button>
 </header>
 
 <div class="app-scroll">
@@ -365,8 +373,6 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
-</div>
-
   <!-- VIEW: JAHRESKREIS -->
   <div class="view" id="view-jahreskreis">
     <div class="card" style="border-color:rgba(78,205,196,0.25)">
@@ -374,7 +380,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <div style="font-family:var(--font-display);font-size:18px;color:var(--teal);letter-spacing:.06em;margin-bottom:4px">Rad des Jahres 2026</div>
         <div style="font-size:12px;color:var(--text3)">8 keltisch-germanische Jahreskreisfeste</div>
       </div>
-      <canvas id="wheel-canvas" width="280" height="280" style="display:block;margin:12px auto 0"></canvas>
+      <div id="wheel-svg-container" style="width:280px;margin:12px auto 0;touch-action:pan-y;user-select:none;-webkit-user-select:none"></div>
     </div>
     <div class="section-label" style="margin-top:4px">Nächstes Fest</div>
     <div id="jk-next-card"></div>
@@ -387,7 +393,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
-</div>
+</div><!-- end app-scroll -->
 
 <!-- TAB BAR -->
 <nav class="tab-bar">
@@ -827,76 +833,57 @@ function renderJahreskreis(){
 }
 
 function drawWheel(nextId, today){
-  const canvas=document.getElementById('wheel-canvas');
-  if(!canvas)return;
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-  const size=280;
-  canvas.width=size*dpr; canvas.height=size*dpr;
-  canvas.style.width=size+'px'; canvas.style.height=size+'px';
-  const ctx=canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-  const cx=size/2, cy=size/2, r=size/2-8;
+  const container=document.getElementById('wheel-svg-container');
+  if(!container)return;
+  const size=280, cx=size/2, cy=size/2, r=size/2-10, ri=r*0.18;
   const sorted=[...JAHRESKREIS].sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
-  const n=sorted.length;
-  const slice=(2*Math.PI)/n;
-  // start at top (Yule ≈ Dec 21, index 7 in sorted) – shift so Yule is at top
+  const n=sorted.length, slice=(2*Math.PI)/n;
   const yuleIdx=sorted.findIndex(f=>f.id==='yule');
-  const startAngle=-Math.PI/2 - yuleIdx*slice;
+  const startAngle=-Math.PI/2-yuleIdx*slice;
 
+  function polar(angle,radius){
+    return [cx+Math.cos(angle)*radius, cy+Math.sin(angle)*radius];
+  }
+  function arc(a0,a1,ro,ri2){
+    const [x0,y0]=polar(a0,ro), [x1,y1]=polar(a1,ro);
+    const [x2,y2]=polar(a1,ri2), [x3,y3]=polar(a0,ri2);
+    const large=a1-a0>Math.PI?1:0;
+    return `M${x0},${y0} A${ro},${ro} 0 ${large},1 ${x1},${y1} L${x2},${y2} A${ri2},${ri2} 0 ${large},0 ${x3},${y3} Z`;
+  }
+
+  let paths='', icons='', labels='';
   sorted.forEach((f,i)=>{
-    const a0=startAngle+i*slice, a1=a0+slice;
-    const isPast=f.isoDate<today;
-    const isNext=f.id===nextId;
-    // segment
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,a0,a1);
-    ctx.closePath();
-    ctx.fillStyle=isPast?'rgba(255,255,255,0.04)':f.farbe+(isNext?'55':'28');
-    ctx.fill();
-    ctx.strokeStyle=isNext?f.farbe+'cc':'rgba(255,255,255,0.1)';
-    ctx.lineWidth=isNext?2:0.5;
-    ctx.stroke();
-    // icon label
-    const mid=a0+slice/2, lr=r*0.7;
-    const tx=cx+Math.cos(mid)*lr, ty=cy+Math.sin(mid)*lr;
-    ctx.font=`${r*0.13}px serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(f.icon,tx,ty);
-    // name label
-    const nr=r*0.88;
-    const nx=cx+Math.cos(mid)*nr, ny=cy+Math.sin(mid)*nr;
-    ctx.save();
-    ctx.translate(nx,ny);
-    ctx.rotate(mid+Math.PI/2);
-    ctx.font=`${r*0.075}px sans-serif`;
-    ctx.fillStyle=isPast?'rgba(255,255,255,0.25)':isNext?f.farbe:'rgba(255,255,255,0.6)';
-    ctx.fillText(f.name,0,0);
-    ctx.restore();
+    const a0=startAngle+i*slice, a1=a0+slice, mid=a0+slice/2;
+    const isPast=f.isoDate<today, isNext=f.id===nextId;
+    const fill=isPast?'rgba(255,255,255,0.04)':f.farbe+(isNext?'55':'22');
+    const stroke=isNext?f.farbe+'cc':'rgba(255,255,255,0.1)';
+    const sw=isNext?2:0.5;
+    paths+=`<path d="${arc(a0,a1,r,ri)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+
+    // emoji icon at 70% radius
+    const [ix,iy]=polar(mid,r*0.62);
+    icons+=`<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.13}" style="user-select:none">${f.icon}</text>`;
+
+    // name label at 88% radius, rotated
+    const [lx,ly]=polar(mid,r*0.85);
+    const rot=(mid*180/Math.PI)+90;
+    const tc=isPast?'rgba(255,255,255,0.25)':isNext?f.farbe:'rgba(255,255,255,0.6)';
+    labels+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.075}" fill="${tc}" transform="rotate(${rot},${lx},${ly})" style="user-select:none">${f.name}</text>`;
   });
-  // center circle
-  ctx.beginPath();
-  ctx.arc(cx,cy,r*0.18,0,2*Math.PI);
-  ctx.fillStyle='#1a1a2e';
-  ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,0.15)';
-  ctx.lineWidth=1;
-  ctx.stroke();
+
   // spokes
+  let spokes='';
   sorted.forEach((_,i)=>{
     const a=startAngle+i*slice;
-    ctx.beginPath();
-    ctx.moveTo(cx+Math.cos(a)*r*0.18, cy+Math.sin(a)*r*0.18);
-    ctx.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
-    ctx.strokeStyle='rgba(255,255,255,0.08)';
-    ctx.lineWidth=0.5;
-    ctx.stroke();
+    const [x0,y0]=polar(a,ri), [x1,y1]=polar(a,r);
+    spokes+=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>`;
   });
-  // center text
-  ctx.font=`bold ${r*0.1}px sans-serif`;
-  ctx.fillStyle='rgba(255,255,255,0.4)';
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('2026',cx,cy);
+
+  container.innerHTML=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;touch-action:pan-y;pointer-events:none">
+    ${paths}${spokes}${icons}${labels}
+    <circle cx="${cx}" cy="${cy}" r="${ri}" fill="#1a1a2e" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.1}" fill="rgba(255,255,255,0.4)" style="user-select:none">2026</text>
+  </svg>`;
 }
 
 
@@ -925,18 +912,32 @@ function checkInstallHint(){
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
 const TABS=['greg','moon','ifc','swarog','jahreskreis'];
-let touchX=null;
-document.querySelector('.app-scroll').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
-document.querySelector('.app-scroll').addEventListener('touchend',e=>{
-  if(touchX===null)return;
-  const dx=e.changedTouches[0].clientX-touchX;
-  if(Math.abs(dx)>60){
-    const cur=TABS.indexOf(activeTab);
-    const next=dx<0?Math.min(cur+1,TABS.length-1):Math.max(cur-1,0);
-    if(next!==cur)switchTab(TABS[next]);
+
+function prevTab(){
+  const i=TABS.indexOf(activeTab);
+  if(i>0)switchTab(TABS[i-1]);
+}
+function nextTab(){
+  const i=TABS.indexOf(activeTab);
+  if(i<TABS.length-1)switchTab(TABS[i+1]);
+}
+
+// Swipe – works on real devices; header arrows work everywhere
+(function(){
+  let sx=null,sy=null,moved=false;
+  function start(x,y){sx=x;sy=y;moved=false;}
+  function end(x,y){
+    if(sx===null)return;
+    const dx=x-sx, dy=y-sy;
+    if(!moved&&Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.2){
+      dx<0?nextTab():prevTab();
+    }
+    sx=null;
   }
-  touchX=null;
-},{passive:true});
+  document.addEventListener('touchstart',e=>{start(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('touchmove',e=>{if(sx!==null)moved=false;},{passive:true});
+  document.addEventListener('touchend',e=>{end(e.changedTouches[0].clientX,e.changedTouches[0].clientY);},{passive:true});
+})();
 
 // ── SERVICE WORKER ────────────────────────────────────────────────────────────
 if('serviceWorker' in navigator){
