@@ -269,6 +269,49 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
+  <!-- VIEW: FEIERTAGE -->
+  <div class="view" id="view-feiertage">
+
+    <!-- Bundesland-Auswahl -->
+    <div class="card" style="border-color:rgba(232,200,122,0.2)">
+      <div style="font-family:var(--font-display);font-size:13px;color:var(--gold);letter-spacing:.05em;margin-bottom:10px">Bundesland &amp; Jahr wählen</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="feiertage-bundesland" onchange="renderFeiertage()"
+          style="flex:1;min-width:160px;padding:8px 10px;border-radius:10px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:14px;font-family:var(--font-body);-webkit-appearance:none;appearance:none;cursor:pointer">
+          <option value="alle">🇩🇪 Alle (gemeinsam)</option>
+          <option value="BW">Baden-Württemberg</option>
+          <option value="BY">Bayern</option>
+          <option value="BE">Berlin</option>
+          <option value="BB">Brandenburg</option>
+          <option value="HB">Bremen</option>
+          <option value="HH">Hamburg</option>
+          <option value="HE">Hessen</option>
+          <option value="MV">Mecklenburg-Vorpommern</option>
+          <option value="NI">Niedersachsen</option>
+          <option value="NW">Nordrhein-Westfalen</option>
+          <option value="RP" selected>Rheinland-Pfalz</option>
+          <option value="SL">Saarland</option>
+          <option value="SN">Sachsen</option>
+          <option value="ST">Sachsen-Anhalt</option>
+          <option value="SH">Schleswig-Holstein</option>
+          <option value="TH">Thüringen</option>
+        </select>
+        <select id="feiertage-year" onchange="renderFeiertage()"
+          style="width:90px;padding:8px 10px;border-radius:10px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:14px;font-family:var(--font-body);-webkit-appearance:none;appearance:none;cursor:pointer">
+        </select>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px" id="feiertage-count">–</div>
+    </div>
+
+    <!-- Feiertags-Liste -->
+    <div class="section-label">Gesetzliche Feiertage</div>
+    <div class="card" id="feiertage-legal-list"></div>
+
+    <div class="section-label">Weitere Feste &amp; Gedenktage</div>
+    <div class="card" id="feiertage-other-list"></div>
+
+  </div>
+
   <!-- VIEW: MONDPHASEN -->
   <div class="view" id="view-moon">
     <div class="card">
@@ -484,6 +527,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn active" onclick="switchTab('greg')" id="tab-greg">
     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
     <span class="tab-label">Kalender</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('feiertage')" id="tab-feiertage">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <span class="tab-label">Feiertage</span>
   </button>
   <button class="tab-btn" onclick="switchTab('moon')" id="tab-moon">
     <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -782,7 +829,7 @@ function tick() {
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
 function renderCal() {
-  const hmap=getHolidayMap(viewY), ts=todayStr();
+  const hmap=getHolidayMapBL(viewY), ts=todayStr();
   const first=new Date(Date.UTC(viewY,viewM,1));
   const last=new Date(Date.UTC(viewY,viewM+1,0)).getUTCDate();
   const startDow=first.getUTCDay();
@@ -795,7 +842,7 @@ function renderCal() {
   for(let day=1;day<=last;day++){
     const ds=`${viewY}-${pad(viewM+1)}-${pad(day)}`;
     const isT=ds===ts, hols=hmap[ds], moon=getMoonForDate(ds);
-    const isH=hols&&hols.some(h=>h.l);
+    const isH=hols&&hols.some(h=>h.legal||h.l);
     let cls='cal-cell';
     if(isT)cls+=' today';else if(isH)cls+=' holiday';
     const title=hols?hols.map(h=>h.n).join(', '):'';
@@ -803,13 +850,14 @@ function renderCal() {
   }
   document.getElementById('cal-grid').innerHTML=g;
 
-  const month_hdays=holidaysForYear(viewY).filter(h=>h.d.startsWith(`${viewY}-${pad(viewM+1)}`));
+  const blHdays = buildFeiertageForYear(viewY, _feiertageBLForCal);
+  const month_hdays = blHdays.filter(h=>h.ds.startsWith(`${viewY}-${pad(viewM+1)}`));
   if(!month_hdays.length){
     document.getElementById('hday-month').innerHTML='<div style="font-size:13px;color:var(--text3)">Keine Feiertage in diesem Monat</div>';
   } else {
     document.getElementById('hday-month').innerHTML=month_hdays.map(h=>{
-      const d=new Date(h.d+'T12:00:00Z');
-      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]}</span><span class="hday-name">${h.n}</span>${h.l?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
+      const d=new Date(h.ds+'T12:00:00Z');
+      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
     }).join('');
   }
 }
@@ -832,6 +880,212 @@ function renderSolstices(){
       <div class="sol-date">${s.date}</div>
       <div class="sol-time">${s.time}</div>
     </div>`).join('');
+}
+
+// ── FEIERTAGE NACH BUNDESLAND ─────────────────────────────────────────────────
+// Bundesland-spezifische gesetzliche Feiertage (zusätzlich zu den Bundesfeiertagen)
+// Quellen: § Feiertagsgesetze der jeweiligen Bundesländer (Stand 2024)
+const BL_NAMES = {
+  'alle':'Alle (Gemeinschaft)','BW':'Baden-Württemberg','BY':'Bayern',
+  'BE':'Berlin','BB':'Brandenburg','HB':'Bremen','HH':'Hamburg',
+  'HE':'Hessen','MV':'Mecklenburg-Vorpommern','NI':'Niedersachsen',
+  'NW':'Nordrhein-Westfalen','RP':'Rheinland-Pfalz','SL':'Saarland',
+  'SN':'Sachsen','ST':'Sachsen-Anhalt','SH':'Schleswig-Holstein','TH':'Thüringen'
+};
+
+// Bundesweite gesetzliche Feiertage (alle Länder)
+const BUNDESWEIT = [
+  {key:'neujahr',    name:'Neujahr',                  m:1, d:1,  legal:true},
+  {key:'tag_arbeit', name:'Tag der Arbeit',            m:5, d:1,  legal:true},
+  {key:'dtag',       name:'Tag der deutschen Einheit', m:10,d:3,  legal:true},
+  {key:'xmas1',      name:'1. Weihnachtstag',          m:12,d:25, legal:true},
+  {key:'xmas2',      name:'2. Weihnachtstag',          m:12,d:26, legal:true},
+  // Beweglich (Ostern-basiert)
+  {key:'karf',   name:'Karfreitag',         easter:-2,  legal:true},
+  {key:'oster1', name:'Ostersonntag',        easter:0,   legal:true},
+  {key:'oster2', name:'Ostermontag',         easter:1,   legal:true},
+  {key:'himmel', name:'Christi Himmelfahrt', easter:39,  legal:true},
+  {key:'pfing1', name:'Pfingstsonntag',      easter:49,  legal:true},
+  {key:'pfing2', name:'Pfingstmontag',       easter:50,  legal:true},
+];
+
+// Bundesland-spezifische ZUSÄTZLICHE gesetzliche Feiertage
+const BL_LEGAL = {
+  'BW': [{name:'Heilige Drei Könige',m:1,d:6},{name:'Fronleichnam',easter:60},{name:'Allerheiligen',m:11,d:1},{name:'Mariä Himmelfahrt (kath. Gemeinden)',m:8,d:15,note:'nur kath. Gemeinden'}],
+  'BY': [{name:'Heilige Drei Könige',m:1,d:6},{name:'Fronleichnam',easter:60},{name:'Mariä Himmelfahrt',m:8,d:15},{name:'Allerheiligen',m:11,d:1},{name:'Buß- und Bettag (nur Augsburg)',m:11,d:20,note:'nur Augsburg'}],
+  'BE': [{name:'Internationaler Frauentag',m:3,d:8}],
+  'BB': [{name:'Reformationstag',m:10,d:31}],
+  'HB': [{name:'Reformationstag',m:10,d:31}],
+  'HH': [{name:'Reformationstag',m:10,d:31}],
+  'HE': [{name:'Fronleichnam',easter:60}],
+  'MV': [{name:'Reformationstag',m:10,d:31}],
+  'NI': [{name:'Reformationstag',m:10,d:31}],
+  'NW': [{name:'Fronleichnam',easter:60},{name:'Allerheiligen',m:11,d:1}],
+  'RP': [{name:'Heilige Drei Könige (Teile)',m:1,d:6,note:'nur bestimmte Gemeinden'},{name:'Fronleichnam',easter:60},{name:'Mariä Himmelfahrt (kath. Gemeinden)',m:8,d:15,note:'nur kath. Gemeinden'},{name:'Allerheiligen',m:11,d:1}],
+  'SL': [{name:'Fronleichnam',easter:60},{name:'Mariä Himmelfahrt',m:8,d:15},{name:'Allerheiligen',m:11,d:1}],
+  'SN': [{name:'Fronleichnam (Teile)',easter:60,note:'nur bestimmte Kreise'},{name:'Reformationstag',m:10,d:31},{name:'Buß- und Bettag',busstag:true}],
+  'ST': [{name:'Heilige Drei Könige',m:1,d:6},{name:'Reformationstag',m:10,d:31}],
+  'SH': [{name:'Reformationstag',m:10,d:31}],
+  'TH': [{name:'Fronleichnam (Teile)',easter:60,note:'nur bestimmte Gemeinden'},{name:'Reformationstag',m:10,d:31},{name:'Weltkindertag',m:9,d:20}],
+};
+
+// Weitere Feste & Gedenktage (nicht gesetzlich, aber bedeutsam)
+const WEITERE = [
+  {name:'Valentinstag',           m:2,  d:14},
+  {name:'Rosenmontag',            easter:-48},
+  {name:'Faschingsdienstag',      easter:-47},
+  {name:'Aschermittwoch',         easter:-46},
+  {name:'Internationaler Frauentag',m:3, d:8, note:'gesetzl. in Berlin'},
+  {name:'Walpurgisnacht',         m:4,  d:30},
+  {name:'Muttertag',              muttertag:true},
+  {name:'Vatertag (Himmelfahrt)', easter:39, note:'gleich wie Himmelfahrt'},
+  {name:'Weltkindertag',          m:9,  d:20, note:'gesetzl. in Thüringen'},
+  {name:'Halloween',              m:10, d:31},
+  {name:'Martinstag',             m:11, d:11},
+  {name:'Nikolaus',               m:12, d:6},
+  {name:'Heilig Abend',           m:12, d:24},
+  {name:'Silvester',              m:12, d:31},
+];
+
+// Buß- und Bettag: Mittwoch vor dem 23. November
+function getBussBettag(y) {
+  const nov23 = new Date(Date.UTC(y, 10, 23));
+  const dow = nov23.getUTCDay();
+  const daysBack = dow === 3 ? 7 : (dow + 4) % 7;
+  return new Date(Date.UTC(y, 10, 23 - daysBack));
+}
+
+// Muttertag: 2. Sonntag im Mai
+function getMuttertag(y) {
+  const may1 = new Date(Date.UTC(y, 4, 1));
+  const dow = may1.getUTCDay();
+  const firstSun = dow === 0 ? 1 : 8 - dow;
+  return new Date(Date.UTC(y, 4, firstSun + 7));
+}
+
+function buildFeiertageForYear(y, bl) {
+  const easter = easterDate(y);
+  const result = [];
+
+  function addItem(spec, legal, blOnly) {
+    let date;
+    if (spec.m && spec.d) {
+      date = new Date(Date.UTC(y, spec.m-1, spec.d));
+    } else if (spec.easter !== undefined) {
+      date = new Date(easter.getTime() + spec.easter * 86400000);
+    } else if (spec.busstag) {
+      date = getBussBettag(y);
+    } else if (spec.muttertag) {
+      date = getMuttertag(y);
+    } else return;
+    const ds = `${date.getUTCFullYear()}-${pad(date.getUTCMonth()+1)}-${pad(date.getUTCDate())}`;
+    // Duplikat-Check (z.B. Vatertag = Himmelfahrt)
+    if (result.some(r => r.ds === ds && r.name === spec.name)) return;
+    result.push({
+      name: spec.name,
+      ds,
+      date,
+      legal: !!legal,
+      blOnly: blOnly || false,
+      note: spec.note || null,
+    });
+  }
+
+  // Bundesweite Feiertage
+  for (const f of BUNDESWEIT) addItem(f, true, false);
+
+  // Bundesland-spezifische
+  if (bl !== 'alle') {
+    for (const f of (BL_LEGAL[bl] || [])) addItem(f, true, true);
+  } else {
+    // Alle Bundesländer zusammen – alle einzigartigen
+    for (const blk of Object.keys(BL_LEGAL)) {
+      for (const f of BL_LEGAL[blk]) addItem(f, true, true);
+    }
+  }
+
+  // Weitere
+  for (const f of WEITERE) {
+    // Vatertag doppelt verhindern
+    if (f.name === 'Vatertag (Himmelfahrt)') continue;
+    addItem(f, false, false);
+  }
+
+  return result.sort((a, b) => a.ds.localeCompare(b.ds));
+}
+
+// State
+let _feiertageBL = 'RP';
+let _feiertageYear = new Date().getFullYear();
+
+function initFeiertageSelects() {
+  // Jahr-Dropdown befüllen
+  const sel = document.getElementById('feiertage-year');
+  if (!sel) return;
+  const curY = new Date().getFullYear();
+  for (let y = curY - 1; y <= curY + 5; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === curY) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function renderFeiertage() {
+  const blSel = document.getElementById('feiertage-bundesland');
+  const ySel  = document.getElementById('feiertage-year');
+  if (blSel) _feiertageBL = blSel.value;
+  if (ySel)  _feiertageYear = parseInt(ySel.value);
+  _feiertageBLForCal = _feiertageBL;
+
+  const all = buildFeiertageForYear(_feiertageYear, _feiertageBL);
+  const legal = all.filter(f => f.legal);
+  const other = all.filter(f => !f.legal);
+  const today = todayStr();
+  const blLabel = BL_NAMES[_feiertageBL] || _feiertageBL;
+
+  document.getElementById('feiertage-count').textContent =
+    `${legal.length} gesetzliche Feiertage · ${other.length} weitere Feste · ${blLabel} · ${_feiertageYear}`;
+
+  function fmtRow(f) {
+    const d = f.date;
+    const dow = DE_DAYS_SHORT[d.getUTCDay()];
+    const dateLabel = `${dow} ${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}`;
+    const isToday = f.ds === today;
+    const isPast  = f.ds < today;
+    return `<div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?'.55':'1'}">
+      <span style="font-size:11px;color:var(--text3);min-width:72px;flex-shrink:0;font-variant-numeric:tabular-nums">${dateLabel}</span>
+      <div style="flex:1">
+        <span style="font-size:13px;color:${isToday?'var(--gold)':f.blOnly?'var(--teal)':'var(--text)'};font-weight:${isToday||f.legal?'500':'400'}">${f.name}</span>
+        ${f.blOnly?`<span style="font-size:9px;padding:1px 5px;border-radius:6px;background:rgba(78,205,196,0.15);color:var(--teal);margin-left:5px">${_feiertageBL==='alle'?'BL-spez.':'nur '+blLabel.split('-')[0]}</span>`:''}
+        ${isToday?'<span style="font-size:9px;padding:1px 6px;border-radius:6px;background:rgba(232,200,122,0.2);color:var(--gold);margin-left:5px">Heute</span>':''}
+        ${f.note?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${f.note}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  const legalEl = document.getElementById('feiertage-legal-list');
+  const otherEl = document.getElementById('feiertage-other-list');
+  if (legalEl) legalEl.innerHTML = legal.map(fmtRow).join('') || '<div style="font-size:13px;color:var(--text3)">Keine Einträge</div>';
+  if (otherEl) otherEl.innerHTML = other.map(fmtRow).join('') || '<div style="font-size:13px;color:var(--text3)">Keine Einträge</div>';
+
+  // Kalender-Tab ebenfalls aktualisieren
+  renderCal();
+}
+
+let _feiertageBLForCal = 'RP';
+let _feiertageYearForCal = new Date().getFullYear();
+
+// Erweiterte getHolidayMap die Bundesland-Feiertage berücksichtigt
+function getHolidayMapBL(y) {
+  const bl = (y === _feiertageYearForCal) ? _feiertageBLForCal : 'RP';
+  const all = buildFeiertageForYear(y, bl);
+  const map = {};
+  for (const h of all) {
+    if (!map[h.ds]) map[h.ds] = [];
+    map[h.ds].push(h);
+  }
+  return map;
 }
 
 // ── MOON VIEW ─────────────────────────────────────────────────────────────────
@@ -1476,6 +1730,7 @@ function switchTab(id){
   if(id==='swarog')renderSwarog();
   if(id==='jahreskreis')renderJahreskreis();
   if(id==='islam')renderIslam();
+  if(id==='feiertage')renderFeiertage();
 }
 
 // ── INSTALL HINT ──────────────────────────────────────────────────────────────
@@ -1489,7 +1744,7 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','moon','ifc','swarog','jahreskreis','islam'];
+const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam'];
 
 function prevTab(){
   const i=TABS.indexOf(activeTab);
@@ -1529,6 +1784,7 @@ if(TABS.includes(hash))switchTab(hash);
 // ── INIT ──────────────────────────────────────────────────────────────────────
 tick();
 setInterval(tick,1000);
+initFeiertageSelects();
 renderCal();
 renderSolstices();
 checkInstallHint();
