@@ -329,11 +329,48 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 
   <!-- VIEW: SWAROG -->
   <div class="view" id="view-swarog">
+
+    <!-- Swarog Uhr & Zeit -->
+    <div class="card" style="border-color:rgba(155,127,232,0.25);background:linear-gradient(135deg,#1a1a38 0%,#111126 100%)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-family:var(--font-display);font-size:11px;color:var(--purple);letter-spacing:.1em;text-transform:uppercase">Slawisch-Arische Zeit</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px" id="swarog-greg-date">–</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--text3)">EFST-Jahr</div>
+          <div style="font-size:18px;font-weight:300;color:var(--purple)" id="swarog-efst-small">7534</div>
+        </div>
+      </div>
+      <!-- Swarog Datum & 9-Tage-Woche -->
+      <div id="swarog-date-display" style="margin-bottom:10px;padding:8px 10px;background:rgba(155,127,232,0.1);border-radius:10px;border:0.5px solid rgba(155,127,232,0.2)"></div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">9-Tage-Woche · Ruhetage: 3, 6, 9</div>
+      <div id="swarog-week-display" style="display:flex;gap:3px;margin-bottom:10px"></div>
+      <!-- Analoge 16-Stunden-Uhr -->
+      <div style="display:flex;align-items:center;gap:16px">
+        <canvas id="swarog-clock-canvas" width="140" height="140" style="flex-shrink:0;border-radius:50%"></canvas>
+        <div style="flex:1">
+          <div style="font-size:38px;font-weight:200;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.02em" id="swarog-time-big">–:–</div>
+          <div style="font-size:13px;color:var(--purple);margin-top:2px;font-weight:500" id="swarog-hour-name">–</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px" id="swarog-hour-num">– . Stunde</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px" id="swarog-parts">– Части · – Доли</div>
+        </div>
+      </div>
+      <!-- 4 Tagesabschnitte -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px" id="swarog-dayparts"></div>
+    </div>
+
+    <!-- 16-Stunden-Übersicht -->
+    <div class="section-label">Die 16 Swarog-Stunden des Tages</div>
+    <div class="card" style="padding:10px">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px" id="swarog-hours-grid"></div>
+    </div>
+
     <div class="card">
       <div class="swarog-year">
         <div class="efst-big" id="efst-year">7534</div>
         <div class="efst-label">Jahr nach EFST</div>
-        <div class="efst-sub">2026 greg. = 7534 EFST (+ 5508)<br>Neujahr: 22. September (Herbstäquinoktium)</div>
+        <div class="efst-sub" id="swarog-year-sub">– greg. = – EFST (+ 5508)<br>Neujahr: 22. September (Herbstäquinoktium)</div>
       </div>
     </div>
     <div class="section-label">Aktuelle Epoche</div>
@@ -393,6 +430,53 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
+  <!-- VIEW: ISLAMISCHER KALENDER -->
+  <div class="view" id="view-islam">
+    <div class="card" style="border-color:rgba(78,205,196,0.2)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">☪️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:var(--teal);letter-spacing:.05em">Islamischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Tabellarische Variante · Hidschra-Zeitrechnung</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0 4px">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="islam-day-big">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--teal);margin-top:4px" id="islam-month-big">–</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px" id="islam-year-big">– AH</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px" id="islam-arabic">–</div>
+      </div>
+    </div>
+
+    <div class="section-label">Monatskalender</div>
+    <div class="card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="shiftIslamMonth(-1)">‹</button>
+        <div class="cal-month" id="islam-cal-title">–</div>
+        <button class="cal-nav-btn" onclick="shiftIslamMonth(1)">›</button>
+      </div>
+      <div class="cal-grid" id="islam-cal-dow"></div>
+      <div class="cal-grid" id="islam-cal-grid"></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text3)">
+        Woche beginnt am <strong style="color:var(--text2)">Samstag</strong> · Der islamische Tag beginnt bei Sonnenuntergang
+      </div>
+    </div>
+
+    <div class="section-label">Islamische Feiertage <span id="islam-feiertage-year" style="color:var(--text3)"></span></div>
+    <div class="card" id="islam-holidays"></div>
+
+    <div class="section-label">Die 12 Monate des Hidschra-Jahres</div>
+    <div class="card">
+      <div id="islam-months-list" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+    </div>
+
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">islamische Kalender</span> (Hidschra-Kalender) ist ein reiner <span style="color:var(--teal)">Mondkalender</span> mit 12 Monaten und 354 oder 355 Tagen pro Jahr – damit ist er rund <span style="color:var(--gold)">11 Tage kürzer</span> als das gregorianische Jahr. Die Zeitrechnung beginnt mit der <span style="color:var(--text)">Hidschra</span> (Auswanderung des Propheten Mohammed von Mekka nach Medina) im Jahr 622 n.Chr.<br><br>
+      Diese App verwendet die <span style="color:var(--text)">tabellarische Variante</span> (auch „arithmetischer islamischer Kalender"). In der Praxis können Daten um <strong style="color:var(--gold)">1–2 Tage abweichen</strong>, da viele Länder (Saudi-Arabien, Iran, Türkei) den Monatsbeginn nach tatsächlicher Mondsichtung festlegen.
+    </div>
+  </div>
+
 </div><!-- end app-scroll -->
 
 <!-- TAB BAR -->
@@ -417,6 +501,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
     <span class="tab-label">Jahreskreis</span>
   </button>
+  <button class="tab-btn" onclick="switchTab('islam')" id="tab-islam">
+    <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/><path d="M19 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>
+    <span class="tab-label">Islamisch</span>
+  </button>
 </nav>
 
 <script>
@@ -425,55 +513,193 @@ const DE_MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August'
 const DE_DAYS_SHORT=['So','Mo','Di','Mi','Do','Fr','Sa'];
 const DE_DAYS_LONG=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 
-const HOLIDAYS=[
-  {d:'2026-01-01',n:'Neujahr',l:true},{d:'2026-01-06',n:'Heilige Drei Könige',l:false},
-  {d:'2026-02-14',n:'Valentinstag',l:false},{d:'2026-02-16',n:'Rosenmontag',l:false},
-  {d:'2026-02-17',n:'Faschingsdienstag',l:false},{d:'2026-02-18',n:'Aschermittwoch',l:false},
-  {d:'2026-04-03',n:'Karfreitag',l:true},{d:'2026-04-05',n:'Ostersonntag',l:true},
-  {d:'2026-04-06',n:'Ostermontag',l:true},{d:'2026-05-01',n:'Maifeiertag',l:true},
-  {d:'2026-05-14',n:'Christi Himmelfahrt',l:true},{d:'2026-05-24',n:'Pfingstsonntag',l:true},
-  {d:'2026-05-25',n:'Pfingstmontag',l:true},{d:'2026-06-04',n:'Fronleichnam',l:true},
-  {d:'2026-08-15',n:'Mariä Himmelfahrt',l:true},{d:'2026-10-03',n:'Tag der deutschen Einheit',l:true},
-  {d:'2026-10-31',n:'Reformationstag/Halloween',l:false},{d:'2026-11-01',n:'Allerheiligen',l:true},
-  {d:'2026-11-29',n:'1. Advent',l:false},{d:'2026-12-06',n:'Nikolaus / 2. Advent',l:false},
-  {d:'2026-12-13',n:'3. Advent',l:false},{d:'2026-12-20',n:'4. Advent',l:false},
-  {d:'2026-12-24',n:'Heilig Abend',l:false},{d:'2026-12-25',n:'1. Weihnachtstag',l:true},
-  {d:'2026-12-26',n:'2. Weihnachtstag',l:true},{d:'2026-12-31',n:'Silvester',l:false},
+const HOLIDAYS_STATIC=[
+  // Feste Feiertage (Tag, Monat, Name, gesetzlich)
+  {m:1,  d:1,  n:'Neujahr',                    l:true},
+  {m:1,  d:6,  n:'Heilige Drei Könige',         l:false},
+  {m:2,  d:14, n:'Valentinstag',                l:false},
+  {m:5,  d:1,  n:'Maifeiertag',                 l:true},
+  {m:8,  d:15, n:'Mariä Himmelfahrt',           l:true},
+  {m:10, d:3,  n:'Tag der deutschen Einheit',   l:true},
+  {m:10, d:31, n:'Reformationstag/Halloween',   l:false},
+  {m:11, d:1,  n:'Allerheiligen',               l:true},
+  {m:11, d:11, n:'Martinstag',                  l:false},
+  {m:12, d:6,  n:'Nikolaus',                    l:false},
+  {m:12, d:24, n:'Heilig Abend',                l:false},
+  {m:12, d:25, n:'1. Weihnachtstag',            l:true},
+  {m:12, d:26, n:'2. Weihnachtstag',            l:true},
+  {m:12, d:31, n:'Silvester',                   l:false},
 ];
 
-const SOLSTICES=[
-  {icon:'🌱',name:'März-Äquinoktium',date:'20.03.2026',time:'15:41 MEZ'},
-  {icon:'☀️',name:'Juni-Sonnenwende',date:'21.06.2026',time:'20:24 MESZ'},
-  {icon:'🍂',name:'Sept.-Äquinoktium',date:'22.09.2026',time:'12:13 MESZ'},
-  {icon:'❄️',name:'Dez.-Sonnenwende',date:'21.12.2026',time:'09:50 MEZ'},
-];
+// Gaußsche Osterformel
+function easterDate(y) {
+  const a=y%19, b=Math.floor(y/100), c=y%100;
+  const d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m2=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m2+114)/31);
+  const day=((h+l-7*m2+114)%31)+1;
+  return new Date(Date.UTC(y, month-1, day));
+}
 
-const MOON_EVENTS=[
-  {d:'2026-01-03',p:'Vollmond',i:'🌕'},{d:'2026-01-10',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-01-18',p:'Neumond',i:'🌑'},{d:'2026-01-26',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-02-04',p:'Vollmond',i:'🌕'},{d:'2026-02-12',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-02-17',p:'Neumond',i:'🌑'},{d:'2026-02-25',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-03-06',p:'Vollmond',i:'🌕'},{d:'2026-03-14',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-03-22',p:'Neumond',i:'🌑'},{d:'2026-03-28',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-04-05',p:'Vollmond',i:'🌕'},{d:'2026-04-13',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-04-20',p:'Neumond',i:'🌑'},{d:'2026-04-28',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-05-05',p:'Vollmond',i:'🌕'},{d:'2026-05-12',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-05-20',p:'Neumond',i:'🌑'},{d:'2026-05-27',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-06-04',p:'Vollmond',i:'🌕'},{d:'2026-06-11',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-06-18',p:'Neumond',i:'🌑'},{d:'2026-06-26',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-07-04',p:'Vollmond',i:'🌕'},{d:'2026-07-11',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-07-18',p:'Neumond',i:'🌑'},{d:'2026-07-26',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-08-02',p:'Vollmond',i:'🌕'},{d:'2026-08-10',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-08-17',p:'Neumond',i:'🌑'},{d:'2026-08-24',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-09-01',p:'Vollmond',i:'🌕'},{d:'2026-09-08',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-09-15',p:'Neumond',i:'🌑'},{d:'2026-09-22',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-10-01',p:'Vollmond',i:'🌕'},{d:'2026-10-08',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-10-14',p:'Neumond',i:'🌑'},{d:'2026-10-21',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-10-31',p:'Vollmond',i:'🌕'},{d:'2026-11-07',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-11-13',p:'Neumond',i:'🌑'},{d:'2026-11-19',p:'Erstes Viertel',i:'🌓'},
-  {d:'2026-11-30',p:'Vollmond',i:'🌕'},{d:'2026-12-07',p:'Letztes Viertel',i:'🌗'},
-  {d:'2026-12-13',p:'Neumond',i:'🌑'},{d:'2026-12-20',p:'Erstes Viertel',i:'🌓'},
-];
+function getHolidaysForYear(y) {
+  const result=[];
+  // Feste Tage
+  for(const h of HOLIDAYS_STATIC){
+    result.push({d:`${y}-${pad(h.m)}-${pad(h.d)}`,n:h.n,l:h.l});
+  }
+  // Ostern und abhängige Feiertage
+  const easter=easterDate(y);
+  const addE=(offset,name,legal)=>{
+    const d=new Date(easter.getTime()+offset*86400000);
+    result.push({d:`${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`,n:name,l:legal});
+  };
+  addE(-48,'Rosenmontag',false);
+  addE(-47,'Faschingsdienstag',false);
+  addE(-46,'Aschermittwoch',false);
+  addE(-2,'Karfreitag',true);
+  addE(0,'Ostersonntag',true);
+  addE(1,'Ostermontag',true);
+  addE(39,'Christi Himmelfahrt',true);
+  addE(49,'Pfingstsonntag',true);
+  addE(50,'Pfingstmontag',true);
+  addE(60,'Fronleichnam',true);
+  // Adventssonntage (4. Sonntag vor Weihnachten)
+  const xmas=new Date(Date.UTC(y,11,25));
+  const xmasDow=xmas.getUTCDay();
+  const advent4=new Date(Date.UTC(y,11,25-(xmasDow===0?7:xmasDow)));
+  for(let i=0;i<4;i++){
+    const adv=new Date(advent4.getTime()-i*7*86400000);
+    result.push({d:`${y}-${pad(adv.getUTCMonth()+1)}-${pad(adv.getUTCDate())}`,n:`${4-i}. Advent`,l:false});
+  }
+  return result.sort((a,b)=>a.d.localeCompare(b.d));
+}
+
+// Sonnenwenden & Äquinoktien – Jean Meeus Näherung
+function getSolstices(y) {
+  const Y=(y-2000)/1000;
+  // JDE Näherung für März-Äquinoktium, Juni-Sonnenwende, Sept-Äquinoktium, Dez-Sonnenwende
+  const jde0=[
+    2451623.80984+365242.37404*Y+0.05169*Y*Y-0.00411*Y*Y*Y-0.00057*Y*Y*Y*Y,
+    2451716.56767+365241.62603*Y+0.00325*Y*Y+0.00888*Y*Y*Y-0.00030*Y*Y*Y*Y,
+    2451810.21715+365242.01767*Y-0.11575*Y*Y+0.00337*Y*Y*Y+0.00078*Y*Y*Y*Y,
+    2451900.05952+365242.74049*Y-0.06223*Y*Y-0.00823*Y*Y*Y+0.00032*Y*Y*Y*Y,
+  ];
+  const names=[
+    {icon:'🌱',name:'März-Äquinoktium'},
+    {icon:'☀️',name:'Juni-Sonnenwende'},
+    {icon:'🍂',name:'Sept.-Äquinoktium'},
+    {icon:'❄️',name:'Dez.-Sonnenwende'},
+  ];
+  return jde0.map((jde,i)=>{
+    // JDE → Date (Julian Day Number to Unix)
+    const unix=(jde-2440587.5)*86400000;
+    const d=new Date(unix);
+    const dst=isDST(d);
+    const off=dst?2:1;
+    const local=new Date(d.getTime()+off*3600000);
+    const dateStr=`${pad(local.getUTCDate())}.${pad(local.getUTCMonth()+1)}.${local.getUTCFullYear()}`;
+    const timeStr=`${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())} ${dst?'MESZ':'MEZ'}`;
+    return {...names[i], date:dateStr, time:timeStr};
+  });
+}
+
+// ── DYNAMISCHE MONDPHASEN-BERECHNUNG (Jean Meeus) ────────────────────────────
+// Berechnet alle Hauptphasen (NM, EV, VM, LV) für ein Jahr
+// Genauigkeit: ±2-3 Minuten
+function getMoonPhasesForYear(y) {
+  const phases=[];
+  const PHASE_ICONS={0:'🌑',1:'🌓',2:'🌕',3:'🌗'};
+  const PHASE_NAMES={0:'Neumond',1:'Erstes Viertel',2:'Vollmond',3:'Letztes Viertel'};
+
+  // Startpunkt: k für Neumond nahe 1. Januar des Jahres
+  // k = (year - 2000) * 12.3685, gerundet auf nächsten ganzen Wert
+  let k0=Math.round((y-2000)*12.3685);
+
+  for(let ki=k0-1; ki<=k0+14; ki++){
+    for(let ph=0; ph<4; ph++){
+      const k=ki+ph/4;
+      const T=k/1236.85;
+      const T2=T*T, T3=T2*T, T4=T3*T;
+
+      // JDE für die Phase (Meeus Kap. 49)
+      let JDE=2451550.09766+29.530588861*k
+        +0.00015437*T2-0.000000150*T3+0.00000000073*T4;
+
+      // Korrekturen
+      const M=(2.5534+29.10535670*k-0.0000014*T2-0.00000011*T3)*Math.PI/180;
+      const M2=(201.5643+385.81693528*k+0.0107582*T2+0.00001238*T3-0.000000058*T4)*Math.PI/180;
+      const F=(160.7108+390.67050284*k-0.0016118*T2-0.00000227*T3+0.000000011*T4)*Math.PI/180;
+      const Om=(124.7746-1.56375588*k+0.0020672*T2+0.00000215*T3)*Math.PI/180;
+      const E=1-0.002516*T-0.0000074*T2;
+
+      if(ph===0||ph===2){ // NM und VM
+        JDE+=ph===0
+          ?-0.40720*Math.sin(M2)+0.17241*E*Math.sin(M)+0.01608*Math.sin(2*M2)
+            +0.01039*Math.sin(2*F)+0.00739*E*Math.sin(M2-M)-0.00514*E*Math.sin(M2+M)
+            +0.00208*E*E*Math.sin(2*M)-0.00111*Math.sin(M2-2*F)-0.00057*Math.sin(M2+2*F)
+            +0.00056*E*Math.sin(2*M2+M)-0.00042*Math.sin(3*M2)+0.00042*E*Math.sin(M+2*F)
+            +0.00038*E*Math.sin(M-2*F)-0.00024*E*Math.sin(2*M2-M)-0.00017*Math.sin(Om)
+            -0.00007*Math.sin(M2+2*M)
+          :-0.40614*Math.sin(M2)+0.17302*E*Math.sin(M)+0.01614*Math.sin(2*M2)
+            +0.01043*Math.sin(2*F)+0.00734*E*Math.sin(M2-M)-0.00515*E*Math.sin(M2+M)
+            +0.00209*E*E*Math.sin(2*M)-0.00111*Math.sin(M2-2*F)-0.00057*Math.sin(M2+2*F)
+            +0.00056*E*Math.sin(2*M2+M)-0.00042*Math.sin(3*M2)+0.00042*E*Math.sin(M+2*F)
+            +0.00038*E*Math.sin(M-2*F)-0.00024*E*Math.sin(2*M2-M)-0.00017*Math.sin(Om)
+            -0.00007*Math.sin(M2+2*M);
+      } else { // EV und LV
+        const W=0.00306-0.00038*E*Math.cos(M)+0.00026*Math.cos(M2)
+          -0.00002*Math.cos(M2-M)+0.00002*Math.cos(M2+M)+0.00002*Math.cos(2*F);
+        JDE+=ph===1
+          ?-0.62801*Math.sin(M2)+0.17172*E*Math.sin(M)-0.01183*E*Math.sin(M2+M)
+            +0.00862*Math.sin(2*M2)+0.00804*Math.sin(2*F)+0.00454*E*Math.sin(M2-M)
+            +0.00204*E*E*Math.sin(2*M)-0.00180*Math.sin(M2-2*F)-0.00070*Math.sin(M2+2*F)
+            -0.00040*Math.sin(3*M2)-0.00034*E*Math.sin(2*M2-M)+0.00032*E*Math.sin(M+2*F)
+            +0.00032*E*Math.sin(M-2*F)-0.00028*E*E*Math.sin(M2+2*M)+0.00027*E*Math.sin(2*M2+M)
+            -0.00017*Math.sin(Om)-0.00005*Math.sin(M2-M-2*F)+0.00004*Math.sin(2*M2+2*F)
+            -0.00004*Math.sin(M2+M+2*F)+0.00004*Math.sin(M2-2*M)+0.00003*Math.sin(M2+M-2*F)
+            +0.00003*Math.sin(3*M)+0.00002*Math.sin(2*M2-2*F)-0.00002*Math.sin(3*M2+M)+W
+          :-0.62801*Math.sin(M2)+0.17172*E*Math.sin(M)-0.01183*E*Math.sin(M2+M)
+            +0.00862*Math.sin(2*M2)+0.00804*Math.sin(2*F)+0.00454*E*Math.sin(M2-M)
+            +0.00204*E*E*Math.sin(2*M)-0.00180*Math.sin(M2-2*F)-0.00070*Math.sin(M2+2*F)
+            -0.00040*Math.sin(3*M2)-0.00034*E*Math.sin(2*M2-M)+0.00032*E*Math.sin(M+2*F)
+            +0.00032*E*Math.sin(M-2*F)-0.00028*E*E*Math.sin(M2+2*M)+0.00027*E*Math.sin(2*M2+M)
+            -0.00017*Math.sin(Om)-0.00005*Math.sin(M2-M-2*F)+0.00004*Math.sin(2*M2+2*F)
+            -0.00004*Math.sin(M2+M+2*F)+0.00004*Math.sin(M2-2*M)+0.00003*Math.sin(M2+M-2*F)
+            +0.00003*Math.sin(3*M)+0.00002*Math.sin(2*M2-2*F)-0.00002*Math.sin(3*M2+M)-W;
+      }
+
+      // JDE → Unix-Zeit → Lokale MEZ/MESZ
+      const unix=(JDE-2440587.5)*86400000;
+      const dt=new Date(unix);
+      const dst=isDST(dt);
+      const local=new Date(unix+(dst?2:1)*3600000);
+      const yr2=local.getUTCFullYear();
+      if(yr2!==y) continue;
+      const ds=`${yr2}-${pad(local.getUTCMonth()+1)}-${pad(local.getUTCDate())}`;
+      const t=`${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())}`;
+      phases.push({d:ds,p:PHASE_NAMES[ph],i:PHASE_ICONS[ph],t});
+    }
+  }
+  return phases.sort((a,b)=>a.d.localeCompare(b.d)||a.t.localeCompare(b.t));
+}
+
+// Cache damit nicht jedes Mal neu gerechnet wird
+const _moonCache={}, _holidayCache={}, _solsticeCache={};
+function moonEventsForYear(y){
+  if(!_moonCache[y]) _moonCache[y]=getMoonPhasesForYear(y);
+  return _moonCache[y];
+}
+function holidaysForYear(y){
+  if(!_holidayCache[y]) _holidayCache[y]=getHolidaysForYear(y);
+  return _holidayCache[y];
+}
+function solsticesForYear(y){
+  if(!_solsticeCache[y]) _solsticeCache[y]=getSolstices(y);
+  return _solsticeCache[y];
+}
+
 
 const IFC_MONTHS=['Januar','Februar','März','April','Mai','Juni','Sol','Juli','August','September','Oktober','November','Dezember'];
 
@@ -533,8 +759,8 @@ function moonCalc(date) {
   return {age:+age.toFixed(1),phase,icon,illum:Math.round(illum*100)};
 }
 
-function getHolidayMap(){const m={};for(const h of HOLIDAYS){if(!m[h.d])m[h.d]=[];m[h.d].push(h);}return m;}
-function getMoonForDate(ds){for(const e of MOON_EVENTS)if(e.d===ds)return e.i;return '';}
+function getHolidayMap(y){const m={};for(const h of holidaysForYear(y)){if(!m[h.d])m[h.d]=[];m[h.d].push(h);}return m;}
+function getMoonForDate(ds){const y=parseInt(ds.slice(0,4));for(const e of moonEventsForYear(y))if(e.d===ds)return e.i;return '';}
 
 // ── CLOCK ─────────────────────────────────────────────────────────────────────
 function tick() {
@@ -556,7 +782,7 @@ function tick() {
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
 function renderCal() {
-  const hmap=getHolidayMap(), ts=todayStr();
+  const hmap=getHolidayMap(viewY), ts=todayStr();
   const first=new Date(Date.UTC(viewY,viewM,1));
   const last=new Date(Date.UTC(viewY,viewM+1,0)).getUTCDate();
   const startDow=first.getUTCDay();
@@ -577,7 +803,7 @@ function renderCal() {
   }
   document.getElementById('cal-grid').innerHTML=g;
 
-  const month_hdays=HOLIDAYS.filter(h=>h.d.startsWith(`${viewY}-${pad(viewM+1)}`));
+  const month_hdays=holidaysForYear(viewY).filter(h=>h.d.startsWith(`${viewY}-${pad(viewM+1)}`));
   if(!month_hdays.length){
     document.getElementById('hday-month').innerHTML='<div style="font-size:13px;color:var(--text3)">Keine Feiertage in diesem Monat</div>';
   } else {
@@ -589,15 +815,17 @@ function renderCal() {
 }
 
 function shiftMonth(delta){
+  const prevY=viewY;
   viewM+=delta;
   if(viewM<0){viewM=11;viewY--;}
   if(viewM>11){viewM=0;viewY++;}
   renderCal();
+  if(viewY!==prevY) renderSolstices();
 }
 
 // ── SOLSTICES ─────────────────────────────────────────────────────────────────
 function renderSolstices(){
-  document.getElementById('solstice-grid').innerHTML=SOLSTICES.map(s=>`
+  document.getElementById('solstice-grid').innerHTML=solsticesForYear(viewY).map(s=>`
     <div class="sol-card">
       <div class="sol-icon">${s.icon}</div>
       <div class="sol-name">${s.name}</div>
@@ -615,8 +843,11 @@ function renderMoon(){
   document.getElementById('moon-age').textContent=m.age;
   document.getElementById('moon-illum').textContent=m.illum+'%';
   const ts=todayStr();
+  const curY=parseInt(ts.slice(0,4));
+  // Hole Events für dieses Jahr + ggf. nächstes Jahr für "nächste Ereignisse"
+  const eventsNow=[...moonEventsForYear(curY),...moonEventsForYear(curY+1)];
   let daysToFull='–';
-  for(const e of MOON_EVENTS){
+  for(const e of eventsNow){
     if(e.p==='Vollmond'&&e.d>=ts){
       const diff=Math.round((new Date(e.d)-new Date(ts+'T12:00:00Z'))/86400000);
       daysToFull=diff===0?'Heute':diff;
@@ -628,33 +859,46 @@ function renderMoon(){
 
   const next={};
   const prios=['Vollmond','Neumond','Erstes Viertel','Letztes Viertel'];
-  for(const e of MOON_EVENTS){
+  for(const e of eventsNow){
     if(e.d>=ts&&!next[e.p]) next[e.p]=e;
   }
   document.getElementById('next-phase-list').innerHTML=prios.map(p=>{
-    const ev=next[p]||MOON_EVENTS.find(e=>e.p===p);
+    const ev=next[p];
     const d=ev?new Date(ev.d):null;
     const ds=d?fmtDate(d):'–';
     const icon=ev?ev.i:'';
-    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${p}</div><div class="np-date">${ds}</div></div></div>`;
+    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${p}</div><div class="np-date">${ds}${ev&&ev.t?' · '+ev.t+' Uhr':''}</div></div></div>`;
   }).join('');
 
+  // Jahresübersicht mit Jahres-Umschalter
+  const moonYear=window._moonViewYear||curY;
+  const moonEvents=moonEventsForYear(moonYear);
   const byMonth={};
-  for(const e of MOON_EVENTS){
+  for(const e of moonEvents){
     const mo=parseInt(e.d.slice(5,7))-1;
     if(!byMonth[mo])byMonth[mo]=[];
     byMonth[mo].push(e);
   }
-  let yg='';
+  let yg=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;grid-column:1/-1">
+    <button onclick="changeMoonYear(-1)" class="cal-nav-btn">‹</button>
+    <span style="font-size:14px;font-weight:500;color:var(--gold);flex:1;text-align:center">Mondphasen ${moonYear}</span>
+    <button onclick="changeMoonYear(1)" class="cal-nav-btn">›</button>
+  </div>`;
   for(let mo=0;mo<12;mo++){
     yg+=`<div class="moon-month-card"><div class="moon-month-title">${DE_MONTHS[mo]}</div>`;
     for(const e of (byMonth[mo]||[])){
       const day=parseInt(e.d.slice(8,10));
-      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${e.p}</span></div>`;
+      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${e.p}${e.t?' '+e.t:''}</span></div>`;
     }
     yg+='</div>';
   }
   document.getElementById('moon-year-grid').innerHTML=yg;
+}
+
+function changeMoonYear(delta){
+  const now=new Date();
+  window._moonViewYear=(window._moonViewYear||now.getFullYear())+delta;
+  renderMoon();
 }
 
 // ── IFC ───────────────────────────────────────────────────────────────────────
@@ -690,11 +934,206 @@ function renderIFC(){
   document.getElementById('ifc-months-grid').innerHTML=g;
 }
 
-// ── SWAROG ────────────────────────────────────────────────────────────────────
+
+// ── SWAROG ZEIT (vollständig astronomisch) ────────────────────────────────────
+const SWAROG_HOURS = [
+  {n:1,  ru:'Паобедъ',      de:'Paobед – Tagesbeginn',         part:'Вечер',col:'#9b7fe8'},
+  {n:2,  ru:'Вечерь',       de:'Wetscherj – Abend',             part:'Вечер',col:'#9b7fe8'},
+  {n:3,  ru:'Нощь',         de:'Noschtsch – Nacht',              part:'Ночь', col:'#4a4a8a'},
+  {n:4,  ru:'Полунощь',     de:'Polunoschetsch – Mitternacht',   part:'Ночь', col:'#4a4a8a'},
+  {n:5,  ru:'Куриглашение', de:'Kuriglaschenije – Hahnenschrei', part:'Ночь', col:'#4a4a8a'},
+  {n:6,  ru:'Зарница',      de:'Sarnitsa – Morgenrot',           part:'Ночь', col:'#4a4a8a'},
+  {n:7,  ru:'Заура',        de:'Saura – Morgenröte',             part:'Утро', col:'#e8a050'},
+  {n:8,  ru:'Заурнице',     de:'Saurnitze – Frühdämmerung',      part:'Утро', col:'#e8a050'},
+  {n:9,  ru:'Настя',        de:'Nastja – Hellwerden',            part:'Утро', col:'#e8a050'},
+  {n:10, ru:'Сваор',        de:'Swaor – Sonnenaufgang',          part:'Утро', col:'#e8a050'},
+  {n:11, ru:'Утрось',       de:'Utross – Frühe',                 part:'День', col:'#f0c040'},
+  {n:12, ru:'Поутрось',     de:'Poutross – Vormittag',           part:'День', col:'#f0c040'},
+  {n:13, ru:'Обедне',       de:'Obednje – Mittagszeit',          part:'День', col:'#f0c040'},
+  {n:14, ru:'Обед',         de:'Obed – Mittagsstunde',           part:'День', col:'#f0c040'},
+  {n:15, ru:'Подобедне',    de:'Podobednje – Nachmittag',        part:'День', col:'#f0c040'},
+  {n:16, ru:'Вечерь',       de:'Wetscherj – Vorabend',           part:'Вечер',col:'#9b7fe8'},
+];
+const SWAROG_DAYPARTS = [
+  {name:'Вечер',de:'Abend', col:'#9b7fe8',hours:[1,2,16]},
+  {name:'Ночь', de:'Nacht', col:'#4a4a8a',hours:[3,4,5,6]},
+  {name:'Утро', de:'Morgen',col:'#e8a050',hours:[7,8,9,10]},
+  {name:'День', de:'Tag',   col:'#f0c040',hours:[11,12,13,14,15]},
+];
+const SWAROG_WEEKDAYS = [
+  {n:1,ru:'Понедельникъ',de:'Ponedelnik', rest:false},
+  {n:2,ru:'Вторникъ',    de:'Wторnik',    rest:false},
+  {n:3,ru:'Тритейникъ',  de:'Triteínik',  rest:true},
+  {n:4,ru:'Четверикъ',   de:'Tscheterik', rest:false},
+  {n:5,ru:'Пятница',     de:'Pjatnitsa',  rest:false},
+  {n:6,ru:'Шестица',     de:'Schestiza',  rest:true},
+  {n:7,ru:'Седьмица',    de:'Sedmiza',    rest:false},
+  {n:8,ru:'Осьмица',     de:'Osmiza',     rest:false},
+  {n:9,ru:'Неделя',      de:'Nedela',     rest:true},
+];
+const SWAROG_MONTHS = [
+  {n:1,ru:'Рамхатъ',de:'Ramchat',days:41},{n:2,ru:'Айлетъ',de:'Ailet',days:40},
+  {n:3,ru:'Бейлетъ',de:'Beilet',days:41},{n:4,ru:'Гэйлетъ',de:'Geilet',days:40},
+  {n:5,ru:'Дайлетъ',de:'Dailet',days:41},{n:6,ru:'Элетъ',de:'Elet',days:40},
+  {n:7,ru:'Вейлетъ',de:'Veilet',days:41},{n:8,ru:'Хейлетъ',de:'Cheilet',days:40},
+  {n:9,ru:'Тайлетъ',de:'Tailet',days:41},
+];
+
+// Sonnenuntergang (Jean Meeus Näherung)
+function calcSunsetUTC(date,lat,lon){
+  const n=Math.floor(date.getTime()/86400000)-10956.5;
+  const Js=n-lon/360;
+  const M=(357.5291+0.98560028*Js)%360;
+  const Mr=M*Math.PI/180;
+  const C=1.9148*Math.sin(Mr)+0.02*Math.sin(2*Mr)+0.0003*Math.sin(3*Mr);
+  const lam=(M+C+180+102.9372)%360;
+  const lr=lam*Math.PI/180;
+  const Jt=2451545+Js+0.0053*Math.sin(Mr)-0.0069*Math.sin(2*lr);
+  const sinD=Math.sin(lr)*Math.sin(23.4397*Math.PI/180);
+  const cosD=Math.cos(Math.asin(sinD));
+  const latr=lat*Math.PI/180;
+  const cosH=(Math.sin(-0.8333*Math.PI/180)-Math.sin(latr)*sinD)/(Math.cos(latr)*cosD);
+  if(cosH<-1||cosH>1)return null;
+  const Jset=Jt+Math.acos(cosH)*180/(Math.PI*360);
+  return((Jset-2440587.5)*86400000%86400000+86400000)%86400000/60000;
+}
+
+window._swarogLat=null;window._swarogLon=null;
+window._swarogSunsetUTCmin=17*60;
+window._swarogLocationLabel='Standardzeit (18:00 MEZ)';
+
+function requestSwarogLocation(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    window._swarogLat=pos.coords.latitude;
+    window._swarogLon=pos.coords.longitude;
+    const s=calcSunsetUTC(new Date(),window._swarogLat,window._swarogLon);
+    if(s!==null)window._swarogSunsetUTCmin=s;
+    window._swarogLocationLabel=`${pos.coords.latitude.toFixed(2)}°N ${pos.coords.longitude.toFixed(2)}°E`;
+    updateSwarogClock();renderSwarogHoursGrid();
+  },()=>{});
+}
+
+function getSwarogTime(now){
+  const su=window._swarogSunsetUTCmin;
+  const nu=now.getUTCHours()*60+now.getUTCMinutes()+now.getUTCSeconds()/60;
+  let ms=nu-su; if(ms<0)ms+=1440;
+  const hi=Math.floor(ms/90)%16;
+  const minH=ms-hi*90;
+  const pf=minH/(90/144);
+  return{hourNum:hi+1,hourIndex:hi,minInHour:minH,parts:Math.floor(pf),dolja:Math.floor((pf-Math.floor(pf))*1296),totalSwarogMin:ms};
+}
+
+function getSwarogDate(now){
+  const y=now.getUTCFullYear(),m=now.getUTCMonth()+1,d=now.getUTCDate();
+  let nyY=(m>9||(m===9&&d>=22))?y:y-1;
+  const nyDate=new Date(Date.UTC(nyY,8,22));
+  const efst=nyY+5508;
+  const su=window._swarogSunsetUTCmin;
+  const nu=now.getUTCHours()*60+now.getUTCMinutes();
+  let days=Math.floor((now-nyDate)/86400000)+(nu>=su?1:0);
+  let month=9,dom=41,rem=days;
+  for(let mo=1;mo<=9;mo++){
+    const md=SWAROG_MONTHS[mo-1].days;
+    if(rem<md){month=mo;dom=rem+1;break;}
+    rem-=md;
+  }
+  const ref=new Date(Date.UTC(2025,8,22));
+  const td=Math.floor((now-ref)/86400000)+(nu>=su?1:0);
+  return{efstYear:efst,month,dayOfMonth:dom,weekdayIdx:((td%9)+9)%9};
+}
+
+let _swarogClockInterval=null;
+
+function drawSwarogClock(hi,mih){
+  const canvas=document.getElementById('swarog-clock-canvas');
+  if(!canvas)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2),size=140;
+  canvas.width=size*dpr;canvas.height=size*dpr;
+  canvas.style.width=size+'px';canvas.style.height=size+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const cx=size/2,cy=size/2,r=size/2-4;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fillStyle='#1a1a2e';ctx.fill();
+  ctx.strokeStyle='rgba(155,127,232,0.3)';ctx.lineWidth=1.5;ctx.stroke();
+  // Sektoren: Abend3h, Nacht4h, Morgen4h, Tag5h rückwärts
+  const secs=[3,4,4,5],cols=['#9b7fe8','#4a4a8a','#e8a050','#f0c040'];
+  let a=-Math.PI/2;
+  for(let i=0;i<4;i++){
+    const da=secs[i]*2*Math.PI/16;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r-2,a,a+da);ctx.closePath();
+    ctx.fillStyle=cols[i]+'1a';ctx.fill();a+=da;
+  }
+  for(let i=0;i<16;i++){
+    const ang=-Math.PI/2-i*2*Math.PI/16;
+    const maj=i%4===0;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(ang)*(r-2),cy+Math.sin(ang)*(r-2));
+    ctx.lineTo(cx+Math.cos(ang)*(r-(maj?11:6)),cy+Math.sin(ang)*(r-(maj?11:6)));
+    ctx.strokeStyle=maj?'rgba(255,255,255,0.5)':'rgba(255,255,255,0.18)';
+    ctx.lineWidth=maj?1.5:0.7;ctx.stroke();
+  }
+  const ha=-Math.PI/2-(hi+mih/90)*2*Math.PI/16;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(ha)*r*0.55,cy+Math.sin(ha)*r*0.55);
+  ctx.strokeStyle='#9b7fe8';ctx.lineWidth=3;ctx.lineCap='round';ctx.stroke();
+  const ma=-Math.PI/2-(mih/90)*2*Math.PI;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(ma)*r*0.78,cy+Math.sin(ma)*r*0.78);
+  ctx.strokeStyle='#e8c87a';ctx.lineWidth=1.5;ctx.stroke();
+  // Sunset-Punkt oben
+  ctx.beginPath();ctx.arc(cx,cy-r+7,3,0,2*Math.PI);ctx.fillStyle='#e8c87a';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,2*Math.PI);ctx.fillStyle='#9b7fe8';ctx.fill();
+}
+
+function updateSwarogClock(){
+  const now=new Date(),dst=isDST(now),l=localNow();
+  const st=getSwarogTime(now),sd=getSwarogDate(now);
+  const h=SWAROG_HOURS[st.hourIndex];
+  const wd=SWAROG_WEEKDAYS[sd.weekdayIdx];
+  const mo=SWAROG_MONTHS[sd.month-1];
+  const su=window._swarogSunsetUTCmin;
+  const off=isDST(new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),Math.floor(su/60),su%60)))?2:1;
+  const sLH=Math.floor((su/60+off)%24),sMm=Math.floor(su%60);
+  const gd=document.getElementById('swarog-greg-date');
+  if(gd)gd.textContent=`${DE_DAYS_LONG[l.getUTCDay()]}, ${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${l.getUTCFullYear()} · ${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())} ${dst?'MESZ':'MEZ'}`;
+  const tb=document.getElementById('swarog-time-big');
+  if(tb)tb.textContent=`${st.hourNum}:${String(st.parts).padStart(3,'0')}`;
+  const hn=document.getElementById('swarog-hour-name');
+  if(hn&&h)hn.textContent=`${h.ru} – ${h.de}`;
+  const hnu=document.getElementById('swarog-hour-num');
+  if(hnu)hnu.textContent=`${st.hourNum}. Swarog-Stunde · ${st.dolja} Доли`;
+  const pp=document.getElementById('swarog-parts');
+  if(pp)pp.textContent=`${st.parts} Части · Sonnenuntergang: ${pad(sLH)}:${pad(sMm)} ${off===2?'MESZ':'MEZ'} (${window._swarogLocationLabel})`;
+  const sdate=document.getElementById('swarog-date-display');
+  if(sdate)sdate.innerHTML=`<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span style="font-family:var(--font-display);font-size:22px;color:var(--purple)">${sd.dayOfMonth}. ${mo.ru}</span><span style="font-size:14px;color:var(--text2)">${sd.efstYear} СМЗХ</span></div><div style="font-size:12px;color:var(--text3)">${sd.dayOfMonth}. ${mo.de} · Monat ${sd.month}/9 · ${wd.ru} (${wd.de})</div>`;
+  const ww=document.getElementById('swarog-week-display');
+  if(ww)ww.innerHTML=SWAROG_WEEKDAYS.map(w=>{const cur=w.n===sd.weekdayIdx+1;return `<div style="flex:1;text-align:center;padding:5px 2px;border-radius:8px;background:${cur?'rgba(155,127,232,0.25)':w.rest?'rgba(255,255,255,0.04)':'transparent'};border:0.5px solid ${cur?'rgba(155,127,232,0.6)':'rgba(255,255,255,0.07)'}"><div style="font-size:9px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'}">${w.n}</div><div style="font-size:8px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'};margin-top:1px">${w.ru.slice(0,4)}</div>${w.rest?'<div style="font-size:7px;color:var(--gold)">Ruh</div>':''}</div>`;}).join('');
+  const dp=document.getElementById('swarog-dayparts');
+  if(dp&&h){const cp=h.part;dp.innerHTML=SWAROG_DAYPARTS.map(p=>{const act=p.name===cp;return`<div style="background:${act?p.col+'33':'rgba(255,255,255,0.04)'};border:0.5px solid ${act?p.col+'88':'rgba(255,255,255,0.08)'};border-radius:8px;padding:5px 6px;text-align:center"><div style="font-size:10px;color:${act?p.col:'var(--text3)'};font-weight:${act?500:400}">${p.de}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${p.name}</div></div>`;}).join('');}
+  const ef=document.getElementById('swarog-efst-small');
+  if(ef)ef.textContent=sd.efstYear;
+  drawSwarogClock(st.hourIndex,st.minInHour);
+}
+
+function renderSwarogHoursGrid(){
+  const now=new Date(),st=getSwarogTime(now),dst=isDST(now);
+  const su=window._swarogSunsetUTCmin;
+  const off=dst?2:1;
+  const grid=document.getElementById('swarog-hours-grid');if(!grid)return;
+  grid.innerHTML=SWAROG_HOURS.map(h=>{
+    const cur=h.n===st.hourNum;
+    const sm=(su+(h.n-1)*90)%(24*60);
+    const gH=Math.floor((sm/60+off)%24),gM=Math.floor(sm%60);
+    return `<div style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:${cur?h.col+'22':'transparent'};border:0.5px solid ${cur?h.col+'66':'rgba(255,255,255,0.06)'}"><div style="width:22px;height:22px;border-radius:50%;background:${cur?h.col:'rgba(255,255,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${cur?'#fff':'var(--text3)'};flex-shrink:0;font-weight:${cur?600:400}">${h.n}</div><div style="flex:1;min-width:0"><div style="font-size:11px;color:${cur?h.col:'var(--text2)'};font-weight:${cur?500:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.ru}</div><div style="font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.de.split('–')[0].trim()}</div></div><div style="font-size:9px;color:var(--text3);flex-shrink:0">${pad(gH)}:${pad(gM)}</div></div>`;
+  }).join('');
+}
+
+
 function renderSwarog(){
-  const cur=SWAROG.find(e=>2026>=e.von&&2026<e.bis)||SWAROG[8];
+  const y=viewY;
+  const cur=SWAROG.find(e=>y>=e.von&&y<e.bis)||SWAROG[8];
   const nxt=SWAROG.find(e=>e.n===cur.n+1)||SWAROG[0];
   const fmtEra=e=>`${e.von<0?Math.abs(e.von)+' v.Chr.':e.von+' n.Chr.'} – ${e.bis} n.Chr.`;
+  document.getElementById('efst-year').textContent=y+5508;
+  if(document.getElementById('swarog-efst-small')) document.getElementById('swarog-efst-small').textContent=y+5508;
   document.getElementById('epoch-current').innerHTML=`
     <div class="epoch-label">◆ Aktuelle Epoche (${cur.n}/16)</div>
     <div class="epoch-name">${cur.tier}</div>
@@ -712,6 +1151,12 @@ function renderSwarog(){
       <div class="sw-tier">${e.tier}</div>
     </div>`;
   }).join('');
+  // Swarog-Uhr starten & Standort anfragen
+  updateSwarogClock();
+  renderSwarogHoursGrid();
+  requestSwarogLocation();
+  if(_swarogClockInterval) clearInterval(_swarogClockInterval);
+  _swarogClockInterval=setInterval(()=>{updateSwarogClock();renderSwarogHoursGrid();},1000);
 }
 
 // ── JAHRESKREIS DATA ──────────────────────────────────────────────────────────
@@ -887,8 +1332,140 @@ function drawWheel(nextId, today){
 }
 
 
+// ── ISLAMISCHER KALENDER ──────────────────────────────────────────────────────
+const HIJRI_MONTHS=['Muharram','Safar','Rabīʿ al-awwal','Rabīʿ ath-thānī','Dschumādā al-ūlā','Dschumādā ath-thāniya','Radschab','Schaʿbān','Ramadan','Schawwāl','Dhū l-qaʿda','Dhū l-hiddscha'];
+const HIJRI_MONTHS_AR=['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+
+function gregorianToHijri(gY,gM,gD){
+  const a=Math.floor((14-gM)/12),y=gY+4800-a,m=gM+12*a-3;
+  let jd=gD+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+  const l=jd-1948440+10632,n=Math.floor((l-1)/10631),l2=l-10631*n+354;
+  const j=Math.floor((10985-l2)/5316)*Math.floor((50*l2)/17719)+Math.floor(l2/5670)*Math.floor((43*l2)/15238);
+  const l3=l2-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;
+  return{year:30*n+j-30,month:Math.floor((24*l3)/709),day:l3-Math.floor((709*Math.floor((24*l3)/709))/24)};
+}
+
+function hijriToGregorian(hY,hM,hD){
+  const n=hD+Math.ceil(29.5*(hM-1))+(hY-1)*354+Math.floor((3+11*hY)/30)+1948440-385;
+  let l=n+68569;
+  const q=Math.floor(4*l/146097);
+  l=l-Math.floor((146097*q+3)/4);
+  const i=Math.floor(4000*(l+1)/1461001);
+  l=l-Math.floor(1461*i/4)+31;
+  const j=Math.floor(80*l/2447),day=l-Math.floor(2447*j/80);
+  l=Math.floor(j/11);
+  return{year:100*(q-49)+i+l,month:j+2-12*l,day};
+}
+
+function isHijriLeap(y){return[2,5,7,10,13,16,18,21,24,26,29].includes(y%30);}
+function hijriMonthDays(hY,hM){if(hM%2===1)return 30;if(hM===12)return isHijriLeap(hY)?30:29;return 29;}
+
+function getIslamicHolidays(hY){
+  const H=[
+    {hM:1, hD:1, name:'Islamisches Neujahr',ar:'رأس السنة الهجرية',important:true},
+    {hM:1, hD:10,name:'Aschura',ar:'عاشوراء',note:'Fasttag'},
+    {hM:3, hD:12,name:'Maulid an-Nabī (Geburtstag des Propheten)',ar:'مولد النبي',important:true},
+    {hM:7, hD:27,name:'Isra und Miradsch (Nachtreise)',ar:'الإسراء والمعراج'},
+    {hM:8, hD:15,name:'Laylat al-Barāʾa (Nacht der Vergebung)',ar:'ليلة البراءة'},
+    {hM:9, hD:1, name:'Beginn Ramadan',ar:'بداية رمضان',note:'Fastenmonat',important:true},
+    {hM:9, hD:27,name:'Laylat al-Qadr (Nacht der Bestimmung)',ar:'ليلة القدر'},
+    {hM:10,hD:1, name:'ʿĪd al-Fitr – Zuckerfest (1. Tag)',ar:'عيد الفطر',important:true},
+    {hM:10,hD:2, name:'ʿĪd al-Fitr (2. Tag)',ar:'عيد الفطر'},
+    {hM:10,hD:3, name:'ʿĪd al-Fitr (3. Tag)',ar:'عيد الفطر'},
+    {hM:12,hD:9, name:'Tag von Arafat',ar:'يوم عرفة',note:'Fasttag für Nicht-Pilger'},
+    {hM:12,hD:10,name:'ʿĪd al-Adhā – Opferfest (1. Tag)',ar:'عيد الأضحى',important:true},
+    {hM:12,hD:11,name:'ʿĪd al-Adhā (2. Tag)',ar:'عيد الأضحى'},
+    {hM:12,hD:12,name:'ʿĪd al-Adhā (3. Tag)',ar:'عيد الأضحى'},
+  ];
+  return H.map(h=>{
+    const g=hijriToGregorian(hY,h.hM,h.hD);
+    const ds=`${g.year}-${pad(g.month)}-${pad(g.day)}`;
+    const d=new Date(Date.UTC(g.year,g.month-1,g.day));
+    return{...h,greg:ds,dateLabel:`${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`};
+  }).sort((a,b)=>a.greg.localeCompare(b.greg));
+}
+
+let islamHY=0,islamHM=0;
+function initIslamState(){
+  const l=localNow(),h=gregorianToHijri(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  islamHY=h.year;islamHM=h.month;
+}
+
+function holidayRows(hY){
+  return getIslamicHolidays(hY).map(h=>`
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0;padding-top:1px">${h.dateLabel}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?'500':'400'}">${h.name}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;direction:rtl;font-family:serif">${h.ar}</div>
+        ${h.note?`<div style="font-size:11px;color:var(--teal);margin-top:2px">${h.note}</div>`:''}
+      </div>
+    </div>`).join('');}
+
+function monthsGrid(hY,hM){
+  return Array.from({length:12},(_,i)=>{
+    const g=hijriToGregorian(hY,i+1,1);
+    const days=hijriMonthDays(hY,i+1);
+    const cur=(i+1)===hM;
+    return `<div style="background:${cur?'rgba(78,205,196,0.12)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(78,205,196,0.3)':'var(--border)'};border-radius:10px;padding:8px 10px">
+      <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};text-transform:uppercase">${i+1}.</div>
+      <div style="font-size:12px;color:${cur?'var(--teal)':'var(--text)'};font-weight:${cur?500:400};margin-top:2px">${HIJRI_MONTHS[i].split(' ')[0]}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g.day}. ${DE_MONTHS[g.month-1]} · ${days} T.</div>
+    </div>`;}).join('');}
+
+function renderIslamCal(){
+  const days=hijriMonthDays(islamHY,islamHM);
+  const g1=hijriToGregorian(islamHY,islamHM,1);
+  const dow=new Date(Date.UTC(g1.year,g1.month-1,g1.day)).getUTCDay();
+  const startOffset=(dow+1)%7; // Sa=0
+  const IDOW=['Sa','So','Mo','Di','Mi','Do','Fr'];
+  document.getElementById('islam-cal-title').textContent=`${HIJRI_MONTHS[islamHM-1]} ${islamHY} AH`;
+  document.getElementById('islam-cal-dow').innerHTML=IDOW.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const l=localNow();
+  const todayH=gregorianToHijri(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  const isCurMo=todayH.year===islamHY&&todayH.month===islamHM;
+  const hdays=getIslamicHolidays(islamHY).filter(h=>h.hM===islamHM);
+  const hdaySet=new Set(hdays.map(h=>h.hD));
+  let g='';
+  for(let i=0;i<startOffset;i++) g+=`<div class="cal-cell other"></div>`;
+  for(let d=1;d<=days;d++){
+    const gd=hijriToGregorian(islamHY,islamHM,d);
+    const isT=isCurMo&&d===todayH.day;
+    const title=hdays.filter(h=>h.hD===d).map(h=>h.name).join(', ');
+    g+=`<div class="cal-cell${isT?' today':hdaySet.has(d)?' holiday':''}" title="${title}">
+      ${d}<div style="font-size:8px;color:var(--text3);line-height:1">${gd.day}</div></div>`;
+  }
+  document.getElementById('islam-cal-grid').innerHTML=g;
+}
+
+function renderIslam(){
+  if(!islamHY) initIslamState();
+  const l=localNow();
+  const h=gregorianToHijri(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('islam-day-big').textContent=h.day;
+  document.getElementById('islam-month-big').textContent=HIJRI_MONTHS[h.month-1];
+  document.getElementById('islam-year-big').textContent=`${h.year} AH · ${h.month}. Monat`;
+  document.getElementById('islam-arabic').textContent=`${h.day} ${HIJRI_MONTHS_AR[h.month-1]} ${h.year} هـ`;
+  renderIslamCal();
+  document.getElementById('islam-feiertage-year').textContent=`${islamHY} AH`;
+  document.getElementById('islam-holidays').innerHTML=holidayRows(islamHY);
+  document.getElementById('islam-months-list').innerHTML=monthsGrid(islamHY,islamHM);
+}
+
+function shiftIslamMonth(delta){
+  islamHM+=delta;
+  if(islamHM<1){islamHM=12;islamHY--;}
+  if(islamHM>12){islamHM=1;islamHY++;}
+  renderIslamCal();
+  document.getElementById('islam-feiertage-year').textContent=`${islamHY} AH`;
+  document.getElementById('islam-holidays').innerHTML=holidayRows(islamHY);
+  document.getElementById('islam-months-list').innerHTML=monthsGrid(islamHY,islamHM);
+}
+
 function switchTab(id){
   activeTab=id;
+  // Swarog-Uhr stoppen wenn Tab gewechselt
+  if(id!=='swarog'&&_swarogClockInterval){clearInterval(_swarogClockInterval);_swarogClockInterval=null;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
@@ -898,6 +1475,7 @@ function switchTab(id){
   if(id==='ifc')renderIFC();
   if(id==='swarog')renderSwarog();
   if(id==='jahreskreis')renderJahreskreis();
+  if(id==='islam')renderIslam();
 }
 
 // ── INSTALL HINT ──────────────────────────────────────────────────────────────
@@ -911,7 +1489,7 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','moon','ifc','swarog','jahreskreis'];
+const TABS=['greg','moon','ifc','swarog','jahreskreis','islam'];
 
 function prevTab(){
   const i=TABS.indexOf(activeTab);
