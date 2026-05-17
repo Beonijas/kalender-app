@@ -332,12 +332,58 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <div class="epoch-current" id="epoch-current"></div>
     <div class="section-label">Nächste Epoche</div>
     <div class="epoch-next" id="epoch-next"></div>
+    <div class="section-label">Was bedeutet EFST?</div>
+    <div class="card" style="border-color:rgba(155,127,232,0.2)">
+      <div style="font-size:16px;font-weight:500;color:var(--purple);font-family:var(--font-display);margin-bottom:10px;letter-spacing:.04em">Erschaffung des Friedens im Sternen-Tempel</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.75">
+        EFST steht für <span style="color:var(--text)">„Erschaffung des Friedens im Sternen-Tempel"</span> – ein Datum aus der slawisch-vedischen Überlieferung, das als Beginn einer Friedensepoche zwischen den arischen Völkern gilt.<br><br>
+        Der Legende nach schlossen die Vorfahren der Slawen und das sogenannte <span style="color:var(--text)">Asen-Volk</span> einen Friedensvertrag, der im sternkundlichen Tempel besiegelt wurde. Dieses Ereignis markiert den Nullpunkt der slawisch-vedischen Zeitrechnung – ähnlich wie die Geburt Christi den Nullpunkt unseres gregorianischen Kalenders bildet.<br><br>
+        Die Differenz zum gregorianischen Kalender beträgt <span style="color:var(--gold)">+5.508 Jahre</span>. Das Jahr 2026 n.Chr. entspricht also dem Jahr <span style="color:var(--gold)">7.534 nach EFST</span>.<br><br>
+        Das slawisch-vedische Neujahr beginnt nicht am 1. Januar, sondern am <span style="color:var(--text)">Herbstäquinoktium</span> – dem 22. September –, wenn Tag und Nacht gleich lang sind und die Erde in einen neuen kosmischen Zyklus eintritt.
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+        <div>
+          <div style="font-size:18px;font-weight:300;color:var(--purple)">5.508</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">Jahre Differenz</div>
+        </div>
+        <div>
+          <div style="font-size:18px;font-weight:300;color:var(--gold)">22. Sep.</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">Neujahr</div>
+        </div>
+        <div>
+          <div style="font-size:18px;font-weight:300;color:var(--teal)">7.534</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">Aktuelles Jahr</div>
+        </div>
+      </div>
+    </div>
     <div class="section-label">Der Große Swarog-Kreis (25.920 Jahre · 16 Epochen)</div>
     <div class="card">
       <div class="swarog-wheel" id="swarog-wheel"></div>
     </div>
     <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:4px;padding:0 2px">
       Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 n.Chr. befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.
+    </div>
+  </div>
+
+</div>
+
+  <!-- VIEW: JAHRESKREIS -->
+  <div class="view" id="view-jahreskreis">
+    <div class="card" style="border-color:rgba(78,205,196,0.25)">
+      <div style="text-align:center;padding:8px 0 4px">
+        <div style="font-family:var(--font-display);font-size:18px;color:var(--teal);letter-spacing:.06em;margin-bottom:4px">Rad des Jahres 2026</div>
+        <div style="font-size:12px;color:var(--text3)">8 keltisch-germanische Jahreskreisfeste</div>
+      </div>
+      <canvas id="wheel-canvas" width="280" height="280" style="display:block;margin:12px auto 0"></canvas>
+    </div>
+    <div class="section-label" style="margin-top:4px">Nächstes Fest</div>
+    <div id="jk-next-card"></div>
+    <div class="section-label">Alle 8 Feste</div>
+    <div id="jk-list"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Das <span style="color:var(--text)">Rad des Jahres</span> ist ein Jahreskreis aus acht Festen, der tief in keltischen und germanischen Traditionen verwurzelt ist. Die vier <span style="color:var(--teal)">Sonnenfeste</span> (Yule, Ostara, Litha, Mabon) richten sich nach den astronomischen Sonnenwenden und Äquinoktien – ihr Ursprung liegt überwiegend im germanischen Heidentum. Die vier <span style="color:var(--gold)">Feuerfeste</span> (Imbolc, Beltane, Lughnasadh, Samhain) stammen aus der keltischen Tradition und liegen jeweils in der Mitte zwischen zwei Sonnenereignissen.<br><br>
+      Viele dieser alten Feste leben bis heute fort: Samhain wurde zu Halloween, Imbolc zu Mariä Lichtmess, Ostara zu Ostern und Beltane zur Walpurgisnacht.
     </div>
   </div>
 
@@ -360,6 +406,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn" onclick="switchTab('swarog')" id="tab-swarog">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20M2 12h20M12 2c-4 6-4 14 0 20M12 2c4 6 4 14 0 20"/></svg>
     <span class="tab-label">Swarog</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('jahreskreis')" id="tab-jahreskreis">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    <span class="tab-label">Jahreskreis</span>
   </button>
 </nav>
 
@@ -658,7 +708,198 @@ function renderSwarog(){
   }).join('');
 }
 
-// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+// ── JAHRESKREIS DATA ──────────────────────────────────────────────────────────
+const JAHRESKREIS=[
+  {
+    id:'yule',name:'Yule',datum:'21. Dezember 2026',isoDate:'2026-12-21',
+    typ:'Sonnenfest',icon:'❄️',farbe:'#7aa5f5',
+    gottheiten:'Odin, Frigg, Baldur',
+    thema:'Wintersonnenwende · Rückkehr des Lichts · Wiedergeburt der Sonne',
+    beschreibung:'Yule ist das älteste Fest des Jahreskreises und feiert die Wintersonnenwende – den kürzesten Tag und die längste Nacht. Ab jetzt werden die Tage wieder länger. Das Julfest der Wikinger dauerte 12 Nächte. Man glaubte, Odin führe in dieser Zeit die Wilde Jagd an. Das christliche Weihnachtsfest übernahm viele Yule-Bräuche: Lichterschmuck, Tannenbäume und das Julfeuer.',
+    christl:'Weihnachten (25. Dezember)'
+  },
+  {
+    id:'imbolc',name:'Imbolc',datum:'1. Februar 2026',isoDate:'2026-02-01',
+    typ:'Feuerfest',icon:'🕯️',farbe:'#e8c87a',
+    gottheiten:'Brigid (kelt.), Frigg (germ.)',
+    thema:'Lichtmess · Erwachen · Reinigung · erstes Frühlingszeichen',
+    beschreibung:'Imbolc markiert die Mitte zwischen Wintersonnenwende und Frühlingsäquinoktium. Das Wort bedeutet im Irischen „im Bauch" – ein Hinweis auf trächtige Schafe, deren erste Milch ein Zeichen des nahenden Frühlings war. Gefeiert wurde mit Kerzen und Feuern, um die Sonne zurückzurufen. Die keltische Göttin Brigid (Feuer, Heilkunst, Schmiedekunst) steht im Mittelpunkt.',
+    christl:'Mariä Lichtmess (2. Februar)'
+  },
+  {
+    id:'ostara',name:'Ostara',datum:'20. März 2026',isoDate:'2026-03-20',
+    typ:'Sonnenfest',icon:'🌸',farbe:'#5dcaa5',
+    gottheiten:'Ostara/Eostre (germ.), Freyja',
+    thema:'Frühlingsäquinoktium · Gleichgewicht · Erneuerung · Fruchtbarkeit',
+    beschreibung:'Ostara fällt auf das Frühlingsäquinoktium – Tag und Nacht sind gleich lang, das Licht siegt. Die germanische Göttin Ostara (auch Eostre) gab dem Fest und dem christlichen Osterfest ihren Namen. Hasen und Eier – die klassischen Ostersymbole – stammen direkt aus diesem alten Frühlingsfest. Es ist die Zeit des Neubeginns, des Säens und der Erneuerung.',
+    christl:'Ostern (Datum variiert)'
+  },
+  {
+    id:'beltane',name:'Beltane',datum:'1. Mai 2026',isoDate:'2026-05-01',
+    typ:'Feuerfest',icon:'🔥',farbe:'#e07a5f',
+    gottheiten:'Bel (kelt.), Freyr, Freyja',
+    thema:'Feuer · Fruchtbarkeit · Liebe · Übergang in die helle Jahreshälfte',
+    beschreibung:'Beltane ist das große keltische Frühlingsfest in der Nacht vom 30. April auf den 1. Mai. Riesige Freudenfeuer wurden auf den Hügeln entzündet, das Vieh zwischen zwei Feuern hindurchgetrieben um es zu reinigen. In Deutschland lebt das Fest als Walpurgisnacht weiter. Der Maibaum – ein uraltes Fruchtbarkeitssymbol – gehört ebenfalls zu diesem Fest.',
+    christl:'Walpurgisnacht (30. April)'
+  },
+  {
+    id:'litha',name:'Litha',datum:'21. Juni 2026',isoDate:'2026-06-21',
+    typ:'Sonnenfest',icon:'☀️',farbe:'#f0c040',
+    gottheiten:'Baldur, Sol, Aine',
+    thema:'Sommersonnenwende · Höhepunkt des Lichts · Fülle · Mittsommer',
+    beschreibung:'Litha ist die Sommersonnenwende – der längste Tag des Jahres und der Höhepunkt der Sonnenkraft. Überall in Nordeuropa wurden Sonnenwendfeuer entzündet. Die Wikinger feierten Mittsommer als Fest des Lichtgottes Baldur. Kräuter, die an diesem Tag gesammelt werden, gelten als besonders heilkräftig. Ab jetzt werden die Tage wieder kürzer – das Licht beginnt zu weichen.',
+    christl:'Johannistag (24. Juni)'
+  },
+  {
+    id:'lughnasadh',name:'Lughnasadh',datum:'1. August 2026',isoDate:'2026-08-01',
+    typ:'Feuerfest',icon:'🌾',farbe:'#c49a2a',
+    gottheiten:'Lugh (kelt.), Freyr (germ.)',
+    thema:'Erstlingsfrüchte · erste Ernte · Dankbarkeit · Stärke',
+    beschreibung:'Lughnasadh (auch Lammas) ist das erste Erntedankfest und zu Ehren des keltischen Lichtgottes Lugh. Das erste Getreide wurde geschnitten und als Opferbrot gebacken. Es war auch ein Fest großer Versammlungen, bei denen Handel getrieben, Ehen geschlossen und Wettkämpfe ausgetragen wurden. Der Name Lammas kommt vom angelsächsischen „hlaf-maesse" – Brotmesse.',
+    christl:'Erntedankfest (variiert)'
+  },
+  {
+    id:'mabon',name:'Mabon',datum:'22. September 2026',isoDate:'2026-09-22',
+    typ:'Sonnenfest',icon:'🍂',farbe:'#c47a3a',
+    gottheiten:'Mabon ap Modron (kelt.), Njord (germ.)',
+    thema:'Herbstäquinoktium · zweite Ernte · Balance · Dankbarkeit',
+    beschreibung:'Mabon fällt auf das Herbstäquinoktium – erneut sind Tag und Nacht gleich lang, doch nun übernimmt die Dunkelheit. Es ist das zweite Erntedankfest: das Getreide ist eingeholt, Äpfel werden geerntet, Wein und Bier eingelagert. Gleichzeitig beginnt die dunkle Jahreshälfte. Zeit innezuhalten, für das Geerntete zu danken und sich auf den Winter vorzubereiten.',
+    christl:'Michaelistag (29. September)'
+  },
+  {
+    id:'samhain',name:'Samhain',datum:'31. Oktober 2026',isoDate:'2026-10-31',
+    typ:'Feuerfest',icon:'🌑',farbe:'#9b7fe8',
+    gottheiten:'Dagda, Morrigan (kelt.), Hela (nord.)',
+    thema:'Neujahr der Kelten · Totengedenken · Schleier wird dünn · Wandel',
+    beschreibung:'Samhain (ausgesprochen „Sah-win") ist das wichtigste keltische Fest und ihr Neujahr – der Beginn des dunklen Halbjahrs. Man glaubte, in dieser Nacht sei der Schleier zwischen Lebenden und Toten am dünnsten. Die Ahnen wurden geehrt, Feuer gelöscht und neu entzündet. Aus Samhain wurde Halloween. In der nordischen Tradition führte Odin in dieser Zeit die Wilde Jagd.',
+    christl:'Halloween / Allerheiligen (1. Nov.)'
+  },
+];
+
+// ── JAHRESKREIS RENDER ────────────────────────────────────────────────────────
+function renderJahreskreis(){
+  const today=todayStr();
+  const upcoming=JAHRESKREIS.filter(f=>f.isoDate>=today).sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
+  const next=upcoming[0]||JAHRESKREIS[0];
+
+  // Next fest card
+  const daysTo=Math.round((new Date(next.isoDate)-new Date(today+'T12:00:00Z'))/86400000);
+  document.getElementById('jk-next-card').innerHTML=`
+    <div class="card" style="border-color:${next.farbe}44;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:36px;flex-shrink:0">${next.icon}</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:18px;color:var(--text)">${next.name}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">${next.datum}</div>
+        </div>
+        <div style="margin-left:auto;text-align:right;flex-shrink:0">
+          <div style="font-size:22px;font-weight:300;color:${next.farbe}">${daysTo===0?'Heute':daysTo}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase">${daysTo===0?'':daysTo===1?'Tag noch':'Tage noch'}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">${next.typ} · ${next.thema.split(' · ')[0]}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.65">${next.beschreibung}</div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;color:var(--text3)">
+        Gottheiten: <span style="color:var(--text2)">${next.gottheiten}</span> &nbsp;·&nbsp; Christl. Entsprechung: <span style="color:var(--text2)">${next.christl}</span>
+      </div>
+    </div>`;
+
+  // Full list
+  const sorted=[...JAHRESKREIS].sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
+  document.getElementById('jk-list').innerHTML=sorted.map(f=>{
+    const isPast=f.isoDate<today;
+    const isNext=f.id===next.id;
+    return `<div style="display:flex;gap:12px;align-items:flex-start;padding:11px 14px;background:${isNext?`${f.farbe}18`:'var(--surface)'};border:1px solid ${isNext?f.farbe+'44':'var(--border)'};border-radius:12px;margin-bottom:6px;opacity:${isPast?'.5':'1'}">
+      <div style="font-size:26px;flex-shrink:0;margin-top:2px">${f.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <span style="font-family:var(--font-display);font-size:15px;color:${isPast?'var(--text3)':'var(--text)'}">${f.name}</span>
+          <span style="font-size:10px;padding:2px 7px;border-radius:10px;background:${f.typ==='Sonnenfest'?'rgba(78,205,196,0.15)':'rgba(232,200,122,0.15)'};color:${f.typ==='Sonnenfest'?'var(--teal)':'var(--gold)'};letter-spacing:.03em">${f.typ}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${f.datum}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5">${f.thema}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Draw wheel
+  drawWheel(next.id, today);
+}
+
+function drawWheel(nextId, today){
+  const canvas=document.getElementById('wheel-canvas');
+  if(!canvas)return;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const size=280;
+  canvas.width=size*dpr; canvas.height=size*dpr;
+  canvas.style.width=size+'px'; canvas.style.height=size+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const cx=size/2, cy=size/2, r=size/2-8;
+  const sorted=[...JAHRESKREIS].sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
+  const n=sorted.length;
+  const slice=(2*Math.PI)/n;
+  // start at top (Yule ≈ Dec 21, index 7 in sorted) – shift so Yule is at top
+  const yuleIdx=sorted.findIndex(f=>f.id==='yule');
+  const startAngle=-Math.PI/2 - yuleIdx*slice;
+
+  sorted.forEach((f,i)=>{
+    const a0=startAngle+i*slice, a1=a0+slice;
+    const isPast=f.isoDate<today;
+    const isNext=f.id===nextId;
+    // segment
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,a0,a1);
+    ctx.closePath();
+    ctx.fillStyle=isPast?'rgba(255,255,255,0.04)':f.farbe+(isNext?'55':'28');
+    ctx.fill();
+    ctx.strokeStyle=isNext?f.farbe+'cc':'rgba(255,255,255,0.1)';
+    ctx.lineWidth=isNext?2:0.5;
+    ctx.stroke();
+    // icon label
+    const mid=a0+slice/2, lr=r*0.7;
+    const tx=cx+Math.cos(mid)*lr, ty=cy+Math.sin(mid)*lr;
+    ctx.font=`${r*0.13}px serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(f.icon,tx,ty);
+    // name label
+    const nr=r*0.88;
+    const nx=cx+Math.cos(mid)*nr, ny=cy+Math.sin(mid)*nr;
+    ctx.save();
+    ctx.translate(nx,ny);
+    ctx.rotate(mid+Math.PI/2);
+    ctx.font=`${r*0.075}px sans-serif`;
+    ctx.fillStyle=isPast?'rgba(255,255,255,0.25)':isNext?f.farbe:'rgba(255,255,255,0.6)';
+    ctx.fillText(f.name,0,0);
+    ctx.restore();
+  });
+  // center circle
+  ctx.beginPath();
+  ctx.arc(cx,cy,r*0.18,0,2*Math.PI);
+  ctx.fillStyle='#1a1a2e';
+  ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.15)';
+  ctx.lineWidth=1;
+  ctx.stroke();
+  // spokes
+  sorted.forEach((_,i)=>{
+    const a=startAngle+i*slice;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*r*0.18, cy+Math.sin(a)*r*0.18);
+    ctx.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
+    ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.lineWidth=0.5;
+    ctx.stroke();
+  });
+  // center text
+  ctx.font=`bold ${r*0.1}px sans-serif`;
+  ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('2026',cx,cy);
+}
+
+
 function switchTab(id){
   activeTab=id;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -669,6 +910,7 @@ function switchTab(id){
   if(id==='moon')renderMoon();
   if(id==='ifc')renderIFC();
   if(id==='swarog')renderSwarog();
+  if(id==='jahreskreis')renderJahreskreis();
 }
 
 // ── INSTALL HINT ──────────────────────────────────────────────────────────────
@@ -682,7 +924,7 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','moon','ifc','swarog'];
+const TABS=['greg','moon','ifc','swarog','jahreskreis'];
 let touchX=null;
 document.querySelector('.app-scroll').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
 document.querySelector('.app-scroll').addEventListener('touchend',e=>{
