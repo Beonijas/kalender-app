@@ -40,6 +40,94 @@
   --font-display: 'Cinzel', serif;
   --font-body: 'Inter', sans-serif;
 }
+
+/* LIGHT MODE */
+body.light-mode {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #eeeae3;
+  --surface3: #e4dfd6;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --gold: #8a6a1a;
+  --gold2: #6a500e;
+  --blue: #2a5fbb;
+  --blue2: #1a4a9a;
+  --purple: #6040b0;
+  --teal: #1a8a82;
+  --red: #b03030;
+  --text: #1a1810;
+  --text2: rgba(26,24,16,0.65);
+  --text3: rgba(26,24,16,0.40);
+}
+body.light-mode .app-header{background:rgba(245,243,238,0.95);}
+body.light-mode .tab-bar{background:rgba(245,243,238,0.97);}
+body.light-mode .clock-card{background:linear-gradient(135deg,#e8e0d0 0%,#f0ebe0 100%);border-color:rgba(138,106,26,0.2);}
+body.light-mode .clock-card::before{background:radial-gradient(circle,rgba(138,106,26,0.07) 0%,transparent 70%);}
+body.light-mode .swarog-clock-canvas-wrap{filter:invert(0);}
+
+/* SETTINGS MODAL */
+.settings-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
+  z-index:100;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  align-items:flex-end;justify-content:center;
+}
+.settings-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.settings-sheet{
+  width:100%;max-width:520px;max-height:85vh;
+  background:var(--surface);border-radius:20px 20px 0 0;
+  border:1px solid var(--border2);overflow-y:auto;
+  padding-bottom:calc(20px + var(--safe-bot));
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.settings-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
+.settings-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px 12px;border-bottom:1px solid var(--border);
+}
+.settings-title{font-family:var(--font-display);font-size:16px;color:var(--text);letter-spacing:.05em;}
+.settings-close{background:none;border:none;color:var(--text3);font-size:24px;cursor:pointer;line-height:1;padding:0 4px;}
+.settings-section{padding:16px 20px 0;}
+.settings-section-title{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.settings-row:last-child{border-bottom:none;}
+.settings-row-left{display:flex;align-items:center;gap:10px;}
+.settings-row-icon{font-size:20px;width:28px;text-align:center;}
+.settings-row-label{font-size:14px;color:var(--text);}
+.settings-row-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;inset:0;border-radius:13px;cursor:pointer;
+  background:var(--surface3);transition:background .2s;
+}
+.toggle-slider::before{
+  content:'';position:absolute;width:20px;height:20px;
+  left:3px;top:3px;border-radius:50%;background:#fff;
+  transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+.toggle input:checked + .toggle-slider{background:var(--teal);}
+.toggle input:checked + .toggle-slider::before{transform:translateX(18px);}
+
+/* GEAR BUTTON */
+.gear-btn{
+  background:none;border:none;color:var(--text3);cursor:pointer;
+  padding:6px;border-radius:8px;line-height:1;
+  transition:color .2s;-webkit-tap-highlight-color:transparent;
+}
+.gear-btn:active{color:var(--gold);}
+.gear-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5;}
+
+/* THEME TOGGLE in header */
+.theme-btn{
+  background:none;border:none;cursor:pointer;
+  font-size:18px;padding:6px;border-radius:8px;line-height:1;
+  -webkit-tap-highlight-color:transparent;
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-body)}
 body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
@@ -222,13 +310,60 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 
 <header class="app-header">
   <button class="nav-arrow" onclick="prevTab()" title="Vorheriger Tab">‹</button>
-  <div class="header-title">Universalkalender</div>
-  <div class="header-clock">
-    <div class="clock-time" id="h-clock">--:--</div>
-    <div class="clock-tz" id="h-tz">MEZ</div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" title="Hell/Dunkel">🌙</button>
+    <div class="header-title">Universalkalender</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <div class="header-clock">
+      <div class="clock-time" id="h-clock">--:--</div>
+      <div class="clock-tz" id="h-tz">MEZ</div>
+    </div>
+    <button class="gear-btn" onclick="openSettings()" title="Einstellungen">
+      <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
   <button class="nav-arrow" onclick="nextTab()" title="Nächster Tab">›</button>
 </header>
+
+<!-- SETTINGS MODAL -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
+  <div class="settings-sheet" id="settings-sheet">
+    <div class="settings-handle"></div>
+    <div class="settings-header">
+      <div class="settings-title">Einstellungen</div>
+      <button class="settings-close" onclick="closeSettings()">×</button>
+    </div>
+
+    <!-- Darstellung -->
+    <div class="settings-section">
+      <div class="settings-section-title">Darstellung</div>
+      <div class="settings-row">
+        <div class="settings-row-left">
+          <span class="settings-row-icon" id="theme-icon">🌙</span>
+          <div>
+            <div class="settings-row-label">Dunkler Modus</div>
+            <div class="settings-row-sub">Wechselt zwischen Hell und Dunkel</div>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="settings-theme-toggle" onchange="toggleThemeFromSettings(this)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="settings-section" style="padding-top:12px;">
+      <div class="settings-section-title">Aktive Tabs</div>
+      <div id="settings-tabs-list"></div>
+    </div>
+
+    <div style="padding:16px 20px 0;font-size:11px;color:var(--text3);line-height:1.6;">
+      Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.
+    </div>
+  </div>
+</div>
 
 <div class="app-scroll">
 
@@ -520,6 +655,454 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
+  <!-- VIEW: HEBRÄISCH -->
+  <div class="view" id="view-hebrew">
+    <div class="card" style="border-color:rgba(91,141,238,0.2)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">✡️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:var(--blue2);letter-spacing:.05em">Hebräischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Jüdische Zeitrechnung · Anno Mundi</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0 4px">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="heb-day-big">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--blue2);margin-top:4px" id="heb-month-big">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="heb-year-big">– AM</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;direction:rtl;font-family:serif" id="heb-hebrew">–</div>
+      </div>
+    </div>
+    <div class="section-label">Jüdische Feiertage <span id="heb-year-label" style="color:var(--text3)"></span></div>
+    <div class="card" id="heb-holidays"></div>
+    <div class="section-label">Die 12 Monate</div>
+    <div class="card"><div id="heb-months-list" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Hebräische Kalender</span> (Anno Mundi) ist ein <span style="color:var(--blue2)">lunisolarer Kalender</span> – er basiert auf Mondmonaten, wird aber durch Schaltmonate mit dem Sonnenjahr synchronisiert. Die Zeitrechnung beginnt mit der biblischen Schöpfung der Welt. Das aktuelle Jahr <span style="color:var(--gold)" id="heb-am-inline">–</span> entspricht ca. 5784/5785 n. jüd. Zeitrechnung.<br><br>In 19 Jahren werden 7 Schaltmonate (Adar II) eingefügt (Metonischer Zyklus). Der Tag beginnt bei Sonnenuntergang.
+    </div>
+  </div>
+
+  <!-- VIEW: CHINESISCH -->
+  <div class="view" id="view-chinese">
+    <div class="card" style="border-color:rgba(224,92,92,0.2)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">🐉</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:var(--red);letter-spacing:.05em">Chinesischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Lunisolarer Kalender · Tierkreiszeichen</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0 4px">
+        <div style="font-size:48px;margin-bottom:6px" id="cn-zodiac-icon">🐍</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:var(--red);margin-top:4px" id="cn-year-name">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="cn-cycle">–</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px" id="cn-date-today">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 12 Tierkreiszeichen</div>
+    <div class="card"><div id="cn-zodiac-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div></div>
+    <div class="section-label">Chinesische Feste <span id="cn-year-label" style="color:var(--text3)"></span></div>
+    <div class="card" id="cn-holidays"></div>
+    <div class="section-label">Die 5 Elemente & Himmelsstämme</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der chinesische Kalender kombiniert <span style="color:var(--text)">12 Erdäste</span> (Tierkreiszeichen) mit <span style="color:var(--text)">10 Himmelsstämmen</span> (5 Elemente × Yin/Yang) zu einem <span style="color:var(--red)">60-Jahres-Zyklus</span>. Jedes Jahr trägt einen Tier- und Element-Namen. Das neue Jahr beginnt mit dem zweiten Neumond nach der Wintersonnenwende – zwischen dem 21. Januar und 20. Februar.
+    </div>
+  </div>
+
+  <!-- VIEW: MAYA -->
+  <div class="view" id="view-maya">
+
+    <!-- Hauptkarte: Aktuelle Daten -->
+    <div class="card" style="border-color:rgba(78,205,196,0.25);background:linear-gradient(135deg,#0d1f1e 0%,#0d0d1a 100%)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-family:var(--font-display);font-size:13px;color:var(--teal);letter-spacing:.08em">MAYA-KALENDER</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Tzolkin · Haab · Lange Zählung</div>
+        </div>
+        <div id="maya-main-glyph" style="width:56px;height:56px;flex-shrink:0"></div>
+      </div>
+
+      <!-- Tzolkin + Haab nebeneinander -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div style="background:rgba(78,205,196,0.1);border:0.5px solid rgba(78,205,196,0.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Tzolkin</div>
+          <div id="maya-tzolkin-glyph-main" style="width:52px;height:52px;margin:0 auto 6px"></div>
+          <div style="font-size:28px;font-weight:200;color:var(--teal);line-height:1" id="maya-tzolkin-num">–</div>
+          <div style="font-family:var(--font-display);font-size:13px;color:var(--teal);margin-top:3px" id="maya-tzolkin-name">–</div>
+        </div>
+        <div style="background:rgba(232,200,122,0.1);border:0.5px solid rgba(232,200,122,0.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Haab</div>
+          <div id="maya-haab-glyph-main" style="width:52px;height:52px;margin:0 auto 6px"></div>
+          <div style="font-size:28px;font-weight:200;color:var(--gold);line-height:1" id="maya-haab-day">–</div>
+          <div style="font-family:var(--font-display);font-size:13px;color:var(--gold);margin-top:3px" id="maya-haab-month">–</div>
+        </div>
+      </div>
+
+      <!-- Lange Zählung mit Punkte-Balken Visualisierung -->
+      <div style="background:rgba(155,127,232,0.1);border:0.5px solid rgba(155,127,232,0.3);border-radius:12px;padding:12px">
+        <div style="font-size:10px;color:var(--purple);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Lange Zählung</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:var(--purple);letter-spacing:.12em;text-align:center" id="maya-long-count">–</div>
+        <div id="maya-dots-bars" style="display:flex;gap:12px;justify-content:center;margin-top:8px"></div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:3px" id="maya-lc-labels"></div>
+      </div>
+    </div>
+
+    <!-- Tzolkin Grid mit Glyphen -->
+    <div class="section-label">Tzolkin – 20 Tageszeichen</div>
+    <div class="card" style="padding:10px">
+      <div id="maya-tzolkin-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+    </div>
+
+    <!-- Haab Grid mit Glyphen -->
+    <div class="section-label">Haab – 18 Monate + Wayeb</div>
+    <div class="card" style="padding:10px">
+      <div id="maya-haab-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div>
+    </div>
+
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Die Maya verwendeten drei Kalender gleichzeitig: Der <span style="color:var(--teal)">Tzolkin</span> (260 Tage) ist ein Ritualkalender aus 20 Tageszeichen × 13 Zahlen. Der <span style="color:var(--gold)">Haab</span> (365 Tage) besteht aus 18 Monaten à 20 Tagen + 5 Unglückstage (Wayeb). Die <span style="color:var(--purple)">Lange Zählung</span> ist eine lineare Zeitrechnung ab dem mythischen Schöpfungsdatum <span style="color:var(--text)">11. August 3114 v. Chr.</span> Beide Kurzkalender synchronisieren sich alle 52 Jahre (Calendar Round). Die Punktnotation steht für 1, der Balken für 5.
+    </div>
+  </div>
+
+  <!-- VIEW: SAKA KALENDER -->
+  <div class="view" id="view-saka">
+    <div class="card" style="border-color:rgba(232,120,80,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">🇮🇳</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#e87850;letter-spacing:.05em">Saka-Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Nationaler Kalender Indiens · seit 1957</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="saka-day">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#e87850;margin-top:4px" id="saka-month">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="saka-year">– Saka</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px" id="saka-season">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 6 Jahreszeiten (Ritu)</div>
+    <div class="card"><div id="saka-ritu-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Indische Nationalfeiertage</div>
+    <div class="card" id="saka-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Saka-Kalender</span> ist seit 1957 der offizielle Nationalkalender Indiens und wird parallel zum gregorianischen Kalender in Staatsangelegenheiten verwendet. Er ist ein <span style="color:#e87850">lunisolarer Kalender</span> mit 12 Monaten. Neujahr (1. Chaitra) fällt auf den <span style="color:var(--gold)">22. März</span> (in Schaltjahren 21. März). Das Jahr liegt ca. 78 Jahre hinter dem gregorianischen.
+    </div>
+  </div>
+
+  <!-- VIEW: VIKRAM SAMVAT -->
+  <div class="view" id="view-vikram">
+    <div class="card" style="border-color:rgba(255,153,0,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">🕉️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#ff9900;letter-spacing:.05em">Vikram Samvat</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Hinduistischer Kalender · Nordindien & Nepal</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="vs-day">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#ff9900;margin-top:4px" id="vs-month">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="vs-year">– VS</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px" id="vs-paksha">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px" id="vs-tithi">–</div>
+      </div>
+    </div>
+    <div class="section-label">Hinduistische Feste</div>
+    <div class="card" id="vs-holidays"></div>
+    <div class="section-label">Die 12 Monate</div>
+    <div class="card"><div id="vs-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Vikram Samvat</span> ist benannt nach König Vikramaditya und beginnt <span style="color:#ff9900">57 Jahre vor Christus</span>. Es ist ein lunisolarer Kalender – jeder Monat hat zwei Hälften: <span style="color:var(--text)">Shukla Paksha</span> (zunehmender Mond, 1–15) und <span style="color:var(--text)">Krishna Paksha</span> (abnehmender Mond, 1–15). Die <span style="color:#ff9900">Tithis</span> (Mondtage) sind astronomisch berechnet und können kürzer oder länger als 24 Stunden sein. Neujahr ist Diwali (Gujarat) oder Chaitra Shukla 1 (Nordindien).
+    </div>
+  </div>
+
+  <!-- VIEW: BENGALI KALENDER -->
+  <div class="view" id="view-bengali">
+    <div class="card" style="border-color:rgba(220,80,120,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">🌸</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#dc5078;letter-spacing:.05em">Bengali-Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Bangla San · Westbengalen & Bangladesch</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="bn-day">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#dc5078;margin-top:4px" id="bn-month">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="bn-year">– BS</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;font-family:serif" id="bn-bengali">–</div>
+      </div>
+    </div>
+    <div class="section-label">Bengalische Feste</div>
+    <div class="card" id="bn-holidays"></div>
+    <div class="section-label">Die 6 Jahreszeiten</div>
+    <div class="card"><div id="bn-ritu-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Bengali-Kalender</span> (Bangla San) wurde unter Kaiser Akbar eingeführt und basiert auf dem Saka-Kalender. Das Neujahr <span style="color:#dc5078">Pohela Boishakh</span> (1. Boishakh) fällt auf den <span style="color:var(--gold)">14. oder 15. April</span> und ist eines der größten Feste in Westbengalen und Bangladesch. Der Kalender liegt ca. 593–594 Jahre hinter dem gregorianischen.
+    </div>
+  </div>
+
+  <!-- VIEW: NAKSHATRAS -->
+  <div class="view" id="view-nakshatra">
+    <div class="card" style="border-color:rgba(180,120,255,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">⭐</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#b478ff;letter-spacing:.05em">Nakshatras</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">27 vedische Mondstationen</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;margin-bottom:6px" id="nk-icon">✨</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#b478ff" id="nk-name">–</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px" id="nk-deity">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px" id="nk-quality">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px" id="nk-num">–</div>
+      </div>
+    </div>
+    <div class="section-label" style="margin-top:4px">Alle 27 Nakshatras</div>
+    <div class="card"><div id="nk-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Die <span style="color:var(--text)">Nakshatras</span> sind 27 (oder 28) vedische Mondstationen – der Mond durchläuft in einem Monat alle 27 Nakshatras (je ca. <span style="color:#b478ff">13°20'</span> des Tierkreises). Jede Mondstation hat eine eigene Gottheit, ein Symbol und eine Qualität. Sie spielen in der vedischen Astrologie (Jyotish) eine zentrale Rolle – z.B. bei der Wahl von Hochzeiten, Reisen oder Geschäftseröffnungen. Das aktuelle Nakshatra wird aus der Mondlänge berechnet.
+    </div>
+  </div>
+
+  <!-- VIEW: JAPANISCHER KALENDER -->
+  <div class="view" id="view-japanese">
+    <div class="card" style="border-color:rgba(220,50,50,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🗾</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#dc3232;letter-spacing:.05em">Japanischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Gengō-System · Kaiserjahre · Japanische Ären</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:48px;margin-bottom:4px" id="jp-kanji">令和</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#dc3232" id="jp-era-name">Reiwa</div>
+        <div style="font-size:28px;font-weight:200;color:var(--text);margin-top:4px" id="jp-year">– 年</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:6px" id="jp-date-full">–</div>
+      </div>
+    </div>
+    <div class="section-label">Alle modernen Ären (Meiji bis heute)</div>
+    <div class="card" id="jp-eras-list"></div>
+    <div class="section-label">Japanische Feiertage</div>
+    <div class="card" id="jp-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Das japanische <span style="color:var(--text)">Gengō-System</span> (元号) zählt die Jahre nach Regierungsperioden des Kaisers. Jede Ära beginnt mit dem Thronwechsel. Die aktuelle Ära <span style="color:#dc3232">Reiwa</span> (令和, „schöne Harmonie") begann am <span style="color:var(--gold)">1. Mai 2019</span> mit der Thronbesteigung von Kaiser Naruhito. Japan verwendet offiziell beide Systeme parallel – Gengō für traditionelle Dokumente, das gregorianische für internationale Korrespondenz.
+    </div>
+  </div>
+
+  <!-- VIEW: BUDDHISTISCHER KALENDER -->
+  <div class="view" id="view-buddhist">
+    <div class="card" style="border-color:rgba(255,180,0,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">☸️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#ffb400;letter-spacing:.05em">Buddhistischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Buddha-Ära · Thailand · Sri Lanka · Myanmar</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:48px;font-weight:200;color:var(--text)" id="be-year">–</div>
+        <div style="font-size:16px;color:#ffb400;margin-top:4px">Jahr der Buddha-Ära (BE)</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px" id="be-date">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px" id="be-thai">–</div>
+      </div>
+    </div>
+    <div class="section-label">Buddhistische Feste</div>
+    <div class="card" id="be-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Buddhistische Kalender</span> (Buddhistisches Zeitalter, BE) zählt ab dem Tod oder der Erleuchtung des Buddha Siddhartha Gautama. In <span style="color:#ffb400">Thailand</span> ist er offizieller Staatskalender: das gregorianische Jahr <span id="be-greg-inline" style="color:var(--gold)">–</span> entspricht <span id="be-be-inline" style="color:#ffb400">–</span> BE. Der Unterschied beträgt <span style="color:var(--text)">+543 Jahre</span>. Wichtigste Feste: Vesak (Geburt/Erleuchtung/Tod Buddhas) und Asalha Puja.
+    </div>
+  </div>
+
+  <!-- VIEW: 13-MOND-KALENDER -->
+  <div class="view" id="view-moon13">
+    <div class="card" style="border-color:rgba(160,100,255,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🌀</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#a064ff;letter-spacing:.05em">13-Mond-Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Dreamspell · José Argüelles · Galaktische Zeitrechnung</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="m13-day">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#a064ff;margin-top:4px" id="m13-month">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="m13-year">– G.A.</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px" id="m13-kin">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 13 Monde</div>
+    <div class="card"><div id="m13-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">13-Mond-Kalender</span> (Dreamspell) wurde von <span style="color:#a064ff">José Argüelles</span> entwickelt und basiert auf dem Maya-Tzolkin. Er hat <span style="color:var(--text)">13 Monde à 28 Tage</span> = 364 Tage + 1 „Tag aus der Zeit" (25. Juli). Das Jahr beginnt immer am <span style="color:var(--gold)">26. Juli</span> (Tag nach dem heliakischen Aufgang von Sirius). Jeder Mond hat einen Tier-Namen und eine Qualität. Das Konzept basiert auf dem Prinzip <span style="color:#a064ff">„28:13"</span> als natürlichem Zeitrhythmus.
+    </div>
+  </div>
+
+  <!-- VIEW: PERSISCHER KALENDER -->
+  <div class="view" id="view-persian">
+    <div class="card" style="border-color:rgba(0,180,120,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🇮🇷</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#00b478;letter-spacing:.05em">Persischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Solar Hijri · Iran & Afghanistan · Jalali</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="per-day">–</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#00b478;margin-top:4px" id="per-month">–</div>
+        <div style="font-size:18px;color:var(--text2);margin-top:4px" id="per-year">– SH</div>
+        <div style="font-size:14px;color:var(--text3);margin-top:6px;direction:rtl;font-family:serif" id="per-farsi">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 4 Jahreszeiten & 12 Monate</div>
+    <div class="card"><div id="per-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Iranische Feiertage</div>
+    <div class="card" id="per-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Persische Kalender</span> (Solar Hijri / Jalali) gilt als <span style="color:#00b478">einer der genauesten Sonnenkalender der Welt</span> – genauer als der gregorianische. Neujahr (<span style="color:var(--gold)">Nowruz</span>, „neuer Tag") fällt exakt auf das Frühlingsäquinoktium. Die ersten 6 Monate haben 31 Tage, die nächsten 5 haben 30 Tage, der letzte Monat hat 29 oder 30 Tage. Die Zeitrechnung beginnt mit der Hidschra (wie der islamische Kalender), zählt aber Sonnenjahre. Jahr = greg. - 621/622.
+    </div>
+  </div>
+
+  <!-- VIEW: ZOROASTRISCHER KALENDER -->
+  <div class="view" id="view-zoroastrian">
+    <div class="card" style="border-color:rgba(255,140,0,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🔥</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#ff8c00;letter-spacing:.05em">Zoroastrischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Fasli · Zarathushtra · Parsi-Gemeinschaft</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="zoro-day">–</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#ff8c00;margin-top:4px" id="zoro-month">–</div>
+        <div style="font-size:16px;color:var(--text2);margin-top:4px" id="zoro-year">– YZ</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px" id="zoro-dayname">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 12 Monate</div>
+    <div class="card"><div id="zoro-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Zoroastrische Kalender</span> ist einer der ältesten Kalender der Welt und geht auf das <span style="color:#ff8c00">Avesta</span> zurück, die heilige Schrift des Zoroastrismus. Die <span style="color:var(--text)">Fasli-Variante</span> (Solar) hat 12 Monate à 30 Tage + 5 Gatha-Tage = 365 Tage. Jeder Tag des Monats hat einen eigenen Namen (nach Yazatas, den göttlichen Wesen). Die Zeitrechnung beginnt mit der Krönung des persischen Königs Yazdegerd III. (632 n.Chr.) – daher YZ. Heute praktiziert von den <span style="color:#ff8c00">Parsi</span> in Indien und dem Iran.
+    </div>
+  </div>
+
+  <!-- VIEW: ÄTHIOPISCHER KALENDER -->
+  <div class="view" id="view-ethiopian">
+    <div class="card" style="border-color:rgba(0,160,80,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🇪🇹</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#00a050;letter-spacing:.05em">Äthiopischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Ge'ez · 13 Monate · ~7 Jahre zurück</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="eth-day">–</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#00a050;margin-top:4px" id="eth-month">–</div>
+        <div style="font-size:18px;color:var(--text2);margin-top:4px" id="eth-year">– ዓ.ም.</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;font-family:serif" id="eth-geez">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 13 Monate</div>
+    <div class="card"><div id="eth-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Äthiopische Feiertage</div>
+    <div class="card" id="eth-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Äthiopische Kalender</span> (Ge'ez-Kalender) basiert auf dem koptischen Kalender und hat <span style="color:#00a050">13 Monate</span>: 12 Monate à 30 Tage + 1 kurzer Monat (Pagumē) mit 5 oder 6 Tagen. Das Neujahr (<span style="color:var(--gold)">Enkutatash</span>) fällt auf den 11. September (greg.). Der Kalender liegt ca. <span style="color:var(--text)">7–8 Jahre hinter dem gregorianischen</span>, da eine andere Berechnung des Annunciationstags genutzt wird. Ethiopia hat eine eigene Zeitrechnung: der Tag beginnt bei Sonnenaufgang (6 Uhr = 0 Uhr äthiopisch).
+    </div>
+  </div>
+
+  <!-- VIEW: KOPTISCHER KALENDER -->
+  <div class="view" id="view-coptic">
+    <div class="card" style="border-color:rgba(180,60,60,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">✝️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#b43c3c;letter-spacing:.05em">Koptischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Anno Martyrum · Ägyptisch-christlich · 13 Monate</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="cop-day">–</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#b43c3c;margin-top:4px" id="cop-month">–</div>
+        <div style="font-size:18px;color:var(--text2);margin-top:4px" id="cop-year">– AM</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;font-family:serif" id="cop-coptic">–</div>
+      </div>
+    </div>
+    <div class="section-label">Die 13 Monate</div>
+    <div class="card"><div id="cop-months-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Koptische Kalender</span> ist eine direkte Weiterentwicklung des <span style="color:#b43c3c">altägyptischen Kalenders</span> und hat ebenfalls 13 Monate (12 × 30 Tage + Nasie mit 5/6 Tagen). Die Zeitrechnung <span style="color:var(--text)">Anno Martyrum</span> (AM) beginnt mit dem ersten Jahr der Regierung von Kaiser Diokletian (284 n.Chr.), unter dem die Christenverfolgungen begannen. Verwendet von der <span style="color:#b43c3c">Koptisch-Orthodoxen Kirche</span> in Ägypten und der Äthiopisch-Orthodoxen Kirche. Neujahr: 11. September (greg.).
+    </div>
+  </div>
+
+  <!-- VIEW: JULIANISCHER KALENDER -->
+  <div class="view" id="view-julian">
+    <div class="card" style="border-color:rgba(120,120,200,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">📜</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#8888cc;letter-spacing:.05em">Julianischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Julius Caesar · 46 v.Chr. · Orthodoxe Kirche</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:36px;font-weight:200;color:var(--text)" id="jul-day">–</div>
+        <div style="font-family:var(--font-display);font-size:22px;color:#8888cc;margin-top:4px" id="jul-month">–</div>
+        <div style="font-size:18px;color:var(--text2);margin-top:4px" id="jul-year">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px" id="jul-diff">–</div>
+      </div>
+    </div>
+    <div class="section-label">Orthodoxe Kirchenfeste (Julianisch)</div>
+    <div class="card" id="jul-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Julianische Kalender</span> wurde <span style="color:#8888cc">46 v.Chr. von Julius Caesar</span> eingeführt und war über 1600 Jahre der Standardkalender Europas. Er hat ein Schaltjahr alle 4 Jahre – ohne Ausnahme – und läuft dadurch langsam nach. Heute hinkt er dem gregorianischen Kalender um <span style="color:var(--gold)">13 Tage</span> hinterher. Er wird noch von der <span style="color:var(--text)">Russisch-Orthodoxen</span>, <span style="color:var(--text)">Serbisch-Orthodoxen</span> und <span style="color:var(--text)">Jerusalemer Kirche</span> für Kirchenfeste verwendet – daher feiern diese Weihnachten am 7. Januar (greg.).
+    </div>
+  </div>
+
+  <!-- VIEW: HOLOZÄN-KALENDER -->
+  <div class="view" id="view-holocene">
+    <div class="card" style="border-color:rgba(80,180,255,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🔢</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#50b4ff;letter-spacing:.05em">Holozän-Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Human Era (HE) · Cesare Emiliani · +10.000 Jahre</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:48px;font-weight:200;color:var(--text)" id="hol-year">–</div>
+        <div style="font-size:16px;color:#50b4ff;margin-top:4px">Human Era (HE)</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px" id="hol-greg">–</div>
+      </div>
+    </div>
+    <div class="section-label">Meilensteine der Menschheitsgeschichte</div>
+    <div class="card" id="hol-milestones"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Holozän-Kalender</span> (Human Era, HE) wurde von dem Geologen <span style="color:#50b4ff">Cesare Emiliani</span> 1993 vorgeschlagen. Er addiert einfach <span style="color:#50b4ff">10.000 Jahre</span> zum gregorianischen Kalender, um den Beginn des Holozäns (Ende der letzten Eiszeit, erste menschliche Siedlungen) als Nullpunkt zu nutzen. Damit entfällt die religiöse Komponente des gregorianischen Kalenders, und bedeutende Meilensteine der Menschheit (Çatalhöyük, Stonehenge, Pyramiden) erhalten positive Jahreszahlen. Das aktuelle Jahr <span style="color:var(--gold)" id="hol-year-inline">–</span> HE ist ein intuitiver Zeitrahmen für die gesamte Menschheitsgeschichte.
+    </div>
+  </div>
+
 </div><!-- end app-scroll -->
 
 <!-- TAB BAR -->
@@ -551,6 +1134,70 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn" onclick="switchTab('islam')" id="tab-islam">
     <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/><path d="M19 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>
     <span class="tab-label">Islamisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('hebrew')" id="tab-hebrew">
+    <svg viewBox="0 0 24 24"><polygon points="12,2 22,20 2,20"/><polygon points="12,22 2,4 22,4" style="fill:none"/></svg>
+    <span class="tab-label">Hebräisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('chinese')" id="tab-chinese">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6c3.31 0 6 2.69 6 6s-2.69 6-6 6"/><circle cx="12" cy="9" r="1.5" fill="currentColor"/><circle cx="12" cy="15" r="1.5" style="fill:none"/></svg>
+    <span class="tab-label">Chinesisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('maya')" id="tab-maya">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+    <span class="tab-label">Maya</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('saka')" id="tab-saka">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-3"/></svg>
+    <span class="tab-label">Saka</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('vikram')" id="tab-vikram">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    <span class="tab-label">Vikram</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('bengali')" id="tab-bengali">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span class="tab-label">Bengali</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('nakshatra')" id="tab-nakshatra">
+    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    <span class="tab-label">Nakshatra</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('japanese')" id="tab-japanese">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.6"/></svg>
+    <span class="tab-label">Japanisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('buddhist')" id="tab-buddhist">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+    <span class="tab-label">Buddhistisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('moon13')" id="tab-moon13">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="17" r="1.5" fill="currentColor"/></svg>
+    <span class="tab-label">13-Mond</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('persian')" id="tab-persian">
+    <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+    <span class="tab-label">Persisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('zoroastrian')" id="tab-zoroastrian">
+    <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+    <span class="tab-label">Zoroastrisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('ethiopian')" id="tab-ethiopian">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="9" cy="15" r="1.5" fill="currentColor"/><circle cx="15" cy="15" r="1.5" fill="currentColor"/></svg>
+    <span class="tab-label">Äthiopisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('coptic')" id="tab-coptic">
+    <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    <span class="tab-label">Koptisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('julian')" id="tab-julian">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 15h8"/></svg>
+    <span class="tab-label">Julianisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('holocene')" id="tab-holocene">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    <span class="tab-label">Holozän</span>
   </button>
 </nav>
 
@@ -1731,6 +2378,22 @@ function switchTab(id){
   if(id==='jahreskreis')renderJahreskreis();
   if(id==='islam')renderIslam();
   if(id==='feiertage')renderFeiertage();
+  if(id==='hebrew')renderHebrew();
+  if(id==='chinese')renderChinese();
+  if(id==='maya')renderMaya();
+  if(id==='moon13')renderMoon13();
+  if(id==='saka')renderSaka();
+  if(id==='vikram')renderVikram();
+  if(id==='bengali')renderBengali();
+  if(id==='nakshatra')renderNakshatra();
+  if(id==='japanese')renderJapanese();
+  if(id==='buddhist')renderBuddhist();
+  if(id==='persian')renderPersian();
+  if(id==='zoroastrian')renderZoroastrian();
+  if(id==='ethiopian')renderEthiopian();
+  if(id==='coptic')renderCoptic();
+  if(id==='julian')renderJulian();
+  if(id==='holocene')renderHolocene();
 }
 
 // ── INSTALL HINT ──────────────────────────────────────────────────────────────
@@ -1744,15 +2407,17 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam'];
+const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam','hebrew','chinese','japanese','buddhist','maya','moon13','saka','vikram','bengali','nakshatra','persian','zoroastrian','ethiopian','coptic','julian','holocene'];
 
 function prevTab(){
-  const i=TABS.indexOf(activeTab);
-  if(i>0)switchTab(TABS[i-1]);
+  const active=getActiveTabs();
+  const i=active.indexOf(activeTab);
+  if(i>0)switchTab(active[i-1]);
 }
 function nextTab(){
-  const i=TABS.indexOf(activeTab);
-  if(i<TABS.length-1)switchTab(TABS[i+1]);
+  const active=getActiveTabs();
+  const i=active.indexOf(activeTab);
+  if(i<active.length-1)switchTab(active[i+1]);
 }
 
 // Swipe – works on real devices; header arrows work everywhere
@@ -1773,7 +2438,7 @@ function nextTab(){
 })();
 
 // ── SERVICE WORKER ────────────────────────────────────────────────────────────
-if('serviceWorker' in navigator){
+if('serviceWorker' in navigator && location.protocol !== 'file:'){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 
@@ -1781,13 +2446,1377 @@ if('serviceWorker' in navigator){
 const hash=location.hash.replace('#','');
 if(TABS.includes(hash))switchTab(hash);
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function applyTheme(dark) {
+  document.body.classList.toggle('light-mode', !dark);
+  const icon = dark ? '🌙' : '☀️';
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = icon;
+  const si = document.getElementById('theme-icon');
+  if (si) si.textContent = icon;
+  const st = document.getElementById('settings-theme-toggle');
+  if (st) st.checked = dark;
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+function toggleTheme() {
+  const isDark = !document.body.classList.contains('light-mode');
+  applyTheme(!isDark);
+}
+function toggleThemeFromSettings(cb) { applyTheme(cb.checked); }
+
+// ── SETTINGS & TAB MANAGEMENT (hierarchisch) ──────────────────────────────────
+const TAB_GROUPS = [
+  {
+    id: 'basis', label: 'Basis', icon: '📅', ungrouped: true,
+    tabs: [
+      {id:'greg',       label:'Gregorianischer Kalender', icon:'📅', required:true},
+      {id:'feiertage',  label:'Feiertage',                icon:'⭐'},
+      {id:'moon',       label:'Mondphasen',               icon:'🌙'},
+    ]
+  },
+  {
+    id: 'alternativ', label: 'Alternative Kalender', icon: '🌐', ungrouped: true,
+    tabs: [
+      {id:'ifc',        label:'IFC-Kalender',             icon:'📆'},
+      {id:'swarog',     label:'Swarog-Kreis',             icon:'☯️'},
+      {id:'jahreskreis',label:'Jahreskreis (kelt.-germ.)',icon:'🌿'},
+    ]
+  },
+  {
+    id: 'abrahamitisch', label: 'Abrahamitisch', icon: '🕊️',
+    tabs: [
+      {id:'islam',      label:'Islamischer Kalender',     icon:'☪️'},
+      {id:'hebrew',     label:'Hebräischer Kalender',     icon:'✡️'},
+    ]
+  },
+  {
+    id: 'ostasiatisch', label: 'Ostasiatisch', icon: '🐉',
+    tabs: [
+      {id:'chinese',    label:'Chinesischer Kalender',    icon:'🐉'},
+      {id:'japanese',   label:'Japanischer Kalender',     icon:'🗾'},
+      {id:'buddhist',   label:'Buddhistischer Kalender',  icon:'☸️'},
+    ]
+  },
+  {
+    id: 'mesoamerikanisch', label: 'Mesoamerikanisch', icon: '🌞',
+    tabs: [
+      {id:'maya',       label:'Maya-Kalender',            icon:'🌞'},
+      {id:'moon13',     label:'13-Mond-Kalender',         icon:'🌀'},
+    ]
+  },
+  {
+    id: 'indisch', label: 'Indisch', icon: '🕉️',
+    tabs: [
+      {id:'saka',       label:'Saka-Kalender (staatlich)',icon:'🇮🇳'},
+      {id:'vikram',     label:'Vikram Samvat (hinduist.)',icon:'🕉️'},
+      {id:'bengali',    label:'Bengali-Kalender',         icon:'🌸'},
+      {id:'nakshatra',  label:'Nakshatras (27 Mondstat.)',icon:'⭐'},
+    ]
+  },
+  {
+    id: 'iranisch', label: 'Iranisch / Persisch', icon: '🌹',
+    tabs: [
+      {id:'persian',    label:'Persischer Kalender',      icon:'🇮🇷'},
+      {id:'zoroastrian',label:'Zoroastrischer Kalender',  icon:'🔥'},
+    ]
+  },
+  {
+    id: 'afrikanisch', label: 'Afrikanisch', icon: '🌍',
+    tabs: [
+      {id:'ethiopian',  label:'Äthiopischer Kalender',    icon:'🇪🇹'},
+      {id:'coptic',     label:'Koptischer Kalender',      icon:'✝️'},
+    ]
+  },
+  {
+    id: 'historisch', label: 'Historisch / Wissenschaftlich', icon: '📜',
+    tabs: [
+      {id:'julian',     label:'Julianischer Kalender',    icon:'📜'},
+      {id:'holocene',   label:'Holozän-Kalender (HE)',    icon:'🔢'},
+    ]
+  },
+];
+
+// Flache Liste aller Tabs (für Reihenfolge & Suche)
+const ALL_TABS = TAB_GROUPS.flatMap(g => g.tabs);
+
+function loadTabSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('activeTabs') || 'null');
+    if (saved && Array.isArray(saved)) return saved;
+  } catch(e) {}
+  return ['greg','feiertage','moon'];
+}
+function saveTabSettings(active) { localStorage.setItem('activeTabs', JSON.stringify(active)); }
+function getActiveTabs() {
+  const saved = loadTabSettings();
+  return ALL_TABS.filter(t => saved.includes(t.id)).map(t => t.id);
+}
+
+function openSettings() {
+  document.getElementById('settings-overlay').classList.add('open');
+  renderSettingsTabs();
+  const isDark = !document.body.classList.contains('light-mode');
+  const st = document.getElementById('settings-theme-toggle');
+  if (st) st.checked = isDark;
+}
+function closeSettings() { document.getElementById('settings-overlay').classList.remove('open'); }
+function closeSettingsOutside(e) {
+  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+}
+
+function groupState(groupId) {
+  const grp = TAB_GROUPS.find(g => g.id === groupId);
+  if (!grp) return 'none';
+  const active = loadTabSettings();
+  const total = grp.tabs.filter(t => !t.required).length;
+  const on = grp.tabs.filter(t => !t.required && active.includes(t.id)).length;
+  if (on === 0) return 'off';
+  if (on === total) return 'on';
+  return 'partial';
+}
+
+function toggleGroup(groupId, enabled) {
+  const grp = TAB_GROUPS.find(g => g.id === groupId);
+  if (!grp) return;
+  let active = loadTabSettings();
+  for (const t of grp.tabs) {
+    if (t.required) continue;
+    if (enabled && !active.includes(t.id)) active.push(t.id);
+    if (!enabled) active = active.filter(a => a !== t.id);
+  }
+  active = ALL_TABS.filter(t => active.includes(t.id)).map(t => t.id);
+  saveTabSettings(active);
+  rebuildTabBar();
+  renderSettingsTabs();
+}
+
+function toggleTab(id, enabled) {
+  let active = loadTabSettings();
+  if (enabled && !active.includes(id)) active.push(id);
+  if (!enabled) active = active.filter(a => a !== id);
+  active = ALL_TABS.filter(t => active.includes(t.id)).map(t => t.id);
+  saveTabSettings(active);
+  rebuildTabBar();
+  renderSettingsTabs(); // Gruppen-Checkbox aktualisieren
+}
+
+function rebuildTabBar() {
+  const active = getActiveTabs();
+  ALL_TABS.forEach(t => {
+    const btn = document.getElementById('tab-' + t.id);
+    if (btn) btn.style.display = active.includes(t.id) ? '' : 'none';
+  });
+  if (!active.includes(activeTab)) switchTab('greg');
+}
+
+function renderSettingsTabs() {
+  const active = loadTabSettings();
+  const list = document.getElementById('settings-tabs-list');
+  if (!list) return;
+
+  let html = '';
+  for (const grp of TAB_GROUPS) {
+    const gs = groupState(grp.id);
+    const isUngrouped = grp.ungrouped;
+    const storedOpen = localStorage.getItem('grp-open-' + grp.id);
+    const isOpen = storedOpen === null ? false : storedOpen === '1';
+
+    if (!isUngrouped) {
+      // Gruppen-Header mit eigenem Toggle + Expand-Pfeil
+      const allOn = gs === 'on';
+      const partial = gs === 'partial';
+      html += `
+      <div style="border:0.5px solid var(--border2);border-radius:12px;margin-bottom:8px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);cursor:pointer"
+             onclick="toggleGroupExpand('${grp.id}')">
+          <span style="font-size:18px">${grp.icon}</span>
+          <div style="flex:1">
+            <div style="font-size:14px;color:var(--text);font-weight:500">${grp.label}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px">${grp.tabs.length} Kalender</div>
+          </div>
+          <label class="toggle" onclick="event.stopPropagation()" style="${partial?'opacity:.7':''}">
+            <input type="checkbox" ${allOn||partial?'checked':''} onchange="toggleGroup('${grp.id}',this.checked)">
+            <span class="toggle-slider" style="${partial?'background:var(--gold)':''}"></span>
+          </label>
+          <span style="color:var(--text3);font-size:14px;margin-left:4px;transition:transform .2s;${isOpen?'transform:rotate(180deg)':''}">▾</span>
+        </div>
+        <div id="grp-body-${grp.id}" style="display:${isOpen?'block':'none'}">`;
+    }
+
+    for (const t of grp.tabs) {
+      const isActive = active.includes(t.id);
+      html += `<div class="settings-row" style="${!isUngrouped?'padding-left:20px':''}">
+        <div class="settings-row-left">
+          <span class="settings-row-icon">${t.icon}</span>
+          <div>
+            <div class="settings-row-label">${t.label}</div>
+            ${t.required ? '<div class="settings-row-sub">Immer aktiv</div>' : ''}
+          </div>
+        </div>
+        <label class="toggle" ${t.required?'style="opacity:.4;pointer-events:none"':''}>
+          <input type="checkbox" ${isActive?'checked':''} ${t.required?'disabled':''}
+            onchange="toggleTab('${t.id}',this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`;
+    }
+
+    if (!isUngrouped) {
+      html += `</div></div>`;
+    }
+  }
+  list.innerHTML = html;
+}
+
+function toggleGroupExpand(groupId) {
+  const body = document.getElementById('grp-body-' + groupId);
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  localStorage.setItem('grp-open-' + groupId, isOpen ? '0' : '1');
+  renderSettingsTabs();
+}
+
+
+// ── HEBRÄISCHER KALENDER ──────────────────────────────────────────────────────
+// Algorithmus: Meeus "Astronomical Algorithms" + klassische Umrechnungsformel
+const HEB_MONTHS = [
+  'Nisan','Ijar','Siwan','Tammus','Aw','Elul',
+  'Tischri','Cheschwan','Kislew','Tewet','Schwat','Adar','Adar II'
+];
+const HEB_MONTHS_HE = [
+  'ניסן','אייר','סיוון','תמוז','אב','אלול',
+  'תשרי','חשוון','כסלו','טבת','שבט','אדר','אדר ב׳'
+];
+const HEB_HOLIDAYS = [
+  {hM:7, hD:1,  name:'Rosch ha-Schana (Jüdisches Neujahr)',  he:'ראש השנה', important:true},
+  {hM:7, hD:10, name:'Jom Kippur (Versöhnungstag)',          he:'יום כיפור', important:true},
+  {hM:7, hD:15, name:'Sukkot – Laubhüttenfest (Beginn)',     he:'סוכות',    important:true},
+  {hM:7, hD:22, name:'Schmini Azeret',                        he:'שמיני עצרת'},
+  {hM:7, hD:23, name:'Simchat Tora',                          he:'שמחת תורה'},
+  {hM:9, hD:25, name:'Chanukka (Beginn)',                     he:'חנוכה',    important:true},
+  {hM:11,hD:15, name:'Tu biSchwat (Neujahrsfest der Bäume)', he:'ט"ו בשבט'},
+  {hM:12,hD:13, name:'Fasttag Ester',                         he:'תענית אסתר'},
+  {hM:12,hD:14, name:'Purim',                                 he:'פורים',    important:true},
+  {hM:1, hD:14, name:'Pessach-Vorabend (Seder)',             he:'פסח',      important:true},
+  {hM:1, hD:15, name:'Pessach (Beginn)',                      he:'פסח'},
+  {hM:1, hD:21, name:'Pessach (Ende)',                        he:'אחרון של פסח'},
+  {hM:2, hD:18, name:'Lag baOmer',                            he:'ל"ג בעומר'},
+  {hM:3, hD:6,  name:'Schawuot – Wochenfest',                he:'שבועות',   important:true},
+  {hM:5, hD:9,  name:'Tischa beAw (Fastentag)',               he:'תשעה באב'},
+];
+
+function isHebLeap(y) {
+  return [3,6,8,11,14,17,19].includes(((y * 7) + 1) % 19 + 1) ||
+    ((y % 19) === 0 ? false : [3,6,8,11,14,17,0].includes(y % 19));
+}
+// Vereinfachte Prüfung: Jahr ist Schaltjahr wenn (7*y+1) mod 19 < 7
+function hebIsLeap(y) { return ((7 * y + 1) % 19) < 7; }
+
+function hebMonthsInYear(y) { return hebIsLeap(y) ? 13 : 12; }
+function hebDaysInMonth(m, y) {
+  if ([1,3,5,7,11].includes(m)) return 30;
+  if ([2,4,6,10,12,13].includes(m)) return 29;
+  if (m === 8) return hebCheshvanDays(y);
+  if (m === 9) return hebKislevDays(y);
+  return 29;
+}
+function hebElapsedDays(y) {
+  const monthsElapsed = Math.floor((235 * y - 234) / 19);
+  const parts = 12084 + 13753 * monthsElapsed;
+  let day = monthsElapsed * 29 + Math.floor(parts / 25920);
+  if ((3 * (day + 1)) % 7 < 3) day++;
+  return day;
+}
+function hebYearDays(y) { return hebElapsedDays(y + 1) - hebElapsedDays(y); }
+function hebCheshvanDays(y) { return hebYearDays(y) % 10 === 5 ? 30 : 29; }
+function hebKislevDays(y)   { return hebYearDays(y) % 10 === 3 ? 29 : 30; }
+
+function gregorianToHebrew(gY, gM, gD) {
+  // JD berechnen
+  const a = Math.floor((14 - gM) / 12);
+  const y = gY + 4800 - a;
+  const m = gM + 12 * a - 3;
+  const jd = gD + Math.floor((153*m+2)/5) + 365*y + Math.floor(y/4)
+    - Math.floor(y/100) + Math.floor(y/400) - 32045;
+
+  // Hebräisches Jahr schätzen
+  let hY = Math.floor((jd - 347997) / 365.25 * 19/19) + 1;
+  while (hebElapsedDays(hY + 1) + (hebIsLeap(hY) ? 6 : 5) <= jd - 347996) hY++;
+
+  // Tag im Jahr
+  const startOfYear = hebElapsedDays(hY) + 347997;
+  let dayOfYear = jd - startOfYear + 1;
+  if (dayOfYear < 1) { hY--; dayOfYear = jd - (hebElapsedDays(hY) + 347997) + 1; }
+
+  // Monat finden
+  const monthOrder = hebIsLeap(hY)
+    ? [7,8,9,10,11,12,13,1,2,3,4,5,6]
+    : [7,8,9,10,11,12,1,2,3,4,5,6];
+  let hM = 7, hD = dayOfYear;
+  for (const mo of monthOrder) {
+    const md = hebDaysInMonth(mo, hY);
+    if (hD <= md) { hM = mo; break; }
+    hD -= md;
+  }
+  return { year: hY, month: hM, day: hD };
+}
+
+function hebrewToGregorian(hY, hM, hD) {
+  // Tage seit Epoche für Monat
+  const monthOrder = hebIsLeap(hY)
+    ? [7,8,9,10,11,12,13,1,2,3,4,5,6]
+    : [7,8,9,10,11,12,1,2,3,4,5,6];
+  let days = hebElapsedDays(hY) + 347997;
+  for (const mo of monthOrder) {
+    if (mo === hM) { days += hD - 1; break; }
+    days += hebDaysInMonth(mo, hY);
+  }
+  // JD → Gregorianisch
+  let l = days + 68569;
+  const n = Math.floor(4 * l / 146097);
+  l -= Math.floor((146097 * n + 3) / 4);
+  const i = Math.floor(4000 * (l + 1) / 1461001);
+  l -= Math.floor(1461 * i / 4) - 31;
+  const j = Math.floor(80 * l / 2447);
+  const day = l - Math.floor(2447 * j / 80);
+  l = Math.floor(j / 11);
+  return { year: 100*(n-49)+i+l, month: j+2-12*l, day };
+}
+
+function renderHebrew() {
+  const l = localNow();
+  const h = gregorianToHebrew(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  document.getElementById('heb-day-big').textContent = h.day;
+  document.getElementById('heb-month-big').textContent = HEB_MONTHS[h.month-1];
+  document.getElementById('heb-year-big').textContent = `${h.year} AM`;
+  document.getElementById('heb-hebrew').textContent =
+    `${h.day} ${HEB_MONTHS_HE[h.month-1]} ${h.year}`;
+  document.getElementById('heb-year-label').textContent = `${h.year} AM`;
+  document.getElementById('heb-am-inline').textContent = `${h.year} AM`;
+
+  // Feiertage
+  const hY = h.month >= 7 ? h.year : h.year; // Tischri-Jahr
+  const today = todayStr();
+  const rows = HEB_HOLIDAYS.map(hol => {
+    let hYear = hY;
+    // Nisan-Monate (1-6) sind nach Tischri (7-13) im gleichen Anno Mundi
+    const g = hebrewToGregorian(hYear, hol.hM, hol.hD);
+    const ds = `${g.year}-${pad(g.month)}-${pad(g.day)}`;
+    const d = new Date(Date.UTC(g.year, g.month-1, g.day));
+    const isT = ds === today, isPast = ds < today;
+    return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)} ${g.year}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;color:${hol.important?'var(--gold)':isT?'var(--blue2)':'var(--text)'};font-weight:${hol.important||isT?500:400}">${hol.name}</div>
+        <div style="font-size:12px;color:var(--text3);direction:rtl;font-family:serif;margin-top:1px">${hol.he}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('heb-holidays').innerHTML = rows;
+
+  // Monatsübersicht
+  const months = hebIsLeap(h.year)
+    ? [...HEB_MONTHS] : HEB_MONTHS.slice(0,12);
+  document.getElementById('heb-months-list').innerHTML = months.map((mn,i) => {
+    const mo = i < 6 ? i+7 : i-5;
+    const cur = mo === h.month;
+    const g2 = hebrewToGregorian(h.year, mo, 1);
+    return `<div style="background:${cur?'rgba(91,141,238,0.12)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(91,141,238,0.3)':'var(--border)'};border-radius:10px;padding:8px 10px">
+      <div style="font-size:10px;color:${cur?'var(--blue2)':'var(--text3)'};text-transform:uppercase">${i+1}.</div>
+      <div style="font-size:12px;color:${cur?'var(--blue2)':'var(--text)'};font-weight:${cur?500:400};margin-top:2px">${mn}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g2.day}. ${DE_MONTHS[g2.month-1].slice(0,3)} · ${hebDaysInMonth(mo,h.year)} T.</div>
+    </div>`;
+  }).join('');
+}
+
+// ── CHINESISCHER KALENDER ─────────────────────────────────────────────────────
+const CN_ZODIAC = [
+  {en:'Ratte',   zh:'鼠', icon:'🐀', elem:'Wasser'},
+  {en:'Büffel',  zh:'牛', icon:'🐂', elem:'Erde'},
+  {en:'Tiger',   zh:'虎', icon:'🐅', elem:'Holz'},
+  {en:'Hase',    zh:'兔', icon:'🐇', elem:'Holz'},
+  {en:'Drache',  zh:'龍', icon:'🐉', elem:'Erde'},
+  {en:'Schlange',zh:'蛇', icon:'🐍', elem:'Feuer'},
+  {en:'Pferd',   zh:'馬', icon:'🐎', elem:'Feuer'},
+  {en:'Ziege',   zh:'羊', icon:'🐐', elem:'Erde'},
+  {en:'Affe',    zh:'猴', icon:'🐒', elem:'Metall'},
+  {en:'Hahn',    zh:'雞', icon:'🐓', elem:'Metall'},
+  {en:'Hund',    zh:'狗', icon:'🐕', elem:'Erde'},
+  {en:'Schwein', zh:'豬', icon:'🐖', elem:'Wasser'},
+];
+const CN_ELEMENTS = ['Holz','Holz','Feuer','Feuer','Erde','Erde','Metall','Metall','Wasser','Wasser'];
+const CN_HOLIDAYS_FIXED = [
+  {name:'Chinesisches Neujahr',     note:'2. Neumond nach Wintersonnenwende', dynamic:true},
+  {name:'Laternenfest',             note:'15. Tag des 1. Mondmonats', dynamic:true},
+  {name:'Qingming (Gräberfest)',    greg:{m:4,d:4}},
+  {name:'Drachenfest (Duanwu)',     note:'5. Tag des 5. Mondmonats', dynamic:true},
+  {name:'Qixi (Valentinstag)',      note:'7. Tag des 7. Mondmonats', dynamic:true},
+  {name:'Mittherbstfest',           note:'15. Tag des 8. Mondmonats', dynamic:true},
+  {name:'Doppel-Neun-Fest',         note:'9. Tag des 9. Mondmonats', dynamic:true},
+  {name:'Dongzhi (Wintersonnenwende)', greg:{m:12,d:22}},
+];
+
+// Chinesisches Neujahr (Näherung: 2. Neumond nach Wintersonnenwende)
+function getChineseNewYear(gYear) {
+  const phases = moonEventsForYear(gYear);
+  const dec21 = `${gYear-1}-12-21`;
+  const newMoons = phases.filter(p => p.p === 'Neumond' && p.d > dec21);
+  if (newMoons.length >= 2) return new Date(newMoons[1].d + 'T12:00:00Z');
+  return new Date(Date.UTC(gYear, 1, 10)); // Fallback
+}
+
+function getChineseYear(gYear) {
+  // Zyklus: 2024 = Jahr der Ratte (idx 0) war ... 
+  // 2024 = Drache (idx 4), 2025 = Schlange (idx 5)
+  const ref = 2024; // Drachen-Jahr
+  const refIdx = 4;
+  const diff = gYear - ref;
+  const idx = ((refIdx + diff) % 12 + 12) % 12;
+  const cycle = Math.floor((gYear - 4) / 12) - Math.floor((ref - 4) / 12) + 78;
+  const elemIdx = ((gYear - ref) % 10 + 10) % 10;
+  return { zodiac: CN_ZODIAC[idx], idx, cycle: 78 + Math.floor((gYear-4)/12) - Math.floor((2024-4)/12) + 1, elemIdx, element: CN_ELEMENTS[elemIdx] };
+}
+
+function renderChinese() {
+  const l = localNow();
+  const gYear = l.getUTCFullYear();
+  const cny = getChineseNewYear(gYear);
+  // Wenn heute vor CNY → altes Jahr
+  const today = new Date(Date.UTC(l.getUTCFullYear(), l.getUTCMonth(), l.getUTCDate()));
+  const cnYear = today < cny ? gYear - 1 : gYear;
+  const cy = getChineseYear(cnYear);
+
+  document.getElementById('cn-zodiac-icon').textContent = cy.zodiac.icon;
+  document.getElementById('cn-year-name').textContent = `Jahr des ${cy.zodiac.en} (${cy.zodiac.zh})`;
+  document.getElementById('cn-cycle').textContent = `Element: ${cy.element} · ${cy.cycle}. Zyklus`;
+  document.getElementById('cn-date-today').textContent =
+    `Chinesisches Neujahr ${cnYear+1}: ${cny.getUTCDate()}. ${DE_MONTHS[cny.getUTCMonth()]} ${cny.getUTCFullYear()}`;
+  document.getElementById('cn-year-label').textContent = `${cnYear} chin.`;
+
+  // Zodiac Grid
+  document.getElementById('cn-zodiac-grid').innerHTML = CN_ZODIAC.map((z, i) => {
+    const isCur = i === cy.idx;
+    return `<div style="background:${isCur?'rgba(224,92,92,0.18)':'var(--surface2)'};border:0.5px solid ${isCur?'rgba(224,92,92,0.4)':'var(--border)'};border-radius:10px;padding:7px;text-align:center">
+      <div style="font-size:20px">${z.icon}</div>
+      <div style="font-size:10px;color:${isCur?'var(--red)':'var(--text2)'};margin-top:3px;font-weight:${isCur?500:400}">${z.en}</div>
+      <div style="font-size:12px;color:var(--text3)">${z.zh}</div>
+    </div>`;
+  }).join('');
+
+  // Feiertage
+  const holidays = [
+    {name:'Chinesisches Neujahr', date: getChineseNewYear(cnYear < gYear ? gYear : gYear+1), important:true},
+    {name:'Qingming (Gräberfest)', date: new Date(Date.UTC(gYear,3,4)), important:false},
+    {name:'Dongzhi (Wintersonnenwende)', date: new Date(Date.UTC(gYear,11,22)), important:false},
+  ];
+  const todayStr2 = todayStr();
+  document.getElementById('cn-holidays').innerHTML = holidays.map(h => {
+    const ds = h.date.toISOString().slice(0,10);
+    const isPast = ds < todayStr2;
+    return `<div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${h.date.getUTCDate()}. ${DE_MONTHS[h.date.getUTCMonth()].slice(0,3)} ${h.date.getUTCFullYear()}</span>
+      <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── MAYA KALENDER ─────────────────────────────────────────────────────────────
+// Korrelation: GMT (584283) – Standard
+const TZOLKIN_NAMES = [
+  'Imix','Ik','Akbal','Kan','Chicchan','Cimi','Manik','Lamat',
+  'Muluc','Oc','Chuen','Eb','Ben','Ix','Men','Cib','Caban','Etznab','Cauac','Ahau'
+];
+const TZOLKIN_ICONS = ['🌊','💨','🌙','🌽','🐍','💀','🦌','⭐','🌧','🐾','🐒','🛤','🌿','🐆','🦅','🦉','🌍','🔪','⛈','☀️'];
+const HAAB_MONTHS = [
+  'Pop','Uo','Zip','Zotz','Tzec','Xul','Yaxkin','Mol','Chen','Yax',
+  'Zac','Ceh','Mac','Kankin','Muan','Pax','Kayab','Cumku','Wayeb'
+];
+const HAAB_DAYS = [20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,5];
+
+const MAYA_CORRELATION = 584283; // GMT-Korrelation
+
+function jdFromGregorian(y, m, d) {
+  const a = Math.floor((14-m)/12), yr = y+4800-a, mo = m+12*a-3;
+  return d + Math.floor((153*mo+2)/5) + 365*yr + Math.floor(yr/4)
+    - Math.floor(yr/100) + Math.floor(yr/400) - 32045;
+}
+
+function getMayaDate(gY, gM, gD) {
+  const jd = jdFromGregorian(gY, gM, gD);
+  const daysSinceCorrelation = jd - MAYA_CORRELATION;
+
+  // Tzolkin
+  const tzolkinDay = ((daysSinceCorrelation % 260) + 260) % 260;
+  const tzolkinNum = (tzolkinDay % 13) + 1;
+  const tzolkinName = TZOLKIN_NAMES[tzolkinDay % 20];
+  const tzolkinIcon = TZOLKIN_ICONS[tzolkinDay % 20];
+
+  // Haab
+  const haabDay = ((daysSinceCorrelation % 365) + 365) % 365;
+  let haabMonth = 0, haabDayInMonth = haabDay;
+  for (let i = 0; i < HAAB_MONTHS.length; i++) {
+    if (haabDayInMonth < HAAB_DAYS[i]) { haabMonth = i; break; }
+    haabDayInMonth -= HAAB_DAYS[i];
+  }
+
+  // Lange Zählung: seit 4. Aug. 3114 v.Chr. (Julian Day 584283)
+  const totalDays = daysSinceCorrelation;
+  const baktun = Math.floor(totalDays / 144000);
+  const katun  = Math.floor((totalDays % 144000) / 7200);
+  const tun    = Math.floor((totalDays % 7200) / 360);
+  const uinal  = Math.floor((totalDays % 360) / 20);
+  const kin    = totalDays % 20;
+
+  return {
+    tzolkinNum, tzolkinName, tzolkinIcon,
+    haabDay: haabDayInMonth, haabMonth: HAAB_MONTHS[haabMonth], haabMonthIdx: haabMonth,
+    longCount: `${baktun}.${katun}.${tun}.${uinal}.${kin}`,
+    baktun, katun, tun, uinal, kin
+  };
+}
+
+// ── MAYA GLYPHEN (SVG, stilisiert nach echten Inschriften) ───────────────────
+// Jede Glyphe ist ein SVG viewBox="0 0 60 60" – Paths aus Maya-Ikonographie
+const TZOLKIN_GLYPHS = [
+  // 1 Imix – Seerose / Krokodil
+  `<ellipse cx="30" cy="30" rx="22" ry="18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <ellipse cx="30" cy="30" rx="12" ry="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="22" r="3" fill="currentColor"/>
+   <circle cx="20" cy="32" r="2.5" fill="currentColor"/>
+   <circle cx="40" cy="32" r="2.5" fill="currentColor"/>
+   <path d="M20 42 Q30 46 40 42" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 2 Ik – Wind / T-Form
+  `<rect x="14" y="10" width="32" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M14 28 Q8 28 8 22 Q8 16 14 16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M14 34 Q8 34 8 40 Q8 46 14 46" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="28" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // 3 Akbal – Nacht / Dunkelheit
+  `<rect x="10" y="10" width="40" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M10 30 Q30 10 50 30 Q30 50 10 30Z" fill="currentColor" opacity="0.3"/>
+   <circle cx="22" cy="24" r="4" fill="currentColor"/>
+   <circle cx="38" cy="24" r="4" fill="currentColor"/>
+   <path d="M22 38 Q30 44 38 38" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 4 Kan – Mais / Netz
+  `<ellipse cx="30" cy="30" rx="20" ry="22" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M30 8 L30 52M10 30 L50 30M14 14 L46 46M46 14 L14 46" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+   <circle cx="30" cy="30" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="30" r="2" fill="currentColor"/>`,
+  // 5 Chicchan – Schlange
+  `<path d="M10 20 Q20 10 30 20 Q40 30 50 20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+   <path d="M10 30 Q20 20 30 30 Q40 40 50 30" fill="none" stroke="currentColor" stroke-width="2.5"/>
+   <path d="M10 40 Q20 30 30 40 Q40 50 50 40" fill="none" stroke="currentColor" stroke-width="2.5"/>
+   <circle cx="48" cy="18" r="3" fill="currentColor"/>
+   <circle cx="48" cy="28" r="3" fill="currentColor"/>`,
+  // 6 Cimi – Tod / Schädel
+  `<ellipse cx="30" cy="26" rx="16" ry="18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="38" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 34 L24 44 L30 46 L36 44 L38 34" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M24 44 L36 44" stroke="currentColor" stroke-width="1.5"/>`,
+  // 7 Manik – Hand
+  `<path d="M20 48 L20 20 Q20 14 26 14 Q32 14 32 20 L32 30" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+   <path d="M32 30 L32 18 Q32 13 37 13 Q42 13 42 18 L42 30" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M15 35 Q12 28 16 24 Q20 20 20 26" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 48 L42 48" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>`,
+  // 8 Lamat – Stern / Venus
+  `<path d="M30 8 L33 22 L47 18 L36 28 L47 38 L33 34 L30 48 L27 34 L13 38 L24 28 L13 18 L27 22 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="28" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // 9 Muluc – Wasser / Regen
+  `<path d="M30 10 Q42 20 42 32 Q42 46 30 50 Q18 46 18 32 Q18 20 30 10Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M24 32 Q30 26 36 32 Q30 38 24 32Z" fill="currentColor" opacity="0.4"/>
+   <path d="M22 42 Q26 46 30 44 Q34 46 38 42" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // 10 Oc – Hund
+  `<ellipse cx="30" cy="28" rx="18" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M16 16 Q12 8 18 8 Q22 8 20 14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M44 16 Q48 8 42 8 Q38 8 40 14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="23" cy="24" r="3" fill="currentColor"/>
+   <circle cx="37" cy="24" r="3" fill="currentColor"/>
+   <path d="M24 34 Q30 40 36 34" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 11 Chuen – Affe
+  `<ellipse cx="30" cy="26" rx="14" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="24" cy="22" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="36" cy="22" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M16 42 Q30 52 44 42" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 10 Q30 4 40 10" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 12 Eb – Weg / Zahn
+  `<rect x="12" y="10" width="36" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M12 22 L48 22M12 34 L48 34" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M24 10 L24 50M36 10 L36 50" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+   <circle cx="30" cy="28" r="4" fill="currentColor" opacity="0.4"/>`,
+  // 13 Ben – Rohr / Stab
+  `<path d="M30 8 L30 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+   <path d="M12 18 L48 18M12 30 L48 30M12 42 L48 42" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="30" r="3" fill="currentColor"/>`,
+  // 14 Ix – Jaguar
+  `<ellipse cx="30" cy="28" rx="18" ry="20" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="22" r="3" fill="currentColor"/>
+   <circle cx="38" cy="22" r="3" fill="currentColor"/>
+   <circle cx="26" cy="32" r="2" fill="currentColor" opacity="0.6"/>
+   <circle cx="34" cy="32" r="2" fill="currentColor" opacity="0.6"/>
+   <circle cx="30" cy="38" r="2" fill="currentColor" opacity="0.6"/>
+   <path d="M20 44 Q30 50 40 44" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 15 Men – Adler
+  `<path d="M10 35 Q20 20 30 18 Q40 20 50 35" fill="none" stroke="currentColor" stroke-width="2.5"/>
+   <path d="M10 35 Q15 48 30 48 Q45 48 50 35" fill="none" stroke="currentColor" stroke-width="2"/>
+   <ellipse cx="30" cy="26" rx="8" ry="10" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="26" cy="23" r="2.5" fill="currentColor"/>`,
+  // 16 Cib – Eule / Wachs
+  `<ellipse cx="30" cy="30" rx="18" ry="20" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M14 22 Q18 14 24 18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M46 22 Q42 14 36 18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="38" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="24" r="2" fill="currentColor"/>
+   <circle cx="38" cy="24" r="2" fill="currentColor"/>
+   <path d="M22 36 Q30 42 38 36" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 17 Caban – Erde / Bewegung
+  `<path d="M10 40 Q30 8 50 40 L50 50 L10 50 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 40 Q30 20 40 40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M10 50 L50 50" stroke="currentColor" stroke-width="3"/>
+   <circle cx="30" cy="34" r="4" fill="currentColor" opacity="0.5"/>`,
+  // 18 Etznab – Feuerstein / Spiegel
+  `<polygon points="30,8 52,30 30,52 8,30" fill="none" stroke="currentColor" stroke-width="2"/>
+   <line x1="8" y1="30" x2="52" y2="30" stroke="currentColor" stroke-width="1.5"/>
+   <line x1="30" y1="8" x2="30" y2="52" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="30" r="6" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // 19 Cauac – Regen / Sturm
+  `<path d="M15 14 Q30 8 45 14 Q52 24 46 36 Q40 48 30 50 Q20 48 14 36 Q8 24 15 14Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 22 Q30 18 40 22" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 30 L18 42 L26 36 L24 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+   <path d="M38 30 L42 42 L34 36 L36 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+  // 20 Ahau – Sonne / Herrscher
+  `<circle cx="30" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="30" r="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="30" r="5" fill="currentColor" opacity="0.5"/>
+   <path d="M30 8 L30 12M30 48 L30 52M8 30 L12 30M48 30 L52 30M13 13 L16 16M44 44 L47 47M47 13 L44 16M16 44 L13 47" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+];
+
+const HAAB_GLYPHS = [
+  // Pop – Matte
+  `<rect x="10" y="10" width="40" height="40" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M10 20 L50 20M10 30 L50 30M10 40 L50 40" stroke="currentColor" stroke-width="1"/>
+   <path d="M20 10 L20 50M30 10 L30 50M40 10 L40 50" stroke="currentColor" stroke-width="1"/>`,
+  // Uo – Frosch
+  `<ellipse cx="30" cy="32" rx="16" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="38" cy="20" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M14 44 Q18 50 22 46M38 46 Q42 50 46 44" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // Zip – Hirsch
+  `<ellipse cx="30" cy="34" rx="14" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 22 L18 10M22 22 L26 12M38 22 L42 10M38 22 L34 12" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 22 L38 22" stroke="currentColor" stroke-width="2"/>`,
+  // Zotz – Fledermaus
+  `<ellipse cx="30" cy="32" rx="12" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M18 26 Q10 16 12 10 Q18 14 20 22" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M42 26 Q50 16 48 10 Q42 14 40 22" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="25" cy="28" r="3" fill="currentColor"/>
+   <circle cx="35" cy="28" r="3" fill="currentColor"/>`,
+  // Tzec – Biene
+  `<ellipse cx="30" cy="30" rx="10" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 20 Q10 14 12 8" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M40 20 Q50 14 48 8" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M18 30 Q8 30 10 38" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M42 30 Q52 30 50 38" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // Xul – Hund
+  `<ellipse cx="30" cy="28" rx="16" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M16 18 Q12 10 18 10 Q22 10 20 16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M44 18 Q48 10 42 10 Q38 10 40 16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M24 34 Q30 40 36 34" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M30 42 L28 52M30 42 L32 52" stroke="currentColor" stroke-width="2"/>`,
+  // Yaxkin – Sonne (grün)
+  `<circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="30" cy="30" r="6" fill="currentColor" opacity="0.4"/>
+   <path d="M30 10 L30 14M30 46 L30 50M10 30 L14 30M46 30 L50 30" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>`,
+  // Mol – Wasser sammeln
+  `<path d="M30 10 Q44 20 44 34 Q44 48 30 50 Q16 48 16 34 Q16 20 30 10Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 32 Q30 26 38 32" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 40 Q30 46 38 40" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // Chen – Höhle
+  `<path d="M10 48 L10 28 Q10 10 30 10 Q50 10 50 28 L50 48" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M10 48 L50 48" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 48 L20 32 Q20 22 30 22 Q40 22 40 32 L40 48" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // Yax – Grün / Venus
+  `<path d="M30 8 L38 24 L54 24 L42 34 L46 50 L30 40 L14 50 L18 34 L6 24 L22 24 Z" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // Zac – Weiß / Frosch
+  `<ellipse cx="30" cy="30" rx="18" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 18 L16 10M40 18 L44 10" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="26" r="3" fill="currentColor"/>
+   <circle cx="38" cy="26" r="3" fill="currentColor"/>
+   <path d="M22 36 Q30 44 38 36" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  // Ceh – Roter Hirsch
+  `<ellipse cx="30" cy="34" rx="14" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 22 Q16 12 22 10 Q26 10 24 18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M40 22 Q44 12 38 10 Q34 10 36 18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 22 Q30 20 40 22" stroke="currentColor" stroke-width="2"/>`,
+  // Mac – Schildkröte
+  `<ellipse cx="30" cy="32" rx="18" ry="14" fill="none" stroke="currentColor" stroke-width="2.5"/>
+   <path d="M18 22 L14 14M42 22 L46 14M18 42 L14 50M42 42 L46 50" stroke="currentColor" stroke-width="2"/>
+   <ellipse cx="30" cy="32" rx="10" ry="7" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+  // Kankin – Hund + Totenschädel
+  `<ellipse cx="30" cy="26" rx="14" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="23" cy="22" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="37" cy="22" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M23 32 L25 44 L30 46 L35 44 L37 32" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M25 44 L35 44" stroke="currentColor" stroke-width="1.5"/>`,
+  // Muan – Eule
+  `<ellipse cx="30" cy="30" rx="16" ry="18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M16 20 Q18 12 24 16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M44 20 Q42 12 36 16" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="38" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="22" cy="24" r="2" fill="currentColor"/>
+   <circle cx="38" cy="24" r="2" fill="currentColor"/>`,
+  // Pax – Trommel
+  `<ellipse cx="30" cy="26" rx="18" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M12 26 L12 38 Q12 46 30 46 Q48 46 48 38 L48 26" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M20 46 L20 52M40 46 L40 52" stroke="currentColor" stroke-width="2"/>`,
+  // Kayab – Schildkröte (Mond)
+  `<circle cx="30" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M16 20 Q30 12 44 20" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <path d="M16 40 Q30 48 44 40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+   <circle cx="30" cy="30" r="3" fill="currentColor"/>`,
+  // Cumku – Drache
+  `<path d="M10 38 Q16 20 30 14 Q44 20 50 38 Q44 50 30 52 Q16 50 10 38Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="22" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <circle cx="38" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M22 38 Q30 44 38 38" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M26 14 L28 8M34 14 L32 8" stroke="currentColor" stroke-width="2"/>`,
+  // Wayeb – die 5 Unglückstage
+  `<path d="M30 8 L50 46 L10 46 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+   <path d="M30 18 L44 44 L16 44 Z" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+   <circle cx="30" cy="38" r="4" fill="currentColor" opacity="0.4"/>
+   <path d="M24 8 L36 8" stroke="currentColor" stroke-width="2"/>`,
+];
+
+function drawMayaGlyph(svgContent, color, size=52) {
+  return `<svg viewBox="0 0 60 60" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="color:${color};display:block">${svgContent}</svg>`;
+}
+
+// Maya Punkte-und-Balken Notation für Lange Zählung
+function mayaDotBar(n, color='var(--purple)') {
+  const bars = Math.floor(n / 5);
+  const dots = n % 5;
+  let svg = `<svg viewBox="0 0 40 ${Math.max(24, bars*8+12)}" width="32" height="${Math.max(20,bars*7+10)}" xmlns="http://www.w3.org/2000/svg">`;
+  for (let b = 0; b < bars; b++) {
+    svg += `<rect x="4" y="${4+b*9}" width="32" height="6" rx="2" fill="${color}" opacity="0.9"/>`;
+  }
+  const dy = bars * 9 + 4;
+  for (let d = 0; d < dots; d++) {
+    svg += `<circle cx="${8+d*9}" cy="${dy+5}" r="4" fill="${color}"/>`;
+  }
+  svg += '</svg>';
+  return svg;
+}
+
+function renderMaya() {
+  const l = localNow();
+  const md = getMayaDate(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  const tIdx = TZOLKIN_NAMES.indexOf(md.tzolkinName);
+  const hIdx = HAAB_MONTHS.indexOf(md.haabMonth);
+
+  // Haupt-Glyphe = aktuelles Tzolkin-Zeichen groß
+  document.getElementById('maya-main-glyph').innerHTML = drawMayaGlyph(TZOLKIN_GLYPHS[tIdx], 'var(--teal)', 56);
+  document.getElementById('maya-tzolkin-glyph-main').innerHTML = drawMayaGlyph(TZOLKIN_GLYPHS[tIdx], 'var(--teal)', 52);
+  document.getElementById('maya-haab-glyph-main').innerHTML = drawMayaGlyph(HAAB_GLYPHS[hIdx], 'var(--gold)', 52);
+
+  document.getElementById('maya-tzolkin-num').textContent = md.tzolkinNum;
+  document.getElementById('maya-tzolkin-name').textContent = md.tzolkinName;
+  document.getElementById('maya-haab-day').textContent = md.haabDay;
+  document.getElementById('maya-haab-month').textContent = md.haabMonth;
+  document.getElementById('maya-long-count').textContent = md.longCount;
+
+  // Punkte-und-Balken für Lange Zählung
+  const lc = [md.baktun, md.katun, md.tun, md.uinal, md.kin];
+  const lcNames = ['Baktun','Katun','Tun','Uinal','Kin'];
+  const lcColors = ['#9b7fe8','#7aa5f5','#4ecdc4','#e8c87a','#e07a5f'];
+  document.getElementById('maya-dots-bars').innerHTML = lc.map((v,i) =>
+    `<div style="text-align:center">${mayaDotBar(v % 20, lcColors[i])}</div>`
+  ).join('');
+  document.getElementById('maya-lc-labels').innerHTML = lc.map((v,i) =>
+    `<div style="font-size:9px;color:${lcColors[i]};text-align:center;width:32px">${lcNames[i]}</div>`
+  ).join('');
+
+  // Tzolkin Grid mit Glyphen
+  document.getElementById('maya-tzolkin-grid').innerHTML = TZOLKIN_NAMES.map((n, i) => {
+    const isCur = i === tIdx;
+    return `<div style="background:${isCur?'rgba(78,205,196,0.2)':'var(--surface2)'};border:0.5px solid ${isCur?'rgba(78,205,196,0.5)':'var(--border)'};border-radius:10px;padding:6px;text-align:center">
+      <div style="margin:0 auto 4px;color:${isCur?'var(--teal)':'var(--text3)'}">${drawMayaGlyph(TZOLKIN_GLYPHS[i], isCur?'var(--teal)':'var(--text3)', 38)}</div>
+      <div style="font-size:9px;color:${isCur?'var(--teal)':'var(--text2)'};font-weight:${isCur?600:400};line-height:1.2">${n}</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:1px">${TZOLKIN_ICONS[i]}</div>
+    </div>`;
+  }).join('');
+
+  // Haab Grid mit Glyphen
+  document.getElementById('maya-haab-grid').innerHTML = HAAB_MONTHS.map((n, i) => {
+    const isCur = i === hIdx;
+    return `<div style="background:${isCur?'rgba(232,200,122,0.2)':'var(--surface2)'};border:0.5px solid ${isCur?'rgba(232,200,122,0.5)':'var(--border)'};border-radius:10px;padding:6px;text-align:center">
+      <div style="margin:0 auto 4px;color:${isCur?'var(--gold)':'var(--text3)'}">${drawMayaGlyph(HAAB_GLYPHS[i], isCur?'var(--gold)':'var(--text3)', 38)}</div>
+      <div style="font-size:9px;color:${isCur?'var(--gold)':'var(--text2)'};font-weight:${isCur?600:400};line-height:1.2">${n}</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:1px">${HAAB_DAYS[i]} T.</div>
+    </div>`;
+  }).join('');
+}
+
+// ── INDISCHE KALENDER ─────────────────────────────────────────────────────────
+
+// --- GEMEINSAME DATEN ---
+const INDIAN_RITU = [
+  {name:'Vasanta',  de:'Frühling',    icon:'🌸', months:'Chaitra–Vaishakha',  greg:'März–Mai'},
+  {name:'Grishma',  de:'Sommer',      icon:'☀️', months:'Jyeshtha–Ashadha',   greg:'Mai–Jul'},
+  {name:'Varsha',   de:'Regenzeit',   icon:'🌧', months:'Shravana–Bhadrapada',greg:'Jul–Sep'},
+  {name:'Sharad',   de:'Herbst',      icon:'🍂', months:'Ashvina–Kartika',    greg:'Sep–Nov'},
+  {name:'Hemanta',  de:'Frühwinter',  icon:'🌾', months:'Margashirsha–Pausha',greg:'Nov–Jan'},
+  {name:'Shishira', de:'Winter',      icon:'❄️', months:'Magha–Phalguna',     greg:'Jan–Mär'},
+];
+
+// --- SAKA KALENDER ---
+// Offizieller indischer Nationalkalender (seit 22. März 1957)
+// Neujahr: 22. März (Schaltjahr: 21. März)
+// Jahr = gregorianisches Jahr - 78 (vor 22. März) oder - 79 (nach 22. März)
+// Monate: Chaitra 30/31 Tage, dann 5×31, 6×30
+const SAKA_MONTHS = [
+  {name:'Chaitra',      de:'Chaitra',     days:[30,31]}, // 30 normal, 31 Schaltjahr
+  {name:'Vaishakha',    de:'Vaishakha',   days:[31,31]},
+  {name:'Jyaishtha',    de:'Jyaishtha',   days:[31,31]},
+  {name:'Ashadha',      de:'Ashadha',     days:[31,31]},
+  {name:'Shravana',     de:'Shravana',    days:[31,31]},
+  {name:'Bhadra',       de:'Bhadra',      days:[31,31]},
+  {name:'Asvina',       de:'Asvina',      days:[30,30]},
+  {name:'Kartika',      de:'Kartika',     days:[30,30]},
+  {name:'Agrahayana',   de:'Agrahayana',  days:[30,30]},
+  {name:'Pausha',       de:'Pausha',      days:[30,30]},
+  {name:'Magha',        de:'Magha',       days:[30,30]},
+  {name:'Phalguna',     de:'Phalguna',    days:[30,30]},
+];
+const SAKA_HOLIDAYS = [
+  {greg:{m:1,d:26},  name:'Tag der Republik',       note:'gesetzl. Feiertag'},
+  {greg:{m:3,d:22},  name:'Saka-Neujahr (Chaitra 1)',note:'Nationalfeiertag', important:true},
+  {greg:{m:8,d:15},  name:'Unabhängigkeitstag',     note:'gesetzl. Feiertag'},
+  {greg:{m:10,d:2},  name:'Gandhi Jayanti',          note:'gesetzl. Feiertag'},
+  {greg:{m:10,d:24}, name:'Dussehra (ca.)',          note:'Datum variiert'},
+  {greg:{m:11,d:1},  name:'Diwali (ca.)',            note:'Datum variiert nach Mondkalender', important:true},
+];
+
+function isGregorianLeap(y) { return (y%4===0&&y%100!==0)||y%400===0; }
+
+function gregorianToSaka(gY, gM, gD) {
+  const leap = isGregorianLeap(gY);
+  // Neujahr ist 22. März (oder 21. März in Schaltjahr)
+  const nyDay = leap ? 21 : 22;
+  const afterNY = gM > 3 || (gM === 3 && gD >= nyDay);
+  const sakaYear = afterNY ? gY - 78 : gY - 79;
+
+  // Tage seit Neujahr (0-basiert)
+  const nyDate = new Date(Date.UTC(gY, 2, nyDay)); // März
+  const today  = new Date(Date.UTC(gY, gM-1, gD));
+  let daysSinceNY = Math.round((today - nyDate) / 86400000);
+  if (daysSinceNY < 0) {
+    const prevLeap = isGregorianLeap(gY-1);
+    const prevNY = new Date(Date.UTC(gY-1, 2, prevLeap?21:22));
+    daysSinceNY = Math.round((today - prevNY) / 86400000);
+  }
+
+  let month = 0, day = daysSinceNY;
+  for (let i = 0; i < 12; i++) {
+    const md = SAKA_MONTHS[i].days[leap&&i===0?1:0];
+    if (day < md) { month = i; day = day + 1; break; }
+    day -= md;
+  }
+  const ritu = INDIAN_RITU[Math.floor(month / 2)];
+  return { year: sakaYear, month, day, monthName: SAKA_MONTHS[month].name, ritu };
+}
+
+function renderSaka() {
+  const l = localNow();
+  const s = gregorianToSaka(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  document.getElementById('saka-day').textContent = s.day;
+  document.getElementById('saka-month').textContent = s.monthName;
+  document.getElementById('saka-year').textContent = `${s.year} Saka`;
+  document.getElementById('saka-season').textContent = `Jahreszeit: ${s.ritu.name} (${s.ritu.de}) ${s.ritu.icon}`;
+
+  // Ritu Grid
+  const curRituIdx = INDIAN_RITU.indexOf(s.ritu);
+  document.getElementById('saka-ritu-grid').innerHTML = INDIAN_RITU.map((r,i) => {
+    const cur = i === curRituIdx;
+    return `<div style="background:${cur?'rgba(232,120,80,0.18)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(232,120,80,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px">
+      <div style="font-size:16px">${r.icon}</div>
+      <div style="font-size:12px;color:${cur?'#e87850':'var(--text)'};font-weight:${cur?500:400};margin-top:3px">${r.name}</div>
+      <div style="font-size:10px;color:var(--text3)">${r.de} · ${r.greg}</div>
+    </div>`;
+  }).join('');
+
+  // Feiertage
+  const gY = l.getUTCFullYear();
+  const today = todayStr();
+  document.getElementById('saka-holidays').innerHTML = SAKA_HOLIDAYS.map(h => {
+    const d = new Date(Date.UTC(gY, h.greg.m-1, h.greg.d));
+    const ds = d.toISOString().slice(0,10);
+    const isPast = ds < today;
+    return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <div>
+        <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
+        ${h.note?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${h.note}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// --- VIKRAM SAMVAT ---
+const VS_MONTHS = [
+  'Chaitra','Vaishakha','Jyeshtha','Ashadha','Shravana',
+  'Bhadrapada','Ashwin','Kartik','Margashirsha','Pausha','Magha','Phalguna'
+];
+const VS_MONTHS_HI = [
+  'चैत्र','वैशाख','ज्येष्ठ','आषाढ','श्रावण',
+  'भाद्रपद','आश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'
+];
+const VS_HOLIDAYS = [
+  {name:'Makar Sankranti', note:'Sonnenwendfest',         greg:{m:1,d:14}},
+  {name:'Vasant Panchami', note:'Göttin Saraswati',       greg:{m:2,d:2}},
+  {name:'Holi (ca.)',      note:'Frühlingsfest',          greg:{m:3,d:14}, important:true},
+  {name:'Ram Navami',      note:'Geburt Ramas',           greg:{m:4,d:6}},
+  {name:'Hanuman Jayanti', note:'Geburt Hanumans',        greg:{m:4,d:12}},
+  {name:'Guru Purnima',    note:'Verehrung des Lehrers',  greg:{m:7,d:10}},
+  {name:'Raksha Bandhan',  note:'Geschwisterfest',        greg:{m:8,d:9}},
+  {name:'Janmashtami',     note:'Geburt Krishnas',        greg:{m:8,d:16}, important:true},
+  {name:'Navratri (Beginn)',note:'9 Nächte-Fest',         greg:{m:10,d:2}, important:true},
+  {name:'Dussehra',        note:'Sieg des Guten',         greg:{m:10,d:12}, important:true},
+  {name:'Diwali (ca.)',    note:'Lichterfest',            greg:{m:11,d:1}, important:true},
+  {name:'Chhath Puja',     note:'Sonnenverehrung',        greg:{m:11,d:5}},
+];
+
+function gregorianToVikram(gY, gM, gD) {
+  // Vikram Samvat = gregorianisch + 56 (vor Chaitra, ~März/April) oder +57
+  // Neujahr: 1. Chaitra = ca. 22. März (Nordindien) oder Kartik (Gujarat)
+  // Vereinfacht: VS = gY + 57 (vor April) / gY + 56 (ab April)
+  const vsYear = (gM < 4 || (gM===4&&gD<14)) ? gY + 56 : gY + 57;
+
+  // Monat: Näherung (1 Lunarmonat ≈ synodischer Monat beginnend Chaitra ≈ März)
+  // Tagesnäherung über Mondphase
+  const moonData = moonCalc(new Date(Date.UTC(gY, gM-1, gD)));
+  const lunarDay = Math.floor(parseFloat(moonData.age));
+  const paksha = lunarDay < 15 ? 'Shukla Paksha (zunehmend)' : 'Krishna Paksha (abnehmend)';
+  const tithi = lunarDay < 15 ? lunarDay + 1 : lunarDay - 14;
+  const tithiNames = ['Pratipada','Dvitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dvadashi','Trayodashi','Chaturdashi','Purnima/Amavasya'];
+  const tithiName = tithiNames[Math.min(tithi-1, 14)];
+
+  // Monat: grob aus dem gregorianischen Datum
+  const monthIdx = ((gM + 9) % 12); // Chaitra ≈ März → idx 0
+  return { year: vsYear, monthIdx, monthName: VS_MONTHS[monthIdx], monthHi: VS_MONTHS_HI[monthIdx], paksha, tithi, tithiName };
+}
+
+function renderVikram() {
+  const l = localNow();
+  const v = gregorianToVikram(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  const moonData = moonCalc(new Date());
+  document.getElementById('vs-day').textContent = moonData.age;
+  document.getElementById('vs-month').textContent = v.monthName;
+  document.getElementById('vs-year').textContent = `${v.year} VS`;
+  document.getElementById('vs-paksha').textContent = v.paksha;
+  document.getElementById('vs-tithi').textContent = `Tithi ${v.tithi}: ${v.tithiName}`;
+
+  const gY = l.getUTCFullYear();
+  const today = todayStr();
+  document.getElementById('vs-holidays').innerHTML = VS_HOLIDAYS.map(h => {
+    const d = new Date(Date.UTC(gY, h.greg.m-1, h.greg.d));
+    const ds = d.toISOString().slice(0,10);
+    const isPast = ds < today;
+    return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <div>
+        <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
+        ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('vs-months-grid').innerHTML = VS_MONTHS.map((mn,i) => {
+    const cur = i === v.monthIdx;
+    return `<div style="background:${cur?'rgba(255,153,0,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(255,153,0,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px">
+      <div style="font-size:12px;color:${cur?'#ff9900':'var(--text)'};font-weight:${cur?500:400}">${mn}</div>
+      <div style="font-size:11px;color:var(--text3);font-family:serif">${VS_MONTHS_HI[i]}</div>
+    </div>`;
+  }).join('');
+}
+
+// --- BENGALI KALENDER ---
+const BN_MONTHS = ['Boishakh','Jyoishtho','Asharh','Srabon','Bhadro','Ashshin','Kartik','Ogrohayon','Poush','Magh','Falgun','Chaitra'];
+const BN_MONTHS_BN = ['বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন','চৈত্র'];
+// Bengali Neujahr: 14. April (meist), Jahresbeginn = gY - 593 oder -594
+const BN_HOLIDAYS = [
+  {name:'Pohela Boishakh (Bengali-Neujahr)', greg:{m:4,d:14}, important:true},
+  {name:'Rabindra Jayanti (Tagore)',         greg:{m:5,d:9}},
+  {name:'Eid ul-Fitr (ca.)',                 greg:{m:4,d:10}, note:'Datum variiert'},
+  {name:'Durga Puja',                        greg:{m:10,d:2}, important:true},
+  {name:'Kali Puja / Diwali',                greg:{m:11,d:1}, important:true},
+  {name:'Poush Mela',                        greg:{m:12,d:23}},
+];
+
+function gregorianToBengali(gY, gM, gD) {
+  // Bengali Neujahr: 14. April
+  const afterNY = gM > 4 || (gM===4 && gD >= 14);
+  const bnYear = afterNY ? gY - 593 : gY - 594;
+  // Monat: Boishakh beginnt 14. April
+  const nyDate = new Date(Date.UTC(gY, 3, 14));
+  const today  = new Date(Date.UTC(gY, gM-1, gD));
+  let daysSinceNY = Math.round((today - nyDate) / 86400000);
+  if (daysSinceNY < 0) {
+    daysSinceNY = Math.round((today - new Date(Date.UTC(gY-1, 3, 14))) / 86400000);
+  }
+  // Bengali Monate: Boishakh–Bhadro 31 Tage, rest 30, Chaitra 29/30
+  const daysInMonth = [31,31,31,31,31,30,30,30,30,30,30,isGregorianLeap(gY)?30:29];
+  let month = 0, day = daysSinceNY;
+  for (let i = 0; i < 12; i++) {
+    if (day < daysInMonth[i]) { month = i; day = day + 1; break; }
+    day -= daysInMonth[i];
+  }
+  const ritu = INDIAN_RITU[Math.floor(month / 2)];
+  return { year: bnYear, month, day, monthName: BN_MONTHS[month], monthBn: BN_MONTHS_BN[month], ritu };
+}
+
+function renderBengali() {
+  const l = localNow();
+  const b = gregorianToBengali(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  document.getElementById('bn-day').textContent = b.day;
+  document.getElementById('bn-month').textContent = b.monthName;
+  document.getElementById('bn-year').textContent = `${b.year} BS`;
+  document.getElementById('bn-bengali').textContent = `${b.day} ${b.monthBn} ${b.year}`;
+
+  const gY = l.getUTCFullYear();
+  const today = todayStr();
+  document.getElementById('bn-holidays').innerHTML = BN_HOLIDAYS.map(h => {
+    const d = new Date(Date.UTC(gY, h.greg.m-1, h.greg.d));
+    const ds = d.toISOString().slice(0,10);
+    const isPast = ds < today;
+    return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <div>
+        <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
+        ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('bn-ritu-grid').innerHTML = INDIAN_RITU.map((r,i) => {
+    const cur = i === INDIAN_RITU.indexOf(b.ritu);
+    return `<div style="background:${cur?'rgba(220,80,120,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(220,80,120,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px">
+      <div style="font-size:16px">${r.icon}</div>
+      <div style="font-size:12px;color:${cur?'#dc5078':'var(--text)'};font-weight:${cur?500:400};margin-top:3px">${r.name}</div>
+      <div style="font-size:10px;color:var(--text3)">${r.de}</div>
+    </div>`;
+  }).join('');
+}
+
+// --- NAKSHATRAS ---
+const NAKSHATRAS = [
+  {name:'Ashwini',    de:'Ashwini',    icon:'🐴', deity:'Ashwini Kumaras',  quality:'Leicht, schnell',     symbol:'Pferdekopf'},
+  {name:'Bharani',    de:'Bharani',    icon:'🔺', deity:'Yama',             quality:'Heftig, grausam',     symbol:'Yoni'},
+  {name:'Krittika',   de:'Krittika',   icon:'🔥', deity:'Agni',             quality:'Gemischt',            symbol:'Messer'},
+  {name:'Rohini',     de:'Rohini',     icon:'🐂', deity:'Brahma',           quality:'Fest, beständig',     symbol:'Ochsenkarren'},
+  {name:'Mrigashira', de:'Mrigashira', icon:'🦌', deity:'Soma/Chandra',     quality:'Sanft, mild',         symbol:'Hirschkopf'},
+  {name:'Ardra',      de:'Ardra',      icon:'💎', deity:'Rudra',            quality:'Scharf, hart',        symbol:'Edelstein'},
+  {name:'Punarvasu',  de:'Punarvasu',  icon:'🏹', deity:'Aditi',            quality:'Beweglich',           symbol:'Bogen & Köcher'},
+  {name:'Pushya',     de:'Pushya',     icon:'🌸', deity:'Brihaspati',       quality:'Leicht, günstig',     symbol:'Lotusblüte'},
+  {name:'Ashlesha',   de:'Ashlesha',   icon:'🐍', deity:'Nagas/Serpenten',  quality:'Scharf, hart',        symbol:'Schlange'},
+  {name:'Magha',      de:'Magha',      icon:'👑', deity:'Pitris (Ahnen)',   quality:'Heftig, grausam',     symbol:'Thron'},
+  {name:'Purva Phalguni',de:'P.Phalguni',icon:'🛏', deity:'Bhaga',          quality:'Wütend, zerstörerisch',symbol:'Vordere Bettbeine'},
+  {name:'Uttara Phalguni',de:'U.Phalguni',icon:'🌿',deity:'Aryaman',        quality:'Fest, beständig',     symbol:'Hintere Bettbeine'},
+  {name:'Hasta',      de:'Hasta',      icon:'✋', deity:'Savitar/Surya',    quality:'Leicht, schnell',     symbol:'Hand'},
+  {name:'Chitra',     de:'Chitra',     icon:'💫', deity:'Vishwakarma',      quality:'Sanft, mild',         symbol:'Perle'},
+  {name:'Swati',      de:'Swati',      icon:'🌬', deity:'Vayu',             quality:'Beweglich',           symbol:'Junger Trieb'},
+  {name:'Vishakha',   de:'Vishakha',   icon:'⚡', deity:'Indra & Agni',    quality:'Gemischt',            symbol:'Triumphbogen'},
+  {name:'Anuradha',   de:'Anuradha',   icon:'🌺', deity:'Mitra',            quality:'Sanft, mild',         symbol:'Lotus'},
+  {name:'Jyeshtha',   de:'Jyeshtha',   icon:'💮', deity:'Indra',            quality:'Scharf, hart',        symbol:'Talisman'},
+  {name:'Mula',       de:'Mula',       icon:'🌿', deity:'Niritti/Kali',     quality:'Scharf, hart',        symbol:'Löwenschwanz'},
+  {name:'Purva Ashadha',de:'P.Ashadha',icon:'🌊', deity:'Apas (Wasser)',    quality:'Heftig, grausam',     symbol:'Elefantenstoßzahn'},
+  {name:'Uttara Ashadha',de:'U.Ashadha',icon:'⚔', deity:'Vishvedevas',    quality:'Fest, beständig',     symbol:'Elefantenstoßzahn'},
+  {name:'Shravana',   de:'Shravana',   icon:'👂', deity:'Vishnu',           quality:'Beweglich',           symbol:'Ohr'},
+  {name:'Dhanishtha', de:'Dhanishtha', icon:'🥁', deity:'Ashta Vasus',      quality:'Beweglich',           symbol:'Trommel'},
+  {name:'Shatabhisha',de:'Shatabhisha',icon:'💊', deity:'Varuna',           quality:'Beweglich',           symbol:'Leerer Kreis'},
+  {name:'Purva Bhadrapada',de:'P.Bhadrapada',icon:'⚰',deity:'Ajaikapada', quality:'Heftig, grausam',     symbol:'Schwert'},
+  {name:'Uttara Bhadrapada',de:'U.Bhadrapada',icon:'🐟',deity:'Ahir Budhnya',quality:'Fest, beständig',  symbol:'Zwillinge'},
+  {name:'Revati',     de:'Revati',     icon:'🐟', deity:'Pushan',           quality:'Sanft, mild',         symbol:'Fisch'},
+];
+
+function getMoonLongitude(date) {
+  // Näherung der Mondlänge (ekliptikale Länge) in Grad
+  const T = (date / 86400000 - 10957.5) / 36525;
+  const L0 = 218.316 + 13.176396 * (date / 86400000 - 10957.5);
+  const M  = 134.963 + 13.064993 * (date / 86400000 - 10957.5);
+  const F  = 93.272  + 13.229350 * (date / 86400000 - 10957.5);
+  const Mr = M * Math.PI / 180, Fr = F * Math.PI / 180;
+  const lon = L0 + 6.289 * Math.sin(Mr) - 1.274 * Math.sin(2*Mr-2*Fr)
+    + 0.658 * Math.sin(2*Fr) - 0.214 * Math.sin(2*Mr) - 0.11 * Math.sin(Mr);
+  return ((lon % 360) + 360) % 360;
+}
+
+function getNakshatra(date) {
+  const lon = getMoonLongitude(date);
+  // 27 Nakshatras à 13°20' = 360°
+  const idx = Math.floor(lon / (360/27));
+  const degInNK = lon - idx * (360/27);
+  const pct = Math.round(degInNK / (360/27) * 100);
+  return { idx, nakshatra: NAKSHATRAS[idx], percent: pct, longitude: lon.toFixed(2) };
+}
+
+function renderNakshatra() {
+  const now = new Date();
+  const nk = getNakshatra(now);
+  const n = nk.nakshatra;
+  document.getElementById('nk-icon').textContent = n.icon;
+  document.getElementById('nk-name').textContent = n.name;
+  document.getElementById('nk-deity').textContent = `Gottheit: ${n.deity}`;
+  document.getElementById('nk-quality').textContent = `Qualität: ${n.quality} · Symbol: ${n.symbol}`;
+  document.getElementById('nk-num').textContent = `${nk.idx+1}. Nakshatra · Mondlänge: ${nk.longitude}° · ${nk.percent}% durchlaufen`;
+
+  document.getElementById('nk-grid').innerHTML = NAKSHATRAS.map((n2,i) => {
+    const cur = i === nk.idx;
+    return `<div style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:${cur?'rgba(180,120,255,0.2)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(180,120,255,0.5)':'var(--border)'}">
+      <span style="font-size:16px;flex-shrink:0">${n2.icon}</span>
+      <div style="min-width:0">
+        <div style="font-size:11px;color:${cur?'#b478ff':'var(--text2)'};font-weight:${cur?500:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i+1}. ${n2.name}</div>
+        <div style="font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${n2.deity}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+// ── JAPANISCHER KALENDER ──────────────────────────────────────────────────────
+const JP_ERAS=[
+  {name:'Meiji',  kanji:'明治',start:new Date('1868-01-25'),end:new Date('1912-07-30')},
+  {name:'Taisho', kanji:'大正',start:new Date('1912-07-30'),end:new Date('1926-12-25')},
+  {name:'Showa',  kanji:'昭和',start:new Date('1926-12-25'),end:new Date('1989-01-08')},
+  {name:'Heisei', kanji:'平成',start:new Date('1989-01-08'),end:new Date('2019-05-01')},
+  {name:'Reiwa',  kanji:'令和',start:new Date('2019-05-01'),end:null},
+];
+const JP_HOLIDAYS=[
+  {m:1,d:1,name:'Neujahr (Shōgatsu)',jp:'正月'},{m:2,d:11,name:'Nationalfeiertag',jp:'建国記念の日'},
+  {m:2,d:23,name:'Geburtstag des Kaisers',jp:'天皇誕生日'},{m:3,d:20,name:'Frühlingsäquinoktium',jp:'春分の日'},
+  {m:4,d:29,name:'Showa-Tag',jp:'昭和の日'},{m:5,d:3,name:'Verfassungstag',jp:'憲法記念日'},
+  {m:5,d:4,name:'Tag des Grüns',jp:'みどりの日'},{m:5,d:5,name:'Kindertag',jp:'こどもの日'},
+  {m:8,d:11,name:'Tag des Berges',jp:'山の日'},{m:11,d:3,name:'Kulturtag',jp:'文化の日'},
+  {m:11,d:23,name:'Tag der Arbeit',jp:'勤労感謝の日'},
+];
+function getJapaneseEra(d){for(let i=JP_ERAS.length-1;i>=0;i--){if(d>=JP_ERAS[i].start)return{era:JP_ERAS[i],year:d.getFullYear()-JP_ERAS[i].start.getFullYear()+1};}return{era:JP_ERAS[0],year:1};}
+function renderJapanese(){
+  const l=localNow();const d=new Date(Date.UTC(l.getUTCFullYear(),l.getUTCMonth(),l.getUTCDate()));
+  const{era,year}=getJapaneseEra(d);
+  document.getElementById('jp-kanji').textContent=era.kanji;
+  document.getElementById('jp-era-name').textContent=era.name;
+  document.getElementById('jp-year').textContent=`${year} 年`;
+  document.getElementById('jp-date-full').textContent=`${era.name} ${year}年 ${l.getUTCMonth()+1}月 ${l.getUTCDate()}日 (${l.getUTCFullYear()} n.Chr.)`;
+  document.getElementById('jp-eras-list').innerHTML=JP_ERAS.map(e=>{const cur=!e.end;const sy=e.start.getFullYear();const ey=e.end?e.end.getFullYear():l.getUTCFullYear();return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><span style="font-size:20px;width:36px;text-align:center;flex-shrink:0">${e.kanji}</span><div style="flex:1"><div style="font-size:13px;color:${cur?'#dc3232':'var(--text)'};font-weight:${cur?500:400}">${e.name}${cur?' (aktuell)':''}</div><div style="font-size:11px;color:var(--text3)">${sy}–${e.end?ey:'heute'}</div></div></div>`;}).join('');
+  const gY=l.getUTCFullYear(),today=todayStr();
+  document.getElementById('jp-holidays').innerHTML=JP_HOLIDAYS.map(h=>{const d2=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d2.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${DE_MONTHS[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:var(--text)">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.jp}</div></div></div>`;}).join('');
+}
+
+// ── BUDDHISTISCHER KALENDER ───────────────────────────────────────────────────
+const BE_THAI_MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const BE_HOLIDAYS=[
+  {m:4,d:13,name:'Songkran (Thai-Neujahr)',note:'Wasserfest',important:true},
+  {m:5,d:5,name:'Vesak / Visakha Bucha',note:'Geburt, Erleuchtung & Tod Buddhas',important:true},
+  {m:7,d:28,name:'Asalha Bucha',note:'Erste Predigt Buddhas'},
+  {m:12,d:5,name:'Nationaltag Thailand',note:'Geburtstag König Rama IX.'},
+];
+function renderBuddhist(){
+  const l=localNow();const gY=l.getUTCFullYear();const beY=gY+543;
+  document.getElementById('be-year').textContent=beY;
+  document.getElementById('be-date').textContent=`${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${beY} BE`;
+  document.getElementById('be-thai').textContent=`${l.getUTCDate()} ${BE_THAI_MONTHS[l.getUTCMonth()]} พ.ศ. ${beY}`;
+  document.getElementById('be-greg-inline').textContent=gY;
+  document.getElementById('be-be-inline').textContent=beY;
+  const today=todayStr();
+  document.getElementById('be-holidays').innerHTML=BE_HOLIDAYS.map(h=>{const d=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${DE_MONTHS[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;}).join('');
+}
+
+// ── 13-MOND-KALENDER ──────────────────────────────────────────────────────────
+const M13_MONTHS=[
+  {n:1,name:'Magnetischer Mond',animal:'Fledermaus',quality:'Vereinen',color:'Rot',icon:'🦇'},
+  {n:2,name:'Mondner Mond',animal:'Skorpion',quality:'Herausfordern',color:'Weiß',icon:'🦂'},
+  {n:3,name:'Elektrischer Mond',animal:'Hirsch',quality:'Aktivieren',color:'Blau',icon:'🦌'},
+  {n:4,name:'Selbstwerdungs-Mond',animal:'Eule',quality:'Definieren',color:'Gelb',icon:'🦉'},
+  {n:5,name:'Strahlender Mond',animal:'Pfau',quality:'Befähigen',color:'Rot',icon:'🦚'},
+  {n:6,name:'Rhythmischer Mond',animal:'Eidechse',quality:'Organisieren',color:'Weiß',icon:'🦎'},
+  {n:7,name:'Resonanter Mond',animal:'Affe',quality:'Abstimmen',color:'Blau',icon:'🐒'},
+  {n:8,name:'Galaktischer Mond',animal:'Falke',quality:'Harmonisieren',color:'Gelb',icon:'🦅'},
+  {n:9,name:'Sonnenmond',animal:'Jaguar',quality:'Verwirklichen',color:'Rot',icon:'🐆'},
+  {n:10,name:'Planetarer Mond',animal:'Hund',quality:'Vollenden',color:'Weiß',icon:'🐕'},
+  {n:11,name:'Spektraler Mond',animal:'Schlange',quality:'Auflösen',color:'Blau',icon:'🐍'},
+  {n:12,name:'Kristalliner Mond',animal:'Kaninchen',quality:'Widmen',color:'Gelb',icon:'🐇'},
+  {n:13,name:'Kosmischer Mond',animal:'Schildkröte',quality:'Transzendieren',color:'Rot',icon:'🐢'},
+];
+function get13MoonDate(gY,gM,gD){const ys=new Date(Date.UTC(gY,6,26));const td=new Date(Date.UTC(gY,gM-1,gD));let doy=Math.floor((td-ys)/86400000);let my=gY;if(doy<0){const ps=new Date(Date.UTC(gY-1,6,26));doy=Math.floor((td-ps)/86400000);my=gY-1;}if(doy>=364)return{moon:0,day:doy-363,moonYear:my,outOfTime:true};return{moon:Math.floor(doy/28),day:(doy%28)+1,moonYear:my,outOfTime:false};}
+function renderMoon13(){
+  const l=localNow();const r=get13MoonDate(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  const mo=M13_MONTHS[r.moon]||M13_MONTHS[0];
+  document.getElementById('m13-day').textContent=r.outOfTime?'★':r.day;
+  document.getElementById('m13-month').textContent=r.outOfTime?'Tag aus der Zeit':mo.name;
+  document.getElementById('m13-year').textContent=`${r.moonYear} G.A.`;
+  document.getElementById('m13-kin').textContent=r.outOfTime?'Grüner Tag · 25. Juli':`${mo.icon} ${mo.animal} · ${mo.quality} · ${mo.color}`;
+  document.getElementById('m13-months-grid').innerHTML=M13_MONTHS.map((m,i)=>{const cur=i===r.moon&&!r.outOfTime;return`<div style="background:${cur?'rgba(160,100,255,0.2)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(160,100,255,0.5)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:16px">${m.icon}</div><div style="font-size:11px;color:${cur?'#a064ff':'var(--text)'};font-weight:${cur?500:400};margin-top:3px">${m.n}. ${m.name.split(' ')[0]}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${m.animal} · ${m.color}</div></div>`;}).join('');
+}
+
+// ── PERSISCHER KALENDER ───────────────────────────────────────────────────────
+const PER_MONTHS=['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'];
+const PER_MONTHS_FA=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function isJalaliLeap(jy){const br=[-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];let jp=br[0],leapJ=-14;for(let i=1;i<br.length;i++){const jp2=br[i];const jump=jp2-jp;if(jy<jp2){const n=jy-jp;leapJ+=Math.floor(n/33)*8+Math.floor((n%33+3)/4);break;}leapJ+=Math.floor(jump/33)*8+Math.floor((jump%33+3)/4);jp=jp2;}const n=(jy-(-61))%2820;return(n*8+29)%33<8;}
+function gregorianToJalali(gy,gm,gd){
+  const leap=(gy%4===0&&(gy%100!==0||gy%400===0));
+  const gd_no=365*(gy-1)+Math.floor((gy+3)/4)-Math.floor((gy+99)/100)+Math.floor((gy+399)/400);
+  const gdays=[0,31,59+(leap?1:0),90,120,151,181,212,243,273,304,334];
+  const days=gd_no+gdays[gm-1]+gd-226895;
+  let jy=474+Math.floor((days-474*365-682)/(2820*365+683))*2820;
+  const r=days-(jy*365+Math.floor((jy+474)*682/2816)+226895-1029983);
+  jy+=Math.floor((r-1)/365.24219879);
+  const r2=days-(jy*365+Math.floor((jy+474)*682/2816)+226895-1029983);
+  const jmd=[0,31,31,31,31,31,31,30,30,30,30,30,isJalaliLeap(jy)?30:29];
+  let jm=1,rem=r2;for(let i=1;i<=12;i++){if(rem<=jmd[i]){jm=i;break;}rem-=jmd[i];}
+  return{year:jy,month:jm,day:rem<1?1:rem};
+}
+function renderPersian(){
+  const l=localNow();const j=gregorianToJalali(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('per-day').textContent=j.day;
+  document.getElementById('per-month').textContent=PER_MONTHS[j.month-1];
+  document.getElementById('per-year').textContent=`${j.year} SH`;
+  document.getElementById('per-farsi').textContent=`${j.day} ${PER_MONTHS_FA[j.month-1]} ${j.year}`;
+  document.getElementById('per-months-grid').innerHTML=PER_MONTHS.map((mn,i)=>{const cur=i===j.month-1;const days=i<6?31:i<11?30:29;const sIcons=['🌸','🌸','🌸','☀️','☀️','☀️','🍂','🍂','🍂','❄️','❄️','❄️'];return`<div style="background:${cur?'rgba(0,180,120,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(0,180,120,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:10px;color:var(--text3)">${sIcons[i]} ${i+1}.</div><div style="font-size:12px;color:${cur?'#00b478':'var(--text)'};font-weight:${cur?500:400};margin-top:2px">${mn}</div><div style="font-size:10px;color:var(--text3);direction:rtl;font-family:serif">${PER_MONTHS_FA[i]}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${days} Tage</div></div>`;}).join('');
+  const nowruz=new Date(Date.UTC(l.getUTCFullYear(),2,20));
+  const yalda=new Date(Date.UTC(l.getUTCFullYear(),11,22));
+  const today=todayStr();
+  const perH=[{d:nowruz,name:'Nowruz – Persisches Neujahr',fa:'نوروز',important:true},{d:yalda,name:'Yalda-Nacht (Wintersonnenwende)',fa:'شب یلدا',important:true}];
+  document.getElementById('per-holidays').innerHTML=perH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${DE_MONTHS[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:500">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.fa}</div></div></div>`;}).join('');
+}
+
+// ── ZOROASTRISCHER KALENDER ───────────────────────────────────────────────────
+const ZORO_MONTHS=['Farvardin','Ardibehesht','Khordad','Tir','Amordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand'];
+const ZORO_DAYS=['Hormoz','Bahman','Ardibehesht','Shahrivar','Espandarmaz','Khordad','Amordad','Daepadar','Azar','Aban','Khorshed','Mah','Tir','Gosh','Daepmehr','Mehr','Srosh','Rashn','Farvardin','Vahram','Ram','Bad','Daepdin','Din','Ard','Ashtad','Asman','Zamyad','Mahraspand','Aneran'];
+function gregorianToZoro(gY,gM,gD){
+  const ny=new Date(Date.UTC(gY,2,20));const td=new Date(Date.UTC(gY,gM-1,gD));
+  let doy=Math.floor((td-ny)/86400000);let zy=gY-632+1;
+  if(doy<0){const pny=new Date(Date.UTC(gY-1,2,20));doy=Math.floor((td-pny)/86400000);zy--;}
+  const isG=doy>=360;const mi=isG?11:Math.min(Math.floor(doy/30),11);
+  const day=isG?doy-359:((doy%30)+1);
+  return{year:zy,monthIdx:mi,month:ZORO_MONTHS[mi],day,isGatha:isG,dayName:ZORO_DAYS[Math.min(day-1,29)]};
+}
+function renderZoroastrian(){
+  const l=localNow();const z=gregorianToZoro(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('zoro-day').textContent=z.isGatha?`Gatha ${z.day}`:z.day;
+  document.getElementById('zoro-month').textContent=z.isGatha?'Gatha-Tage':z.month;
+  document.getElementById('zoro-year').textContent=`${z.year} YZ`;
+  document.getElementById('zoro-dayname').textContent=`Tagname: ${z.dayName||'–'}`;
+  document.getElementById('zoro-months-grid').innerHTML=ZORO_MONTHS.map((mn,i)=>{const cur=i===z.monthIdx&&!z.isGatha;return`<div style="background:${cur?'rgba(255,140,0,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(255,140,0,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:11px;color:${cur?'#ff8c00':'var(--text)'};font-weight:${cur?500:400}">${i+1}. ${mn}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">30 Tage</div></div>`;}).join('');
+}
+
+// ── ÄTHIOPISCHER KALENDER ─────────────────────────────────────────────────────
+const ETH_MONTHS=['Meskerem','Tikimt','Hidar','Tahsas','Tir','Yekatit','Megabit','Miazia','Ginbot','Sene','Hamle','Nehase','Pagumē'];
+const ETH_MONTHS_GE=['መስከረም','ጥቅምት','ኅዳር','ታኅሳስ','ጥር','የካቲት','መጋቢት','ሚያዚያ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','ጳጉሜ'];
+function gregorianToEthiopian(gY,gM,gD){
+  const jd=jdFromGregorian(gY,gM,gD);
+  const ethEpoch=1724221;const days=jd-ethEpoch;
+  const ethYear=Math.floor(days/365.25)+1;
+  const yearStart=ethEpoch+Math.floor((ethYear-1)*365.25);
+  let diy=jd-yearStart;if(diy<0)diy+=365;
+  const month=Math.min(Math.floor(diy/30),12);const day=(diy%30)+1;
+  return{year:ethYear,month,day,monthName:ETH_MONTHS[month],monthGe:ETH_MONTHS_GE[month]};
+}
+function renderEthiopian(){
+  const l=localNow();const e=gregorianToEthiopian(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('eth-day').textContent=e.day;
+  document.getElementById('eth-month').textContent=e.monthName;
+  document.getElementById('eth-year').textContent=`${e.year} ዓ.ም.`;
+  document.getElementById('eth-geez').textContent=`${e.day} ${e.monthGe} ${e.year}`;
+  document.getElementById('eth-months-grid').innerHTML=ETH_MONTHS.map((mn,i)=>{const cur=i===e.month;return`<div style="background:${cur?'rgba(0,160,80,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(0,160,80,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:11px;color:${cur?'#00a050':'var(--text)'};font-weight:${cur?500:400}">${i+1}. ${mn}</div><div style="font-size:10px;color:var(--text3);font-family:serif">${ETH_MONTHS_GE[i]}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${i===12?5:30} Tage</div></div>`;}).join('');
+  const gY=l.getUTCFullYear(),today=todayStr();
+  const ethH=[{d:new Date(Date.UTC(gY,8,11)),name:'Enkutatash (Äthiopisches Neujahr)',ge:'እንቁጣጣሽ',important:true},{d:new Date(Date.UTC(gY,8,27)),name:'Meskel (Kreuzauffindung)',ge:'መስቀል',important:true},{d:new Date(Date.UTC(gY,0,7)),name:'Genna (Äthiopisches Weihnachten)',ge:'ገና'},{d:new Date(Date.UTC(gY,0,19)),name:'Timkat (Taufe Christi)',ge:'ጥምቀት',important:true}];
+  document.getElementById('eth-holidays').innerHTML=ethH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${DE_MONTHS[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div><div style="font-size:11px;color:var(--text3);font-family:serif">${h.ge}</div></div></div>`;}).join('');
+}
+
+// ── KOPTISCHER KALENDER ───────────────────────────────────────────────────────
+const COP_MONTHS=['Thoout','Paope','Athor','Koiak','Tobi','Meshir','Paremhat','Paremoude','Pashons','Paone','Epep','Mesore','Nasie'];
+const COP_MONTHS_COP=['Ⲑⲟⲟⲩⲧ','Ⲡⲁⲱⲡⲉ','Ⲁⲑⲱⲣ','Ⲭⲟⲓⲁⲕ','Ⲧⲱⲃⲓ','Ⲙⲉϣⲓⲣ','Ⲡⲁⲣⲉⲙⲏⲁⲧ','Ⲡⲁⲣⲙⲟⲩⲧⲉ','Ⲡⲁϣⲟⲛⲥ','Ⲡⲁⲱⲛⲉ','Ⲉⲡⲓⲡ','Ⲙⲉⲥⲱⲣⲏ','Ⲡⲓⲕⲟⲩϫⲓ'];
+function gregorianToCoptic(gY,gM,gD){
+  const jd=jdFromGregorian(gY,gM,gD);
+  const copEpoch=1825030;const days=jd-copEpoch;
+  const copYear=Math.floor(days/365.25)+1;
+  const yearStart=copEpoch+Math.floor((copYear-1)*365.25);
+  let diy=jd-yearStart;if(diy<0)diy+=365;
+  const month=Math.min(Math.floor(diy/30),12);const day=(diy%30)+1;
+  return{year:copYear,month,day,monthName:COP_MONTHS[month],monthCop:COP_MONTHS_COP[month]};
+}
+function renderCoptic(){
+  const l=localNow();const c=gregorianToCoptic(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('cop-day').textContent=c.day;
+  document.getElementById('cop-month').textContent=c.monthName;
+  document.getElementById('cop-year').textContent=`${c.year} AM`;
+  document.getElementById('cop-coptic').textContent=`${c.day} ${c.monthCop} ${c.year}`;
+  document.getElementById('cop-months-grid').innerHTML=COP_MONTHS.map((mn,i)=>{const cur=i===c.month;return`<div style="background:${cur?'rgba(180,60,60,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(180,60,60,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:11px;color:${cur?'#b43c3c':'var(--text)'};font-weight:${cur?500:400}">${i+1}. ${mn}</div><div style="font-size:10px;color:var(--text3);font-family:serif">${COP_MONTHS_COP[i]}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${i===12?5:30} Tage</div></div>`;}).join('');
+}
+
+// ── JULIANISCHER KALENDER ─────────────────────────────────────────────────────
+function gregorianToJulian(gY,gM,gD){
+  const jd=jdFromGregorian(gY,gM,gD);
+  const c=jd+32082;const d=Math.floor((4*c+3)/1461);const e=c-Math.floor(1461*d/4);
+  const m=Math.floor((5*e+2)/153);
+  return{year:d-4800+Math.floor(m/10),month:m+3-12*Math.floor(m/10),day:e-Math.floor((153*m+2)/5)+1};
+}
+function renderJulian(){
+  const l=localNow();const j=gregorianToJulian(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
+  document.getElementById('jul-day').textContent=j.day;
+  document.getElementById('jul-month').textContent=DE_MONTHS[j.month-1];
+  document.getElementById('jul-year').textContent=`${j.year} n.Chr. (Julianisch)`;
+  document.getElementById('jul-diff').textContent=`Aktuell 13 Tage hinter dem gregorianischen Kalender`;
+  const gY=l.getUTCFullYear(),today=todayStr();
+  const julH=[
+    {jM:12,jD:25,name:'Julianisches Weihnachten',note:'= 7. Januar gregorianisch',important:true},
+    {jM:1,jD:1,name:'Julianisches Neujahr',note:'= 14. Januar gregorianisch'},
+    {jM:1,jD:6,name:'Epiphanie (Dreikönige)',note:'= 19. Januar gregorianisch'},
+  ];
+  document.getElementById('jul-holidays').innerHTML=julH.map(h=>{
+    const gregDate=new Date(Date.UTC(gY,h.jM===12?0:h.jM-1,h.jM===12?7:h.jD+13));
+    const ds=gregDate.toISOString().slice(0,10);
+    return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:76px;flex-shrink:0">${gregDate.getUTCDate()}. ${DE_MONTHS[gregDate.getUTCMonth()].slice(0,3)} (greg.)</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;
+  }).join('');
+}
+
+// ── HOLOZÄN-KALENDER ──────────────────────────────────────────────────────────
+const HOL_MILESTONES=[
+  {year:1,name:'Beginn des Holozäns',note:'Ende der letzten Eiszeit'},
+  {year:2000,name:'Erste Siedlungen',note:'Çatalhöyük, Anatolien'},
+  {year:4000,name:'Stonehenge (Beginn)',note:'Britische Inseln'},
+  {year:4500,name:'Sumerer – erste Schrift',note:'Keilschrift'},
+  {year:5000,name:'Pyramiden von Gizeh',note:'Ägypten'},
+  {year:5500,name:'Indus-Zivilisation',note:'Mohenjo-Daro'},
+  {year:7165,name:'Geburt Christi',note:'= Jahr 1 n.Chr. gregorianisch'},
+  {year:8622,name:'Beginn der Hidschra',note:'= 622 n.Chr.'},
+  {year:9510,name:'Gutenberg-Bibel',note:'Buchdruck 1450 n.Chr.'},
+  {year:9969,name:'Mondlandung Apollo 11',note:'1969 n.Chr.'},
+  {year:10000+new Date().getFullYear()-2026,name:'Heute',note:`${new Date().getFullYear()} n.Chr.`},
+];
+function renderHolocene(){
+  const l=localNow();const heYear=l.getUTCFullYear()+10000;
+  document.getElementById('hol-year').textContent=heYear;
+  document.getElementById('hol-greg').textContent=`${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${l.getUTCFullYear()} n.Chr. = ${heYear} HE`;
+  document.getElementById('hol-year-inline').textContent=heYear;
+  document.getElementById('hol-milestones').innerHTML=HOL_MILESTONES.map(m=>{const cur=m.name==='Heute';return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><span style="font-size:12px;color:var(--blue2);min-width:62px;flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:500">${m.year} HE</span><div><div style="font-size:13px;color:${cur?'var(--gold)':'var(--text)'};font-weight:${cur?500:400}">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.note}</div></div></div>`;}).join('');
+}
+
+// Theme laden
+const savedTheme = localStorage.getItem('theme');
+applyTheme(savedTheme !== 'light');
+
 tick();
-setInterval(tick,1000);
+setInterval(tick, 1000);
 initFeiertageSelects();
 renderCal();
 renderSolstices();
 checkInstallHint();
+rebuildTabBar();
+
 </script>
 </body>
 </html>
