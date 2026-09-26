@@ -388,9 +388,9 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           </div>
         </div>
         <div style="display:flex;gap:6px">
-          <button data-fs="small"  class="fs-btn" id="fs-btn-small"  style="font-size:11px">A</button>
-          <button data-fs="normal" class="fs-btn" id="fs-btn-normal" style="font-size:15px">A</button>
-          <button data-fs="large"  class="fs-btn" id="fs-btn-large"  style="font-size:19px">A</button>
+          <button onclick="setFontSize('small')"  data-fs="small"  class="fs-btn" id="fs-btn-small"  style="font-size:11px">A</button>
+          <button onclick="setFontSize('normal')" data-fs="normal" class="fs-btn" id="fs-btn-normal" style="font-size:15px">A</button>
+          <button onclick="setFontSize('large')"  data-fs="large"  class="fs-btn" id="fs-btn-large"  style="font-size:19px">A</button>
         </div>
       </div>
     </div>
@@ -5057,9 +5057,9 @@ function renderLangGrid() {
   if (!grid) return;
   grid.innerHTML = Object.entries(I18N).map(([code, l]) => {
     const cur = code === _lang;
-    return `<button data-lang="${code}" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .15s">
-      <div style="font-size:18px">${l.flag}</div>
-      <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};margin-top:3px;font-weight:${cur?500:400}">${l.name}</div>
+    return `<button onclick="applyLanguage('${code}')" data-lang="${code}" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .15s">
+      <div style="font-size:18px;pointer-events:none">${l.flag}</div>
+      <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};margin-top:3px;font-weight:${cur?500:400};pointer-events:none">${l.name}</div>
     </button>`;
   }).join('');
 }
@@ -5289,6 +5289,19 @@ renderCal();
 renderSolstices();
 checkInstallHint();
 rebuildTabBar();
+
+// Expose key functions globally so inline onclick in innerHTML works
+window.applyLanguage = applyLanguage;
+window.setFontSize = setFontSize;
+window.toggleGroupExpand = toggleGroupExpand;
+window.toggleTab = toggleTab;
+window.toggleGroup = toggleGroup;
+window.switchTab = switchTab;
+window.openSettings = openSettings;
+window.closeSettings = closeSettings;
+window.closeSettingsOutside = closeSettingsOutside;
+window.toggleTheme = toggleTheme;
+window.toggleThemeFromSettings = toggleThemeFromSettings;
 
 </script>
 </body>
