@@ -1489,6 +1489,21 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 </nav>
 
 <script>
+// ── I18N CORE (muss ganz oben stehen, wird überall genutzt) ──────────────────
+let _lang = localStorage.getItem('lang') || 'de';
+// Minimale Fallback-Daten bis I18N geladen ist
+const _DE_MONTHS_FB = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const _DE_DAYS_FB    = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+const _DE_DAYSL_FB   = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+// Diese Funktionen werden unten mit dem echten I18N-Objekt überschrieben,
+// aber für den Fall dass sie vor I18N aufgerufen werden:
+function L()        { return (typeof I18N !== 'undefined' && I18N[_lang]) ? I18N[_lang] : {months:_DE_MONTHS_FB, days:_DE_DAYS_FB, daysLong:_DE_DAYSL_FB, dir:'ltr'}; }
+function t(key)     { const l=L(); return l[key] !== undefined ? l[key] : (typeof I18N!=='undefined'?I18N.de[key]:key)||key; }
+function lMonths()  { return L().months; }
+function lDays()    { return L().days; }
+function lDaysLong(){ return L().daysLong; }
+function isRTL()    { return L().dir === 'rtl'; }
+
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const DE_MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const DE_DAYS_SHORT=['So','Mo','Di','Mi','Do','Fr','Sa'];
@@ -5010,14 +5025,6 @@ const I18N = {
 
 // Active language (also used as LANGUAGES alias for countdown etc.)
 const LANGUAGES = I18N;
-let _lang = localStorage.getItem('lang') || 'de';
-
-function L() { return I18N[_lang] || I18N.de; }
-function t(key) { return L()[key] || I18N.de[key] || key; }
-function lMonths() { return L().months; }
-function lDays()   { return L().days; }
-function lDaysLong(){ return L().daysLong; }
-function isRTL()   { return L().dir === 'rtl'; }
 
 function applyLanguage(lang) {
   _lang = lang;
