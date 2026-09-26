@@ -351,6 +351,27 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           <span class="toggle-slider"></span>
         </label>
       </div>
+      <!-- Schriftgröße -->
+      <div class="settings-row">
+        <div class="settings-row-left">
+          <span class="settings-row-icon">🔠</span>
+          <div>
+            <div class="settings-row-label">Schriftgröße</div>
+            <div class="settings-row-sub" id="fontsize-label">Normal</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="setFontSize('small')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:11px;cursor:pointer">A</button>
+          <button onclick="setFontSize('normal')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:14px;cursor:pointer">A</button>
+          <button onclick="setFontSize('large')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:18px;cursor:pointer">A</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sprache -->
+    <div class="settings-section" style="padding-top:12px">
+      <div class="settings-section-title">Sprache / Language</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:4px" id="lang-grid"></div>
     </div>
 
     <!-- Tabs -->
@@ -395,6 +416,8 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="cal-grid" id="cal-grid"></div>
     </div>
 
+    <div class="section-label">Sonne heute</div>
+    <div class="card" id="cal-sun-times" style="padding:10px"></div>
     <div class="section-label">Feiertage dieses Monats</div>
     <div class="card" id="hday-month"></div>
 
@@ -647,6 +670,53 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
     <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:4px;padding:0 2px">
       Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 n.Chr. befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.
+    </div>
+
+    <!-- DARISCHER KALENDER -->
+    <div class="section-label">Darischer Kalender · Да'Арийский Календарь</div>
+    <div class="card" style="border-color:rgba(155,127,232,0.3);background:linear-gradient(135deg,#1a1030 0%,#111126 100%)">
+      <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);letter-spacing:.06em;margin-bottom:10px">Das vollständige Datum</div>
+      <div id="daric-full-date" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.7;padding:8px 10px;background:rgba(155,127,232,0.08);border-radius:8px;border:0.5px solid rgba(155,127,232,0.15)">
+        Der <span style="color:var(--purple)">Darische Kalender</span> (Да'Арийский) ist das vollständige Datumssystem der slawisch-arischen Überlieferung. Er kombiniert das <span style="color:var(--gold)">SMZH-Jahr</span> (Kolyady Dar) mit dem <span style="color:var(--teal)">Stichija</span> (Element des Jahres), dem <span style="color:var(--purple)">16-Zeichen-Tierkreis</span> und dem <span style="color:var(--text)">Kreis der Ahnen</span> (144-jähriger Zyklus).
+      </div>
+    </div>
+
+    <!-- 16-Zeichen Tierkreis -->
+    <div class="section-label">16-Zeichen Tierkreis · Круголет Числобога</div>
+    <div class="card" style="padding:10px">
+      <div id="daric-zodiac-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div>
+    </div>
+
+    <!-- Stichija (4 Elemente) -->
+    <div class="section-label">Stichija – Die 4 Elemente des Jahres</div>
+    <div class="card">
+      <div id="daric-stichija" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
+    </div>
+
+    <!-- Kreise der Zeit -->
+    <div class="section-label">Die drei Kreise der Zeit</div>
+    <div class="card">
+      <div id="daric-circles"></div>
+    </div>
+
+    <!-- SMZH vs EFST Erklärung -->
+    <div class="section-label">SMZH · EFST · Da'Ariya – Epochen im Vergleich</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:8px 10px;background:rgba(155,127,232,0.1);border-radius:8px;border-left:2px solid var(--purple)">
+          <div style="font-size:12px;font-weight:500;color:var(--purple)">СМЗХ (SMZH) – Сотворение Мира в Звёздном Храме</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Erschaffung des Friedens im Sternen-Tempel · Nullpunkt: ~5508 v.Chr. · Aktuell: <span id="daric-smzh-inline" style="color:var(--gold)">7534</span></div>
+        </div>
+        <div style="padding:8px 10px;background:rgba(232,200,122,0.1);border-radius:8px;border-left:2px solid var(--gold)">
+          <div style="font-size:12px;font-weight:500;color:var(--gold)">ЭФСТ (EFST) – Эпоха от Сотворения Тьмы</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Epoche vom Sieg über die Dunkelheit · Nullpunkt: ~13.016 v.Chr. · Aktuell: <span id="daric-efst-inline" style="color:var(--gold)">107542</span></div>
+        </div>
+        <div style="padding:8px 10px;background:rgba(78,205,196,0.1);border-radius:8px;border-left:2px solid var(--teal)">
+          <div style="font-size:12px;font-weight:500;color:var(--teal)">Да'Ария (Da'Ariya)</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Urzeit der Arischen Völker · Nullpunkt: ~111.820 v.Chr. (nach Überlieferung) · mythische Zeitrechnung</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1165,6 +1235,114 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
+  <!-- VIEW: AZTEKISCHER KALENDER -->
+  <div class="view" id="view-aztec">
+    <div class="card" style="border-color:rgba(220,100,40,0.25);background:linear-gradient(135deg,rgba(30,10,0,0.6) 0%,rgba(13,13,26,0.8) 100%)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🦅</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#dc6428;letter-spacing:.05em">Aztekischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Tonalpohualli · Xiuhpohualli · Mexica</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div style="background:rgba(220,100,40,0.12);border:0.5px solid rgba(220,100,40,0.35);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:#dc6428;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Tonalpohualli</div>
+          <div id="aztec-tonal-glyph" style="width:52px;height:52px;margin:0 auto 6px"></div>
+          <div style="font-size:28px;font-weight:200;color:#dc6428;line-height:1" id="aztec-tonal-num">–</div>
+          <div style="font-family:var(--font-display);font-size:13px;color:#dc6428;margin-top:3px" id="aztec-tonal-name">–</div>
+        </div>
+        <div style="background:rgba(78,205,196,0.1);border:0.5px solid rgba(78,205,196,0.3);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Xiuhpohualli</div>
+          <div style="font-size:28px;font-weight:200;color:var(--teal);line-height:1" id="aztec-xiu-day">–</div>
+          <div style="font-family:var(--font-display);font-size:13px;color:var(--teal);margin-top:3px" id="aztec-xiu-month">–</div>
+        </div>
+      </div>
+      <div style="background:rgba(232,200,122,0.1);border:0.5px solid rgba(232,200,122,0.25);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Sonnenstein (Aztekischer Kalender)</div>
+        <div id="aztec-sunstone" style="margin:0 auto"></div>
+      </div>
+    </div>
+    <div class="section-label">Tonalpohualli – 20 Tageszeichen</div>
+    <div class="card" style="padding:10px"><div id="aztec-tonal-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div></div>
+    <div class="section-label">Xiuhpohualli – 18 Monate + Nemontemi</div>
+    <div class="card" style="padding:10px"><div id="aztec-xiu-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Die Azteken (Mexica) nutzten zwei Kalender gleichzeitig: Der <span style="color:#dc6428">Tonalpohualli</span> (260 Tage = 20 Tageszeichen × 13 Zahlen) war ein heiliger Ritualkalender für Wahrsagung und Schicksal. Der <span style="color:var(--teal)">Xiuhpohualli</span> (365 Tage = 18 × 20 Tage + 5 Nemontemi-Unglückstage) war der Solarkalender. Beide synchronisieren sich alle 52 Jahre im <span style="color:var(--gold)">Xiuhmolpilli</span> (Bündelung der Jahre). Der berühmte <span style="color:var(--text)">Sonnenstein</span> (Piedra del Sol) zeigt diese kosmische Ordnung.
+    </div>
+  </div>
+
+  <!-- VIEW: TIBETISCHER KALENDER -->
+  <div class="view" id="view-tibetan">
+    <div class="card" style="border-color:rgba(180,100,220,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:32px">🏔️</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:#b464dc;letter-spacing:.05em">Tibetischer Kalender</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Losar · Rabjung-Zyklus · Bod Kyi Lo-tho</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:48px;margin-bottom:6px" id="tib-animal-icon">🐉</div>
+        <div style="font-family:var(--font-display);font-size:20px;color:#b464dc" id="tib-year-name">–</div>
+        <div style="font-size:14px;color:var(--text2);margin-top:4px" id="tib-rabjung">–</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px" id="tib-date">–</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;font-family:serif" id="tib-tibetan">–</div>
+      </div>
+    </div>
+    <div class="section-label">12 Tierkreiszeichen × 5 Elemente</div>
+    <div class="card"><div id="tib-zodiac-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"></div></div>
+    <div class="section-label">Tibetische Feste</div>
+    <div class="card" id="tib-holidays"></div>
+    <div class="section-label">Hintergrund</div>
+    <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
+      Der <span style="color:var(--text)">Tibetische Kalender</span> (Bod Kyi Lo-tho) ist ein <span style="color:#b464dc">lunisolarer Kalender</span> der auf indischen und chinesischen Traditionen basiert. Er kombiniert 12 Tierkreiszeichen mit 5 Elementen zu einem <span style="color:var(--gold)">60-Jahres-Zyklus (Rabjung)</span>. Das Neujahr <span style="color:#b464dc">Losar</span> fällt auf den ersten Tag des ersten Mondmonats (Feb/März) und ist das wichtigste tibetische Fest. Besondere Mondtage (8., 15., 25., 30.) sind für Praxis und Gebet besonders günstig.
+    </div>
+  </div>
+
+  <!-- VIEW: COUNTDOWN -->
+  <div class="view" id="view-countdown">
+    <div class="card" style="border-color:rgba(232,200,122,0.2)">
+      <div style="font-family:var(--font-display);font-size:16px;color:var(--gold);letter-spacing:.05em;margin-bottom:4px">⏳ Countdown</div>
+      <div style="font-size:12px;color:var(--text3)">Tage bis zu den nächsten Ereignissen</div>
+    </div>
+    <div class="section-label">Astronomisch</div>
+    <div class="card" id="countdown-astro"></div>
+    <div class="section-label">Feiertage & Feste</div>
+    <div class="card" id="countdown-feste"></div>
+    <div class="section-label">Kalender-Neujahrsdaten</div>
+    <div class="card" id="countdown-newyear"></div>
+  </div>
+
+  <!-- VIEW: JAHRESÜBERSICHT -->
+  <div class="view" id="view-jahresuebersicht">
+    <div class="card" style="border-color:rgba(91,141,238,0.2)">
+      <div style="font-family:var(--font-display);font-size:16px;color:var(--blue2);letter-spacing:.05em;margin-bottom:8px">📅 Jahresübersicht</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="jue-year" onchange="renderJahresuebersicht()" style="padding:6px 10px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;-webkit-appearance:none;cursor:pointer"></select>
+        <select id="jue-filter" onchange="renderJahresuebersicht()" style="padding:6px 10px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;-webkit-appearance:none;cursor:pointer">
+          <option value="alle">Alle Feste</option>
+          <option value="legal">Nur gesetzliche Feiertage</option>
+          <option value="astro">Nur astronomische</option>
+        </select>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px" id="jue-count">–</div>
+    </div>
+    <div id="jue-list" style="display:flex;flex-direction:column;gap:0"></div>
+  </div>
+
+  <!-- VIEW: DATUMSRECHNER -->
+  <div class="view" id="view-datumsrechner">
+    <div class="card" style="border-color:rgba(78,205,196,0.2)">
+      <div style="font-family:var(--font-display);font-size:16px;color:var(--teal);letter-spacing:.05em;margin-bottom:10px">🔍 Datumsrechner</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Gregorianisches Datum eingeben → alle Kalender</div>
+      <input type="date" id="datumsrechner-input" onchange="renderDatumsrechner()"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:15px;font-family:var(--font-body);box-sizing:border-box;cursor:pointer">
+    </div>
+    <div id="datumsrechner-result" style="display:flex;flex-direction:column;gap:6px;margin-top:0"></div>
+  </div>
+
 </div><!-- end app-scroll -->
 
 <!-- TAB BAR -->
@@ -1208,6 +1386,14 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn" onclick="switchTab('maya')" id="tab-maya">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
     <span class="tab-label">Maya</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('aztec')" id="tab-aztec">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+    <span class="tab-label">Aztekisch</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('tibetan')" id="tab-tibetan">
+    <svg viewBox="0 0 24 24"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 20h18"/></svg>
+    <span class="tab-label">Tibetisch</span>
   </button>
   <button class="tab-btn" onclick="switchTab('saka')" id="tab-saka">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-3"/></svg>
@@ -1260,6 +1446,18 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn" onclick="switchTab('holocene')" id="tab-holocene">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
     <span class="tab-label">Holozän</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('countdown')" id="tab-countdown">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/><path d="M16 2l4 4-4 4"/></svg>
+    <span class="tab-label">Countdown</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('jahresuebersicht')" id="tab-jahresuebersicht">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+    <span class="tab-label">Jahresübersicht</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('datumsrechner')" id="tab-datumsrechner">
+    <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg>
+    <span class="tab-label">Datumsrechner</span>
   </button>
 </nav>
 
@@ -1569,6 +1767,7 @@ function renderCal() {
       return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
     }).join('');
   }
+  renderSunTimesInCal();
 }
 
 function shiftMonth(delta){
@@ -2137,6 +2336,7 @@ function requestSwarogLocation(){
     if(s!==null)window._swarogSunsetUTCmin=s;
     window._swarogLocationLabel=`${pos.coords.latitude.toFixed(2)}°N ${pos.coords.longitude.toFixed(2)}°E`;
     updateSwarogClock();renderSwarogHoursGrid();
+    renderSunTimesInCal();
   },()=>{});
 }
 
@@ -2277,6 +2477,7 @@ function renderSwarog(){
       <div class="sw-tier">${e.tier}</div>
     </div>`;
   }).join('');
+  renderDaricCalendar();
   // Swarog-Uhr starten & Standort anfragen
   updateSwarogClock();
   renderSwarogHoursGrid();
@@ -2284,6 +2485,131 @@ function renderSwarog(){
   if(_swarogClockInterval) clearInterval(_swarogClockInterval);
   _swarogClockInterval=setInterval(()=>{updateSwarogClock();renderSwarogHoursGrid();},1000);
 }
+
+// ── DARISCHER KALENDER ────────────────────────────────────────────────────────
+// 16 Tierkreiszeichen (Числобог / Chislobog-Kreis)
+// Jedes Zeichen = 1 Jahr im 16-Jahres-Zyklus
+const DARIC_ZODIAC = [
+  {n:1,  ru:'Тёмный Сох',     de:'Dunkler Elch',       icon:'🫎', color:'#4a4a8a'},
+  {n:2,  ru:'Белый Лось',     de:'Weißer Elch',         icon:'🦌', color:'#e0e0f0'},
+  {n:3,  ru:'Жемчужный Дракон',de:'Perlmutt-Drache',   icon:'🐉', color:'#9b7fe8'},
+  {n:4,  ru:'Лисица',         de:'Fuchs',               icon:'🦊', color:'#e87850'},
+  {n:5,  ru:'Дракон',         de:'Drache',              icon:'🐲', color:'#dc6428'},
+  {n:6,  ru:'Змий',           de:'Schlange',            icon:'🐍', color:'#00a050'},
+  {n:7,  ru:'Конь',           de:'Pferd',               icon:'🐎', color:'#e8c87a'},
+  {n:8,  ru:'Орёл',           de:'Adler',               icon:'🦅', color:'#5b8dee'},
+  {n:9,  ru:'Дельфин',        de:'Delfin',              icon:'🐬', color:'#4ecdc4'},
+  {n:10, ru:'Лебедь',         de:'Schwan',              icon:'🦢', color:'#f0f0ff'},
+  {n:11, ru:'Ворон',          de:'Rabe',                icon:'🐦‍⬛',color:'#555577'},
+  {n:12, ru:'Медведь',        de:'Bär',                 icon:'🐻', color:'#8b6840'},
+  {n:13, ru:'Бус',            de:'Weißer Elch (Buss)',  icon:'🦌', color:'#d0d8e8'},
+  {n:14, ru:'Крышень',        de:'Kryschеn',            icon:'☀️', color:'#f0c040'},
+  {n:15, ru:'Ра',             de:'Ra – Sonnengott',     icon:'🌟', color:'#ffdd44'},
+  {n:16, ru:'Финист',         de:'Finist – Falke',      icon:'🦅', color:'#9b7fe8'},
+];
+
+// 4 Stichija (Elemente) – je 4 Jahre im 16er-Zyklus
+const DARIC_STICHIJA = [
+  {ru:'Земля',  de:'Erde',   icon:'🌍', color:'#8b6840', years:[1,2,3,4]},
+  {ru:'Звезда', de:'Stern',  icon:'⭐', color:'#9b7fe8', years:[5,6,7,8]},
+  {ru:'Огонь',  de:'Feuer',  icon:'🔥', color:'#dc6428', years:[9,10,11,12]},
+  {ru:'Небо',   de:'Himmel', icon:'🌌', color:'#5b8dee', years:[13,14,15,16]},
+];
+
+// 3 Kreise der Zeit
+const DARIC_CIRCLES = [
+  {ru:'Круг Жизни',   de:'Kreis des Lebens',    dauer:'16 Jahre',  note:'1 Umlauf der Tierkreiszeichen'},
+  {ru:'Круг Лет',     de:'Kreis der Jahre',      dauer:'144 Jahre', note:'9 × 16 Jahre = Ahnen-Zyklus'},
+  {ru:'Сваргийский Круг', de:'Swaroga-Kreis',   dauer:'25.920 Jahre',note:'16 Epochen à 1.620 Jahre (Präzession)'},
+];
+
+function getDaricYear(gregYear) {
+  // SMZH-Jahr
+  const now = new Date();
+  const m = now.getUTCMonth()+1, d = now.getUTCDate();
+  const afterNY = (m > 9 || (m === 9 && d >= 22));
+  const smzh = afterNY ? gregYear + 5508 : gregYear + 5507;
+  // Position im 16-Jahres-Kreis (Referenz: 7534 SMZH = Dunkler Elch, n=1 → idx 0)
+  const zodiacIdx = ((smzh - 7534) % 16 + 16) % 16;
+  // Position im 144-Jahres-Kreis
+  const ancestorPos = ((smzh - 1) % 144) + 1;
+  // Stichija
+  const stichPos = (zodiacIdx % 4);
+  const stichijaIdx = Math.floor(zodiacIdx / 4);
+  // EFST (andere Epoche: SMZH + 100.008 laut Überlieferung)
+  const efst = smzh + 100008;
+  return { smzh, zodiacIdx, zodiac: DARIC_ZODIAC[zodiacIdx], stichijaIdx, stichija: DARIC_STICHIJA[stichijaIdx], ancestorPos, efst };
+}
+
+function renderDaricCalendar() {
+  const l = localNow();
+  const gY = l.getUTCFullYear();
+  const dc = getDaricYear(gY);
+
+  // Vollständiges Datum
+  const sdate = getSwarogDate(new Date());
+  const mo = SWAROG_MONTHS[sdate.month-1];
+  const wd = SWAROG_WEEKDAYS[sdate.weekdayIdx];
+  const fullDate = document.getElementById('daric-full-date');
+  if (fullDate) fullDate.innerHTML = [
+    {label:'СМЗХ-Jahr', val:`${dc.smzh}`, col:'var(--purple)'},
+    {label:'Tierzeichen', val:`${dc.zodiac.icon} ${dc.zodiac.de}`, col:dc.zodiac.color},
+    {label:'Stichija', val:`${dc.stichija.icon} ${dc.stichija.de}`, col:dc.stichija.color},
+    {label:'Ahnenkreis', val:`Jahr ${dc.ancestorPos} / 144`, col:'var(--gold)'},
+    {label:'Monat', val:`${sdate.month}. ${mo.ru}`, col:'var(--purple)'},
+    {label:'Tag / Wochentag', val:`${sdate.dayOfMonth}. · ${wd.ru}`, col:'var(--text2)'},
+  ].map(item=>`<div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:8px;border:0.5px solid rgba(255,255,255,0.08)">
+    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">${item.label}</div>
+    <div style="font-size:14px;color:${item.col};font-weight:500;margin-top:2px">${item.val}</div>
+  </div>`).join('');
+
+  // SMZH + EFST inline
+  const si = document.getElementById('daric-smzh-inline');
+  if(si) si.textContent = dc.smzh;
+  const ei = document.getElementById('daric-efst-inline');
+  if(ei) ei.textContent = dc.efst;
+
+  // 16-Zeichen Tierkreis
+  const zg = document.getElementById('daric-zodiac-grid');
+  if(zg) zg.innerHTML = DARIC_ZODIAC.map((z,i)=>{
+    const cur = i === dc.zodiacIdx;
+    return `<div style="background:${cur?'rgba(155,127,232,0.2)':'var(--surface2)'};border:0.5px solid ${cur?z.color+'66':'var(--border)'};border-radius:10px;padding:6px;text-align:center">
+      <div style="font-size:18px">${z.icon}</div>
+      <div style="font-size:9px;color:${cur?z.color:'var(--text2)'};font-weight:${cur?600:400};margin-top:3px;line-height:1.2">${z.de}</div>
+      <div style="font-size:8px;color:var(--text3);font-family:serif">${z.ru}</div>
+      ${cur?`<div style="font-size:7px;color:${z.color};margin-top:1px">● aktuell</div>`:''}
+    </div>`;
+  }).join('');
+
+  // 4 Stichija
+  const sg = document.getElementById('daric-stichija');
+  if(sg) sg.innerHTML = DARIC_STICHIJA.map((s,i)=>{
+    const cur = i === dc.stichijaIdx;
+    return `<div style="padding:10px 12px;background:${cur?'rgba(155,127,232,0.1)':'var(--surface2)'};border:0.5px solid ${cur?s.color+'66':'var(--border)'};border-radius:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:22px">${s.icon}</span>
+        <div>
+          <div style="font-size:13px;color:${cur?s.color:'var(--text)'};font-weight:${cur?500:400}">${s.de} ${cur?'(aktuell)':''}</div>
+          <div style="font-size:11px;color:var(--text3);font-family:serif">${s.ru}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Jahre ${s.years[0]}–${s.years[3]} im 16er-Zyklus</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 3 Kreise
+  const cg = document.getElementById('daric-circles');
+  if(cg) cg.innerHTML = DARIC_CIRCLES.map(c=>`
+    <div style="display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:0.5px solid var(--border)">
+      <div style="font-size:11px;color:var(--gold);min-width:80px;flex-shrink:0;font-weight:500">${c.dauer}</div>
+      <div>
+        <div style="font-size:13px;color:var(--text);font-weight:500">${c.de}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:serif">${c.ru}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">${c.note}</div>
+      </div>
+    </div>`).join('');
+}
+
 
 // ── JAHRESKREIS DATA ──────────────────────────────────────────────────────────
 const JAHRESKREIS=[
@@ -2606,6 +2932,7 @@ function switchTab(id){
   if(id==='hebrew')renderHebrew();
   if(id==='chinese')renderChinese();
   if(id==='maya')renderMaya();
+  if(id==='aztec')renderAztec();
   if(id==='moon13')renderMoon13();
   if(id==='saka')renderSaka();
   if(id==='vikram')renderVikram();
@@ -2619,6 +2946,13 @@ function switchTab(id){
   if(id==='coptic')renderCoptic();
   if(id==='julian')renderJulian();
   if(id==='holocene')renderHolocene();
+  if(id==='tibetan')renderTibetan();
+  if(id==='countdown'){renderCountdown();}
+  if(id==='jahresuebersicht'){initJahresuebersicht();renderJahresuebersicht();}
+  if(id==='datumsrechner'){
+    const inp=document.getElementById('datumsrechner-input');
+    if(inp&&!inp.value){const n=new Date();inp.value=`${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`;renderDatumsrechner();}
+  }
 }
 
 // ── INSTALL HINT ──────────────────────────────────────────────────────────────
@@ -2632,7 +2966,7 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam','hebrew','chinese','japanese','buddhist','maya','moon13','saka','vikram','bengali','nakshatra','persian','zoroastrian','ethiopian','coptic','julian','holocene'];
+const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam','hebrew','chinese','japanese','buddhist','maya','aztec','moon13','saka','vikram','bengali','nakshatra','tibetan','persian','zoroastrian','ethiopian','coptic','julian','holocene','countdown','jahresuebersicht','datumsrechner'];
 
 function prevTab(){
   const active=getActiveTabs();
@@ -2726,7 +3060,14 @@ const TAB_GROUPS = [
     id: 'mesoamerikanisch', label: 'Mesoamerikanisch', icon: '🌞',
     tabs: [
       {id:'maya',       label:'Maya-Kalender',            icon:'🌞'},
+      {id:'aztec',      label:'Aztekischer Kalender',     icon:'🦅'},
       {id:'moon13',     label:'13-Mond-Kalender',         icon:'🌀'},
+    ]
+  },
+  {
+    id: 'tibetisch', label: 'Tibetisch', icon: '🏔️',
+    tabs: [
+      {id:'tibetan',    label:'Tibetischer Kalender',     icon:'🏔️'},
     ]
   },
   {
@@ -2759,6 +3100,14 @@ const TAB_GROUPS = [
       {id:'holocene',   label:'Holozän-Kalender (HE)',    icon:'🔢'},
     ]
   },
+  {
+    id: 'tools', label: 'Werkzeuge', icon: '🛠️',
+    tabs: [
+      {id:'countdown',        label:'Countdown',          icon:'⏳'},
+      {id:'jahresuebersicht', label:'Jahresübersicht',    icon:'📅'},
+      {id:'datumsrechner',    label:'Datumsrechner',      icon:'🔍'},
+    ]
+  },
 ];
 
 // Flache Liste aller Tabs (für Reihenfolge & Suche)
@@ -2780,6 +3129,7 @@ function getActiveTabs() {
 function openSettings() {
   document.getElementById('settings-overlay').classList.add('open');
   renderSettingsTabs();
+  renderLangGrid();
   const isDark = !document.body.classList.contains('light-mode');
   const st = document.getElementById('settings-theme-toggle');
   if (st) st.checked = isDark;
@@ -4031,12 +4381,607 @@ function renderHolocene(){
 }
 
 // Theme laden
+// ── AZTEKISCHER KALENDER ──────────────────────────────────────────────────────
+const AZTEC_DAYS = [
+  {name:'Cipactli',  de:'Krokodil',    icon:'🐊',color:'#dc6428'},
+  {name:'Ehecatl',   de:'Wind',        icon:'💨',color:'#5b8dee'},
+  {name:'Calli',     de:'Haus',        icon:'🏠',color:'#e8c87a'},
+  {name:'Cuetzpalin',de:'Eidechse',    icon:'🦎',color:'#4ecdc4'},
+  {name:'Coatl',     de:'Schlange',    icon:'🐍',color:'#9b7fe8'},
+  {name:'Miquiztli', de:'Tod',         icon:'💀',color:'#888'},
+  {name:'Mazatl',    de:'Hirsch',      icon:'🦌',color:'#8a6a1a'},
+  {name:'Tochtli',   de:'Kaninchen',   icon:'🐇',color:'#e87850'},
+  {name:'Atl',       de:'Wasser',      icon:'💧',color:'#5b8dee'},
+  {name:'Itzcuintli',de:'Hund',        icon:'🐕',color:'#dc6428'},
+  {name:'Ozomatli',  de:'Affe',        icon:'🐒',color:'#ff9900'},
+  {name:'Malinalli', de:'Gras',        icon:'🌿',color:'#4ecdc4'},
+  {name:'Acatl',     de:'Rohr',        icon:'🎋',color:'#00a050'},
+  {name:'Ocelotl',   de:'Jaguar',      icon:'🐆',color:'#e8c87a'},
+  {name:'Cuauhtli',  de:'Adler',       icon:'🦅',color:'#9b7fe8'},
+  {name:'Cozcacuauhtli',de:'Geier',    icon:'🦃',color:'#b43c3c'},
+  {name:'Ollin',     de:'Bewegung',    icon:'🌀',color:'#dc6428'},
+  {name:'Tecpatl',   de:'Feuerstein',  icon:'🔪',color:'#5b8dee'},
+  {name:'Quiahuitl', de:'Regen',       icon:'🌧',color:'#4ecdc4'},
+  {name:'Xochitl',   de:'Blume',       icon:'🌸',color:'#dc5078'},
+];
+const AZTEC_MONTHS = [
+  'Atlcahualo','Tlacaxipehualiztli','Tozoztontli','Huey Tozoztli',
+  'Toxcatl','Etzalcualiztli','Tecuilhuitontli','Huey Tecuilhuitl',
+  'Tlaxochimaco','Xocotl Huetzi','Ochpaniztli','Teotleco',
+  'Tepeilhuitl','Quecholli','Panquetzaliztli','Atemoztli',
+  'Tititl','Izcalli','Nemontemi (5 Unglückstage)',
+];
+const AZTEC_MONTH_ICONS = ['💧','🌺','🌸','🌷','☀️','🌽','🎊','🎉','🌸','🍎','🧹','🌟','⛰️','🏹','🎆','🌧','🌀','🌱','⚠️'];
+
+const AZTEC_CORRELATION = 584283; // Gleiche GMT wie Maya
+
+function getAztecDate(gY, gM, gD) {
+  const jd = jdFromGregorian(gY, gM, gD);
+  const days = jd - AZTEC_CORRELATION;
+  // Tonalpohualli
+  const tonalDay = ((days % 260) + 260) % 260;
+  const tonalNum = (tonalDay % 13) + 1;
+  const tonalIdx = tonalDay % 20;
+  // Xiuhpohualli
+  const xiuDay = ((days % 365) + 365) % 365;
+  const xiuMonthIdx = Math.min(Math.floor(xiuDay / 20), 18);
+  const xiuDayInMonth = (xiuDay % 20) + 1;
+  return { tonalNum, tonalIdx, xiuMonthIdx, xiuDayInMonth };
+}
+
+function drawAztecGlyph(idx, color, size=52) {
+  // Stilisierte aztekische Glyphen als SVG
+  const glyphs = [
+    // Cipactli – Krokodil
+    `<ellipse cx="30" cy="32" rx="18" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M12 26 Q20 18 30 20 Q40 18 48 26" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="22" cy="28" r="2.5" fill="currentColor"/><circle cx="38" cy="28" r="2.5" fill="currentColor"/>
+     <path d="M18 44 L22 52M42 44 L38 52M24 44 L24 50M36 44 L36 50" stroke="currentColor" stroke-width="2"/>`,
+    // Ehecatl – Wind
+    `<circle cx="30" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M30 12 Q44 20 44 30 Q44 40 30 48" fill="none" stroke="currentColor" stroke-width="2.5"/>
+     <path d="M16 20 Q24 26 30 30 Q24 34 16 40" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+    // Calli – Haus
+    `<path d="M10 48 L10 26 L30 10 L50 26 L50 48 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 48 L22 36 L38 36 L38 48" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <path d="M10 26 L50 26" stroke="currentColor" stroke-width="1"/>`,
+    // Cuetzpalin – Eidechse
+    `<ellipse cx="30" cy="30" rx="12" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M18 20 L10 12M42 20 L50 12M18 40 L10 50M42 40 L50 50" stroke="currentColor" stroke-width="2"/>
+     <circle cx="24" cy="26" r="2.5" fill="currentColor"/><circle cx="36" cy="26" r="2.5" fill="currentColor"/>`,
+    // Coatl – Schlange
+    `<path d="M10 20 Q20 10 30 20 Q40 30 50 20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+     <path d="M10 30 Q20 20 30 30 Q40 40 50 30" fill="none" stroke="currentColor" stroke-width="2.5"/>
+     <path d="M10 40 Q20 30 30 40 Q40 50 50 40" fill="none" stroke="currentColor" stroke-width="2"/>
+     <ellipse cx="50" cy="18" rx="4" ry="3" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+    // Miquiztli – Schädel
+    `<ellipse cx="30" cy="26" rx="16" ry="18" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="22" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="38" cy="22" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 34 L24 46 L30 48 L36 46 L38 34" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <path d="M24 46 L36 46" stroke="currentColor" stroke-width="1.5"/>`,
+    // Mazatl – Hirsch
+    `<ellipse cx="30" cy="36" rx="14" ry="12" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 24 L18 10M22 24 L14 16M38 24 L42 10M38 24 L46 16M22 24 L38 24" stroke="currentColor" stroke-width="2"/>`,
+    // Tochtli – Kaninchen
+    `<ellipse cx="30" cy="34" rx="14" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 20 Q20 6 24 4 Q28 6 26 18" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M38 20 Q40 6 36 4 Q32 6 34 18" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="24" cy="28" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="36" cy="28" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+    // Atl – Wasser
+    `<path d="M10 40 Q20 28 30 34 Q40 28 50 40" fill="none" stroke="currentColor" stroke-width="2.5"/>
+     <path d="M10 30 Q20 18 30 24 Q40 18 50 30" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M10 20 Q20 8 30 14 Q40 8 50 20" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+    // Itzcuintli – Hund
+    `<ellipse cx="30" cy="30" rx="16" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M16 20 Q12 10 18 10 Q22 10 20 16" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M44 20 Q48 10 42 10 Q38 10 40 16" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M24 36 Q30 42 36 36" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M30 44 L28 54M30 44 L32 54" stroke="currentColor" stroke-width="2"/>`,
+    // Ozomatli – Affe
+    `<ellipse cx="30" cy="28" rx="14" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="23" cy="24" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="37" cy="24" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <path d="M16 44 Q30 54 44 44" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M20 12 Q30 6 40 12" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    // Malinalli – Gras
+    `<path d="M30 52 L30 8M20 52 Q22 36 30 28M40 52 Q38 36 30 28" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M10 30 Q18 24 30 28M50 30 Q42 24 30 28" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    // Acatl – Rohr
+    `<path d="M30 8 L30 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+     <path d="M20 48 L30 52 L40 48" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M14 22 L30 18 L46 22M14 32 L30 28 L46 32" fill="none" stroke="currentColor" stroke-width="1.5"/>`,
+    // Ocelotl – Jaguar
+    `<ellipse cx="30" cy="28" rx="18" ry="20" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="22" cy="22" r="3" fill="currentColor"/><circle cx="38" cy="22" r="3" fill="currentColor"/>
+     <circle cx="26" cy="32" r="2" fill="currentColor" opacity=".6"/>
+     <circle cx="34" cy="32" r="2" fill="currentColor" opacity=".6"/>
+     <circle cx="30" cy="38" r="2" fill="currentColor" opacity=".6"/>
+     <path d="M20 44 Q30 50 40 44" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    // Cuauhtli – Adler
+    `<path d="M10 36 Q20 20 30 18 Q40 20 50 36" fill="none" stroke="currentColor" stroke-width="2.5"/>
+     <path d="M10 36 Q15 50 30 50 Q45 50 50 36" fill="none" stroke="currentColor" stroke-width="2"/>
+     <ellipse cx="30" cy="26" rx="8" ry="10" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="26" cy="23" r="2.5" fill="currentColor"/>`,
+    // Cozcacuauhtli – Geier
+    `<ellipse cx="30" cy="28" rx="16" ry="18" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M16 18 Q18 10 24 14" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M44 18 Q42 10 36 14" fill="none" stroke="currentColor" stroke-width="2"/>
+     <circle cx="22" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="38" cy="24" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="22" cy="24" r="2" fill="currentColor"/><circle cx="38" cy="24" r="2" fill="currentColor"/>`,
+    // Ollin – Bewegung
+    `<path d="M30 10 L50 30 L30 50 L10 30 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 22 L38 22 L38 38 L22 38 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+     <circle cx="30" cy="30" r="5" fill="currentColor" opacity=".4"/>`,
+    // Tecpatl – Feuerstein
+    `<path d="M20 52 L14 20 Q20 8 30 10 Q40 8 46 20 L40 52 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M20 52 L40 52M16 36 L44 36M15 24 L45 24" stroke="currentColor" stroke-width="1"/>`,
+    // Quiahuitl – Regen
+    `<path d="M15 14 Q30 8 45 14 Q52 24 46 36 Q40 48 30 50 Q20 48 14 36 Q8 24 15 14Z" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M22 30 L18 44M30 28 L30 46M38 30 L42 44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    // Xochitl – Blume
+    `<circle cx="30" cy="30" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+     <path d="M30 8 Q36 16 30 22M30 52 Q24 44 30 38M8 30 Q16 24 22 30M52 30 Q44 36 38 30M13 13 Q20 20 18 27M47 47 Q40 40 42 33M47 13 Q40 20 42 27M13 47 Q20 40 18 33" fill="none" stroke="currentColor" stroke-width="2"/>`,
+  ];
+  return `<svg viewBox="0 0 60 60" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="color:${color};display:block">${glyphs[idx]||glyphs[0]}</svg>`;
+}
+
+function drawAztecSunstone(size=180) {
+  // Vereinfachter Aztekischer Sonnenstein
+  const cx=size/2, cy=size/2, r=size/2-2;
+  let svg=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">`;
+  // Äußerer Ring
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a0800" stroke="#dc6428" stroke-width="2"/>`;
+  // 20 Tageszeichen-Segmente
+  for(let i=0;i<20;i++){
+    const a=-Math.PI/2+i*2*Math.PI/20;
+    const a2=a+2*Math.PI/20;
+    const mid=a+Math.PI/20;
+    const ri=r*0.58, ro=r*0.82;
+    const x0=cx+Math.cos(a)*ri,y0=cy+Math.sin(a)*ri;
+    const x1=cx+Math.cos(a)*ro,y1=cy+Math.sin(a)*ro;
+    const x2=cx+Math.cos(a2)*ro,y2=cy+Math.sin(a2)*ro;
+    const x3=cx+Math.cos(a2)*ri,y3=cy+Math.sin(a2)*ri;
+    svg+=`<path d="M${x0},${y0} L${x1},${y1} A${ro},${ro} 0 0,1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 0,0 ${x0},${y0} Z" fill="rgba(220,100,40,0.15)" stroke="#dc6428" stroke-width="0.8"/>`;
+    const ix=cx+Math.cos(mid)*(ri+ro)/2, iy=cy+Math.sin(mid)*(ri+ro)/2;
+    svg+=`<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="${size*0.06}" style="user-select:none">${AZTEC_DAYS[i].icon}</text>`;
+  }
+  // Mittlerer Ring – 4 Richtungen
+  for(let i=0;i<4;i++){
+    const a=-Math.PI/2+i*Math.PI/2;
+    svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+Math.cos(a)*r*0.55}" y2="${cy+Math.sin(a)*r*0.55}" stroke="#dc6428" stroke-width="1" opacity=".4"/>`;
+  }
+  // Sonnengesicht in der Mitte
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r*0.32}" fill="rgba(220,100,40,0.2)" stroke="#dc6428" stroke-width="1.5"/>`;
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r*0.18}" fill="rgba(220,100,40,0.3)" stroke="#dc6428" stroke-width="1"/>`;
+  svg+=`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${size*0.12}" style="user-select:none">☀️</text>`;
+  svg+=`</svg>`;
+  return svg;
+}
+
+function renderAztec() {
+  const l = localNow();
+  const az = getAztecDate(l.getUTCFullYear(), l.getUTCMonth()+1, l.getUTCDate());
+  const td = AZTEC_DAYS[az.tonalIdx];
+  document.getElementById('aztec-tonal-glyph').innerHTML = drawAztecGlyph(az.tonalIdx, '#dc6428', 52);
+  document.getElementById('aztec-tonal-num').textContent = az.tonalNum;
+  document.getElementById('aztec-tonal-name').textContent = td.name;
+  document.getElementById('aztec-xiu-day').textContent = az.xiuDayInMonth;
+  document.getElementById('aztec-xiu-month').textContent = AZTEC_MONTHS[az.xiuMonthIdx];
+  document.getElementById('aztec-sunstone').innerHTML = drawAztecSunstone(180);
+  // Tonalpohualli Grid
+  document.getElementById('aztec-tonal-grid').innerHTML = AZTEC_DAYS.map((d,i)=>{
+    const cur=i===az.tonalIdx;
+    return `<div style="background:${cur?'rgba(220,100,40,0.2)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(220,100,40,0.5)':'var(--border)'};border-radius:10px;padding:6px;text-align:center">
+      <div style="margin:0 auto 3px">${drawAztecGlyph(i,cur?'#dc6428':'var(--text3)',36)}</div>
+      <div style="font-size:9px;color:${cur?'#dc6428':'var(--text2)'};font-weight:${cur?600:400};line-height:1.2">${d.name}</div>
+      <div style="font-size:8px;color:var(--text3)">${d.de}</div>
+    </div>`;
+  }).join('');
+  // Xiuhpohualli Grid
+  document.getElementById('aztec-xiu-grid').innerHTML = AZTEC_MONTHS.map((mn,i)=>{
+    const cur=i===az.xiuMonthIdx;
+    return `<div style="background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(78,205,196,0.4)':'var(--border)'};border-radius:8px;padding:5px 6px;text-align:center">
+      <div style="font-size:14px">${AZTEC_MONTH_ICONS[i]}</div>
+      <div style="font-size:9px;color:${cur?'var(--teal)':'var(--text2)'};font-weight:${cur?500:400};margin-top:2px;line-height:1.2">${mn.split(' ')[0]}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TIBETISCHER KALENDER ──────────────────────────────────────────────────────
+const TIB_ANIMALS = [
+  {en:'Hase',    tib:'ཡོས།',  icon:'🐇'},
+  {en:'Drache',  tib:'འབྲུག།', icon:'🐉'},
+  {en:'Schlange',tib:'སྦྲུལ།', icon:'🐍'},
+  {en:'Pferd',   tib:'རྟ།',   icon:'🐎'},
+  {en:'Schaf',   tib:'ལུག།',  icon:'🐑'},
+  {en:'Affe',    tib:'སྤྲེལ།', icon:'🐒'},
+  {en:'Vogel',   tib:'བྱ།',   icon:'🐓'},
+  {en:'Hund',    tib:'ཁྱི།',  icon:'🐕'},
+  {en:'Schwein', tib:'ཕག།',  icon:'🐖'},
+  {en:'Maus',    tib:'བྱི།',  icon:'🐭'},
+  {en:'Rind',    tib:'གླང།', icon:'🐂'},
+  {en:'Tiger',   tib:'སྟག།',  icon:'🐅'},
+];
+const TIB_ELEMENTS = ['Holz','Feuer','Erde','Metall','Wasser'];
+const TIB_ELEM_ICONS = ['🌿','🔥','🌍','⚙️','💧'];
+const TIB_HOLIDAYS = [
+  {name:'Losar (Tibetisches Neujahr)', note:'1. Tag des 1. Mondmonats', greg:{m:2,d:29}, important:true},
+  {name:'Saga Dawa (Vesak)',           note:'15. Tag des 4. Mondmonats – Geburt/Tod/Erleuchtung Buddhas', greg:{m:5,d:12}, important:true},
+  {name:'Chökhor Düchen',             note:'4. Mond, 4. Tag – erste Predigt Buddhas', greg:{m:8,d:5}},
+  {name:'Lhabab Düchen',              note:'9. Mond, 22. Tag – Buddhas Abstieg vom Himmel', greg:{m:10,d:29}},
+  {name:'Ganden Ngamchö',             note:'Todestag Tsongkhapas', greg:{m:12,d:25}},
+];
+
+function getTibetanYear(gYear) {
+  // Referenz: 2024 = Holz-Drache (Element 0/Holz, Tier 1/Drache)
+  const refYear=2024, refAnimal=1, refElement=0;
+  const diff=gYear-refYear;
+  const animalIdx=((refAnimal+diff)%12+12)%12;
+  const elemIdx=((refElement+Math.floor(diff/2))%5+5)%5;
+  const rabjung=Math.floor((gYear-1027)/60)+1;
+  const yearInRab=((gYear-1027)%60+60)%60+1;
+  return {animal:TIB_ANIMALS[animalIdx],animalIdx,element:TIB_ELEMENTS[elemIdx],elemIcon:TIB_ELEM_ICONS[elemIdx],elemIdx,rabjung,yearInRab};
+}
+
+function renderTibetan() {
+  const l=localNow();
+  const gY=l.getUTCFullYear();
+  // Losar ist ca. Feb/März – wenn vor Losar noch altes Jahr
+  const losarApprox=new Date(Date.UTC(gY,1,28));
+  const today=new Date(Date.UTC(gY,l.getUTCMonth(),l.getUTCDate()));
+  const tibY=today<losarApprox?getTibetanYear(gY-1):getTibetanYear(gY);
+  document.getElementById('tib-animal-icon').textContent=tibY.animal.icon;
+  document.getElementById('tib-year-name').textContent=`Jahr des ${tibY.element}-${tibY.animal.en}`;
+  document.getElementById('tib-rabjung').textContent=`${tibY.rabjung}. Rabjung · Jahr ${tibY.yearInRab} im 60er-Zyklus`;
+  document.getElementById('tib-date').textContent=`Tibetisches Jahr ${gY+127} · Losar ca. Februar/März`;
+  document.getElementById('tib-tibetan').textContent=`${tibY.elemIcon} ${tibY.animal.tib}`;
+  // Zodiac Grid
+  document.getElementById('tib-zodiac-grid').innerHTML=TIB_ANIMALS.map((a,i)=>{
+    const cur=i===tibY.animalIdx;
+    const el=TIB_ELEMENTS[i%5];
+    return `<div style="background:${cur?'rgba(180,100,220,0.2)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(180,100,220,0.5)':'var(--border)'};border-radius:10px;padding:8px;text-align:center">
+      <div style="font-size:20px">${a.icon}</div>
+      <div style="font-size:10px;color:${cur?'#b464dc':'var(--text2)'};font-weight:${cur?500:400};margin-top:3px">${a.en}</div>
+      <div style="font-size:9px;color:var(--text3);font-family:serif">${a.tib}</div>
+    </div>`;
+  }).join('');
+  // Feste
+  const todayStr2=todayStr();
+  document.getElementById('tib-holidays').innerHTML=TIB_HOLIDAYS.map(h=>{
+    const d=new Date(Date.UTC(gY,h.greg.m-1,h.greg.d));
+    const ds=d.toISOString().slice(0,10);
+    return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<todayStr2?.5:1}">
+      <span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.greg.d}. ${DE_MONTHS[h.greg.m-1].slice(0,3)}</span>
+      <div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
+      ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── SONNENAUFGANG / -UNTERGANG im Gregorianischen Tab ─────────────────────────
+function getSunTimes(date, lat, lon) {
+  // Sonnenaufgang + Untergang + Dämmerung (Jean Meeus Näherung)
+  function calcHour(date, lat, lon, rise) {
+    const n = Math.floor(date.getTime()/86400000) - 10956.5;
+    const Js = n - lon/360;
+    const M = (357.5291 + 0.98560028*Js) % 360;
+    const Mr = M*Math.PI/180;
+    const C = 1.9148*Math.sin(Mr)+0.02*Math.sin(2*Mr)+0.0003*Math.sin(3*Mr);
+    const lam = (M+C+180+102.9372)%360;
+    const lr = lam*Math.PI/180;
+    const Jt = 2451545+Js+0.0053*Math.sin(Mr)-0.0069*Math.sin(2*lr);
+    const sinD = Math.sin(lr)*Math.sin(23.4397*Math.PI/180);
+    const cosD = Math.cos(Math.asin(sinD));
+    const latr = lat*Math.PI/180;
+    const cosH = (Math.sin(-0.8333*Math.PI/180)-Math.sin(latr)*sinD)/(Math.cos(latr)*cosD);
+    if(cosH<-1||cosH>1) return null;
+    const H = Math.acos(cosH)*180/Math.PI;
+    const J = rise ? Jt - H/360 : Jt + H/360;
+    return ((J-2440587.5)*86400000%86400000+86400000)%86400000/60000;
+  }
+  const rise = calcHour(date, lat, lon, true);
+  const set  = calcHour(date, lat, lon, false);
+  return { rise, set };
+}
+
+function formatSunTime(utcMin, dst) {
+  if(utcMin===null) return '–';
+  const off = dst ? 2 : 1;
+  const h = Math.floor((utcMin/60+off)%24);
+  const m = Math.floor(utcMin%60);
+  return `${pad(h)}:${pad(m)}`;
+}
+
+function renderSunTimesInCal() {
+  const el = document.getElementById('cal-sun-times');
+  if(!el) return;
+  if(!window._swarogLat) {
+    el.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px">
+      Standort nicht verfügbar – bitte Swarog-Tab öffnen um Standort zu aktivieren</div>`;
+    return;
+  }
+  const now=new Date();
+  const dst=isDST(now);
+  const {rise,set}=getSunTimes(now,window._swarogLat,window._swarogLon);
+  const riseStr=formatSunTime(rise,dst);
+  const setStr=formatSunTime(set,dst);
+  const dayLen=rise&&set?Math.round((set-rise)):null;
+  const h=dayLen?Math.floor(dayLen/60):0, m=dayLen?Math.round(dayLen%60):0;
+  el.innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,200,50,0.12);border:0.5px solid rgba(255,200,50,0.3);border-radius:8px">
+        <span style="font-size:16px">🌅</span>
+        <div><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em">Aufgang</div>
+        <div style="font-size:15px;font-weight:500;color:var(--gold)">${riseStr}</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,140,50,0.12);border:0.5px solid rgba(255,140,50,0.3);border-radius:8px">
+        <span style="font-size:16px">🌇</span>
+        <div><div style="font-size:10px;color:#ff8c32;text-transform:uppercase;letter-spacing:.05em">Untergang</div>
+        <div style="font-size:15px;font-weight:500;color:#ff8c32">${setStr}</div></div>
+      </div>
+      ${dayLen?`<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(91,141,238,0.1);border:0.5px solid rgba(91,141,238,0.25);border-radius:8px">
+        <span style="font-size:16px">⏱</span>
+        <div><div style="font-size:10px;color:var(--blue2);text-transform:uppercase;letter-spacing:.05em">Tageslänge</div>
+        <div style="font-size:15px;font-weight:500;color:var(--blue2)">${h}h ${m}m</div></div>
+      </div>`:''}
+    </div>`;
+}
+
+// ── MEHRSPRACHIGKEIT (i18n) ───────────────────────────────────────────────────
+const LANGUAGES = {
+  de: { flag:'🇩🇪', name:'Deutsch',    dir:'ltr', months:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'], days:['So','Mo','Di','Mi','Do','Fr','Sa'], daysLong:['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'], ui:{calendar:'Kalender',holidays:'Feiertage',moon:'Mondphasen',settings:'Einstellungen',today:'Heute',sunrise:'Sonnenaufgang',sunset:'Sonnenuntergang',daylength:'Tageslänge',countdown:'Countdown',yearview:'Jahresübersicht',dateconv:'Datumsrechner',dark:'Dunkler Modus',fontsize:'Schriftgröße',language:'Sprache',tabs:'Aktive Tabs',legal:'gesetzl.',noLocation:'Standort nicht verfügbar – bitte Swarog-Tab öffnen',enterDate:'Datum eingeben',allFests:'Alle Feste',legalOnly:'Nur gesetzliche Feiertage',astroOnly:'Nur astronomische',days:'Tage',nextEvents:'Nächste Ereignisse'} },
+  en: { flag:'🇬🇧', name:'English',    dir:'ltr', months:['January','February','March','April','May','June','July','August','September','October','November','December'], days:['Su','Mo','Tu','We','Th','Fr','Sa'], daysLong:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], ui:{calendar:'Calendar',holidays:'Holidays',moon:'Moon Phases',settings:'Settings',today:'Today',sunrise:'Sunrise',sunset:'Sunset',daylength:'Day Length',countdown:'Countdown',yearview:'Year Overview',dateconv:'Date Converter',dark:'Dark Mode',fontsize:'Font Size',language:'Language',tabs:'Active Tabs',legal:'legal',noLocation:'Location unavailable – please open Swarog tab',enterDate:'Enter date',allFests:'All Events',legalOnly:'Public Holidays Only',astroOnly:'Astronomical Only',days:'days',nextEvents:'Next Events'} },
+  fr: { flag:'🇫🇷', name:'Français',   dir:'ltr', months:['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'], days:['Di','Lu','Ma','Me','Je','Ve','Sa'], daysLong:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'], ui:{calendar:'Calendrier',holidays:'Jours fériés',moon:'Phases lunaires',settings:'Paramètres',today:'Aujourd\'hui',sunrise:'Lever du soleil',sunset:'Coucher du soleil',daylength:'Durée du jour',countdown:'Compte à rebours',yearview:'Aperçu annuel',dateconv:'Convertisseur',dark:'Mode sombre',fontsize:'Taille de police',language:'Langue',tabs:'Onglets actifs',legal:'légal',noLocation:'Localisation indisponible',enterDate:'Entrer une date',allFests:'Tous les événements',legalOnly:'Jours fériés uniquement',astroOnly:'Astronomique uniquement',days:'jours',nextEvents:'Prochains événements'} },
+  es: { flag:'🇪🇸', name:'Español',    dir:'ltr', months:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], days:['Do','Lu','Ma','Mi','Ju','Vi','Sá'], daysLong:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], ui:{calendar:'Calendario',holidays:'Festivos',moon:'Fases lunares',settings:'Ajustes',today:'Hoy',sunrise:'Amanecer',sunset:'Atardecer',daylength:'Duración del día',countdown:'Cuenta atrás',yearview:'Vista anual',dateconv:'Convertidor',dark:'Modo oscuro',fontsize:'Tamaño fuente',language:'Idioma',tabs:'Pestañas activas',legal:'oficial',noLocation:'Ubicación no disponible',enterDate:'Introducir fecha',allFests:'Todos los eventos',legalOnly:'Solo días festivos',astroOnly:'Solo astronómico',days:'días',nextEvents:'Próximos eventos'} },
+  fa: { flag:'🇮🇷', name:'فارسی',      dir:'rtl', months:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], days:['ی','د','س','چ','پ','ج','ش'], daysLong:['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'], ui:{calendar:'تقویم',holidays:'تعطیلات',moon:'فازهای ماه',settings:'تنظیمات',today:'امروز',sunrise:'طلوع',sunset:'غروب',daylength:'طول روز',countdown:'شمارش معکوس',yearview:'نمای سال',dateconv:'مبدل تاریخ',dark:'حالت تاریک',fontsize:'اندازه فونت',language:'زبان',tabs:'برگه‌های فعال',legal:'رسمی',noLocation:'موقعیت مکانی در دسترس نیست',enterDate:'تاریخ را وارد کنید',allFests:'همه رویدادها',legalOnly:'فقط تعطیلات رسمی',astroOnly:'فقط نجومی',days:'روز',nextEvents:'رویدادهای بعدی'} },
+  ar: { flag:'🇸🇦', name:'العربية',   dir:'rtl', months:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], days:['أح','اث','ث','أر','خ','ج','س'], daysLong:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'], ui:{calendar:'التقويم',holidays:'الأعياد',moon:'أطوار القمر',settings:'الإعدادات',today:'اليوم',sunrise:'الشروق',sunset:'الغروب',daylength:'طول النهار',countdown:'العد التنازلي',yearview:'نظرة عامة سنوية',dateconv:'محول التاريخ',dark:'الوضع المظلم',fontsize:'حجم الخط',language:'اللغة',tabs:'علامات التبويب',legal:'رسمي',noLocation:'الموقع غير متاح',enterDate:'أدخل التاريخ',allFests:'جميع الأحداث',legalOnly:'العطلات الرسمية فقط',astroOnly:'فلكي فقط',days:'يوم',nextEvents:'الأحداث القادمة'} },
+  hi: { flag:'🇮🇳', name:'हिन्दी',    dir:'ltr', months:['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'], days:['र','स','मं','बु','गु','शु','श'], daysLong:['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'], ui:{calendar:'कैलेंडर',holidays:'त्योहार',moon:'चंद्र कलाएं',settings:'सेटिंग्स',today:'आज',sunrise:'सूर्योदय',sunset:'सूर्यास्त',daylength:'दिन की अवधि',countdown:'उलटी गिनती',yearview:'वार्षिक अवलोकन',dateconv:'तिथि परिवर्तक',dark:'डार्क मोड',fontsize:'फ़ॉन्ट आकार',language:'भाषा',tabs:'सक्रिय टैब',legal:'कानूनी',noLocation:'स्थान उपलब्ध नहीं',enterDate:'तारीख दर्ज करें',allFests:'सभी कार्यक्रम',legalOnly:'केवल सार्वजनिक अवकाश',astroOnly:'केवल खगोलीय',days:'दिन',nextEvents:'अगले कार्यक्रम'} },
+  ja: { flag:'🇯🇵', name:'日本語',     dir:'ltr', months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], days:['日','月','火','水','木','金','土'], daysLong:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'], ui:{calendar:'カレンダー',holidays:'祝日',moon:'月の満ち欠け',settings:'設定',today:'今日',sunrise:'日の出',sunset:'日の入り',daylength:'日照時間',countdown:'カウントダウン',yearview:'年間概要',dateconv:'日付変換',dark:'ダークモード',fontsize:'フォントサイズ',language:'言語',tabs:'アクティブタブ',legal:'法定',noLocation:'位置情報が利用できません',enterDate:'日付を入力',allFests:'すべてのイベント',legalOnly:'祝日のみ',astroOnly:'天文のみ',days:'日',nextEvents:'次のイベント'} },
+  zh: { flag:'🇨🇳', name:'中文',       dir:'ltr', months:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'], days:['日','一','二','三','四','五','六'], daysLong:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'], ui:{calendar:'日历',holidays:'节假日',moon:'月相',settings:'设置',today:'今天',sunrise:'日出',sunset:'日落',daylength:'白昼长度',countdown:'倒计时',yearview:'年度概览',dateconv:'日期转换',dark:'深色模式',fontsize:'字体大小',language:'语言',tabs:'活跃标签',legal:'法定',noLocation:'位置不可用',enterDate:'输入日期',allFests:'所有活动',legalOnly:'仅公众假期',astroOnly:'仅天文',days:'天',nextEvents:'即将发生的事件'} },
+};
+
+let _lang = localStorage.getItem('lang') || 'de';
+
+function t(key) { return (LANGUAGES[_lang]||LANGUAGES.de).ui[key] || (LANGUAGES.de).ui[key] || key; }
+function lMonths() { return (LANGUAGES[_lang]||LANGUAGES.de).months; }
+function lDays()   { return (LANGUAGES[_lang]||LANGUAGES.de).days; }
+function lDaysLong(){ return (LANGUAGES[_lang]||LANGUAGES.de).daysLong; }
+function isRTL()   { return (LANGUAGES[_lang]||LANGUAGES.de).dir === 'rtl'; }
+
+function applyLanguage(lang) {
+  _lang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.dir = isRTL() ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+  renderLangGrid();
+  // Update tab labels
+  ALL_TABS.forEach(tab => {
+    const btn = document.getElementById('tab-' + tab.id);
+    if (btn) {
+      const span = btn.querySelector('.tab-label');
+      if (span) span.textContent = tab.label; // keep original labels
+    }
+  });
+  // Re-render current tab
+  renderCal();
+}
+
+function renderLangGrid() {
+  const grid = document.getElementById('lang-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(LANGUAGES).map(([code, l]) => {
+    const cur = code === _lang;
+    return `<button onclick="applyLanguage('${code}')" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center">
+      <div style="font-size:18px">${l.flag}</div>
+      <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};margin-top:3px;font-weight:${cur?500:400}">${l.name}</div>
+    </button>`;
+  }).join('');
+}
+
+// ── SCHRIFTGRÖSSE ─────────────────────────────────────────────────────────────
+function setFontSize(size) {
+  const sizes = {small:'13px', normal:'15px', large:'18px'};
+  const labels = {small:'Klein', normal:'Normal', large:'Groß'};
+  document.documentElement.style.fontSize = sizes[size] || '15px';
+  localStorage.setItem('fontSize', size);
+  const lbl = document.getElementById('fontsize-label');
+  if (lbl) lbl.textContent = labels[size] || 'Normal';
+}
+function loadFontSize() {
+  const s = localStorage.getItem('fontSize') || 'normal';
+  setFontSize(s);
+}
+
+// ── COUNTDOWN ─────────────────────────────────────────────────────────────────
+function renderCountdown() {
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const gY = today.getUTCFullYear();
+
+  function daysUntil(d) {
+    const diff = Math.ceil((new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())) - today) / 86400000);
+    return diff;
+  }
+  function fmtDate(d) { return `${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`; }
+  function cdRow(name, date, color, icon) {
+    const days = daysUntil(date);
+    if (days < 0) return '';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:20px;flex-shrink:0">${icon}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--text);font-weight:${days<=7?500:400}">${name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">${fmtDate(date)}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:${days===0?20:18}px;font-weight:300;color:${days===0?'var(--gold)':days<=7?color:'var(--text2)'}">${days===0?'Heute!':days}</div>
+        ${days>0?`<div style="font-size:9px;color:var(--text3)">${t('days')}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  // Astronomische Ereignisse
+  const phases = getMoonPhasesForYear(gY);
+  const solstices = getSolstices(gY);
+  const nextPhases = phases.filter(p=>new Date(p.d+'T12:00:00Z')>=today).slice(0,4);
+  const astroEvents = [
+    {name:'Frühlingsäquinoktium', date:new Date(Date.UTC(gY,2,20)), icon:'🌸'},
+    {name:'Sommersonnenwende',     date:new Date(Date.UTC(gY,5,21)), icon:'☀️'},
+    {name:'Herbstäquinoktium',     date:new Date(Date.UTC(gY,8,22)), icon:'🍂'},
+    {name:'Wintersonnenwende',     date:new Date(Date.UTC(gY,11,21)), icon:'❄️'},
+    ...nextPhases.map(p=>({name:p.p, date:new Date(p.d+'T12:00:00Z'), icon:p.p==='Vollmond'?'🌕':p.p==='Neumond'?'🌑':p.p==='Erstes Viertel'?'🌓':'🌗'}))
+  ].sort((a,b)=>a.date-b.date);
+
+  document.getElementById('countdown-astro').innerHTML =
+    astroEvents.map(e=>cdRow(e.name, e.date, 'var(--blue2)', e.icon)).filter(Boolean).join('') || '<div style="font-size:13px;color:var(--text3)">Keine bevorstehenden Ereignisse</div>';
+
+  // Feiertage & Feste
+  const bl = _feiertageBLForCal || 'RP';
+  const allH = buildFeiertageForYear(gY, bl);
+  const upcoming = allH.filter(h=>new Date(h.ds+'T12:00:00Z')>=today).slice(0,10);
+  document.getElementById('countdown-feste').innerHTML =
+    upcoming.map(h=>cdRow(h.name, new Date(h.ds+'T12:00:00Z'), 'var(--red)', h.legal?'⭐':'📅')).filter(Boolean).join('') || '<div style="font-size:13px;color:var(--text3)">Keine bevorstehenden Feiertage</div>';
+
+  // Neujahrsdaten
+  const nyEvents = [
+    {name:'Chinesisches Neujahr', date:getChineseNewYear(gY+(new Date()<getChineseNewYear(gY)?0:1)), icon:'🐉'},
+    {name:'Nowruz (Persisches Neujahr)', date:new Date(Date.UTC(gY,2,20)), icon:'🌹'},
+    {name:'Saka-Neujahr', date:new Date(Date.UTC(gY,2,22)), icon:'🇮🇳'},
+    {name:'Pohela Boishakh (Bengali)', date:new Date(Date.UTC(gY,3,14)), icon:'🌸'},
+    {name:'Songkran (Thai)', date:new Date(Date.UTC(gY,3,13)), icon:'💦'},
+    {name:'Enkutatash (Äthiopisch)', date:new Date(Date.UTC(gY,8,11)), icon:'🇪🇹'},
+    {name:'Swarog-Neujahr (СМЗХ)', date:new Date(Date.UTC(gY,8,22)), icon:'☯️'},
+    {name:'Losar (Tibetisch)', date:new Date(Date.UTC(gY,1,28)), icon:'🏔️'},
+  ].filter(e=>daysUntil(e.date)>=0).sort((a,b)=>a.date-b.date);
+  document.getElementById('countdown-newyear').innerHTML =
+    nyEvents.map(e=>cdRow(e.name, e.date, 'var(--purple)', e.icon)).filter(Boolean).join('') || '<div style="font-size:13px;color:var(--text3)">Keine bevorstehenden Neujahrsdaten</div>';
+}
+
+// ── JAHRESÜBERSICHT ───────────────────────────────────────────────────────────
+function initJahresuebersicht() {
+  const sel = document.getElementById('jue-year');
+  if (!sel || sel.options.length > 0) return;
+  const cy = new Date().getFullYear();
+  for (let y = cy-1; y <= cy+5; y++) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === cy) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function renderJahresuebersicht() {
+  const ySel = document.getElementById('jue-year');
+  const fSel = document.getElementById('jue-filter');
+  if (!ySel) return;
+  const y = parseInt(ySel.value);
+  const filter = fSel ? fSel.value : 'alle';
+  const today = todayStr();
+
+  // Sammle alle Ereignisse
+  let events = [];
+
+  // Feiertage
+  const bl = _feiertageBLForCal || 'RP';
+  const fh = buildFeiertageForYear(y, bl);
+  if (filter !== 'astro') {
+    fh.forEach(h => events.push({ds:h.ds, name:h.name, icon:h.legal?'⭐':'📅', color:h.legal?'var(--red)':'var(--text)', cat:'Feiertag', legal:h.legal}));
+  }
+
+  // Astronomisch
+  if (filter !== 'legal') {
+    const phases = getMoonPhasesForYear(y);
+    phases.forEach(p => events.push({ds:p.d, name:p.p, icon:p.p==='Vollmond'?'🌕':p.p==='Neumond'?'🌑':p.p==='Erstes Viertel'?'🌓':'🌗', color:'var(--gold)', cat:'Mond', legal:false}));
+    [{name:'Frühlingsäquinoktium',m:2,d:20,icon:'🌸'},{name:'Sommersonnenwende',m:5,d:21,icon:'☀️'},{name:'Herbstäquinoktium',m:8,d:22,icon:'🍂'},{name:'Wintersonnenwende',m:11,d:21,icon:'❄️'}]
+      .forEach(e=>events.push({ds:`${y}-${pad(e.m+1)}-${pad(e.d)}`,name:e.name,icon:e.icon,color:'var(--blue2)',cat:'Astronomie',legal:false}));
+  }
+
+  // Sortieren
+  events.sort((a,b)=>a.ds.localeCompare(b.ds));
+
+  // Filtern
+  if (filter === 'legal') events = events.filter(e=>e.legal);
+
+  document.getElementById('jue-count').textContent = `${events.length} Ereignisse · ${y}`;
+
+  // Gruppenweise nach Monat anzeigen
+  const byMonth = {};
+  events.forEach(e => {
+    const m = parseInt(e.ds.slice(5,7))-1;
+    if (!byMonth[m]) byMonth[m] = [];
+    byMonth[m].push(e);
+  });
+
+  const months = lMonths();
+  let html = '';
+  for (let m = 0; m < 12; m++) {
+    if (!byMonth[m]) continue;
+    html += `<div style="background:var(--surface2);border-radius:12px;margin-bottom:6px;overflow:hidden">
+      <div style="padding:8px 14px;background:var(--surface3);font-size:12px;font-weight:500;color:var(--text2)">${months[m]} ${y}</div>`;
+    byMonth[m].forEach(e => {
+      const d = new Date(e.ds+'T12:00:00Z');
+      const isPast = e.ds < today;
+      html += `<div style="display:flex;gap:10px;padding:8px 14px;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
+        <span style="font-size:11px;color:var(--text3);min-width:26px;flex-shrink:0">${d.getUTCDate()}.</span>
+        <span style="font-size:12px;margin-right:6px">${e.icon}</span>
+        <span style="font-size:13px;color:${e.color};flex:1">${e.name}</span>
+        <span style="font-size:10px;color:var(--text3);flex-shrink:0">${e.cat}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  document.getElementById('jue-list').innerHTML = html;
+}
+
+// ── DATUMSRECHNER ─────────────────────────────────────────────────────────────
+function renderDatumsrechner() {
+  const inp = document.getElementById('datumsrechner-input');
+  if (!inp || !inp.value) return;
+  const [gY, gM, gD] = inp.value.split('-').map(Number);
+  const res = document.getElementById('datumsrechner-result');
+  if (!res) return;
+
+  // Alle Kalender berechnen
+  const calendars = [
+    {name:'Gregorianisch',    icon:'📅', color:'var(--gold)',   val:`${gD}. ${DE_MONTHS[gM-1]} ${gY}`},
+    {name:'Islamisch',        icon:'☪️',  color:'var(--teal)',   val:(()=>{const h=gregorianToHijri(gY,gM,gD);return `${h.day}. ${['Muharram','Safar','Rabīʿ I','Rabīʿ II','Jumādā I','Jumādā II','Rajab','Schaʿbān','Ramadān','Schawwāl','Dhū l-Qaʿda','Dhū l-Hiddscha'][h.month-1]} ${h.year} AH`;})()},
+    {name:'Hebräisch',        icon:'✡️',  color:'var(--blue2)',  val:(()=>{const h=gregorianToHebrew(gY,gM,gD);return `${h.day}. ${HEB_MONTHS[h.month-1]} ${h.year} AM`;})()},
+    {name:'Persisch',         icon:'🇮🇷', color:'#00b478',      val:(()=>{const j=gregorianToJalali(gY,gM,gD);return `${j.day}. ${PER_MONTHS[j.month-1]} ${j.year} SH`;})()},
+    {name:'Äthiopisch',       icon:'🇪🇹', color:'#00a050',      val:(()=>{const e=gregorianToEthiopian(gY,gM,gD);return `${e.day}. ${ETH_MONTHS[e.month]} ${e.year} ዓ.ም.`;})()},
+    {name:'Koptisch',         icon:'✝️',  color:'#b43c3c',      val:(()=>{const c=gregorianToCoptic(gY,gM,gD);return `${c.day}. ${COP_MONTHS[c.month]} ${c.year} AM`;})()},
+    {name:'Julianisch',       icon:'📜',  color:'#8888cc',      val:(()=>{const j=gregorianToJulian(gY,gM,gD);return `${j.day}. ${DE_MONTHS[j.month-1]} ${j.year}`;})()},
+    {name:'Buddhistisch',     icon:'☸️',  color:'#ffb400',      val:`${gD}. ${DE_MONTHS[gM-1]} ${gY+543} BE`},
+    {name:'Holozän',          icon:'🔢',  color:'var(--blue2)', val:`${gD}. ${DE_MONTHS[gM-1]} ${gY+10000} HE`},
+    {name:'Saka',             icon:'🇮🇳', color:'#e87850',      val:(()=>{const s=gregorianToSaka(gY,gM,gD);return `${s.day}. ${SAKA_MONTHS[s.month].name} ${s.year} Saka`;})()},
+    {name:'Bengali',          icon:'🌸',  color:'#dc5078',      val:(()=>{const b=gregorianToBengali(gY,gM,gD);return `${b.day}. ${b.monthName} ${b.year} BS`;})()},
+    {name:'Maya Tzolkin',     icon:'🌞',  color:'var(--teal)',  val:(()=>{const m=getMayaDate(gY,gM,gD);return `${m.tzolkinNum} ${m.tzolkinName} · ${m.haabDay} ${m.haabMonth}`;})()},
+    {name:'Aztekisch',        icon:'🦅',  color:'#dc6428',      val:(()=>{const a=getAztecDate(gY,gM,gD);return `${a.tonalNum} ${AZTEC_DAYS[a.tonalIdx].name} · ${AZTEC_MONTHS[a.xiuMonthIdx].split(' ')[0]}`;})()},
+    {name:'Japanisch',        icon:'🗾',  color:'#dc3232',      val:(()=>{const d=new Date(Date.UTC(gY,gM-1,gD));const{era,year}=getJapaneseEra(d);return `${era.name} ${year}年 ${gM}月 ${gD}日`;})()},
+    {name:'Zoroastrisch',     icon:'🔥',  color:'#ff8c00',      val:(()=>{const z=gregorianToZoro(gY,gM,gD);return `${z.day}. ${z.month} ${z.year} YZ`;})()},
+    {name:'СМЗХ (Swarog)',    icon:'☯️',  color:'var(--purple)',val:(()=>{const s=getSwarogDate(new Date(Date.UTC(gY,gM-1,gD)));return `${s.dayOfMonth}. ${SWAROG_MONTHS[s.month-1].ru} ${s.efstYear} СМЗХ`;})()},
+  ];
+
+  res.innerHTML = calendars.map(c=>`
+    <div style="display:flex;gap:10px;align-items:center;padding:9px 12px;background:var(--surface2);border-radius:10px;border:0.5px solid var(--border)">
+      <span style="font-size:18px;flex-shrink:0">${c.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">${c.name}</div>
+        <div style="font-size:13px;color:${c.color};font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.val}</div>
+      </div>
+    </div>`).join('');
+}
+
 const savedTheme = localStorage.getItem('theme');
 applyTheme(savedTheme !== 'light');
-
+_lang = localStorage.getItem('lang') || 'de';
+document.documentElement.dir = isRTL() ? 'rtl' : 'ltr';
+loadFontSize();
 tick();
-setInterval(tick, 1000);
+setInterval(tick,1000);
 initFeiertageSelects();
+initJahresuebersicht();
 renderCal();
 renderSolstices();
 checkInstallHint();
