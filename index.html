@@ -39,7 +39,31 @@
   --header-h: 56px;
   --font-display: 'Cinzel', serif;
   --font-body: 'Inter', sans-serif;
+  --fs-xs:  10px;
+  --fs-sm:  11px;
+  --fs-md:  13px;
+  --fs-lg:  15px;
+  --fs-xl:  17px;
+  --fs-2xl: 20px;
 }
+
+/* FONT SIZE SCALES */
+body.fs-small  { --fs-xs:9px;  --fs-sm:10px; --fs-md:11px; --fs-lg:13px; --fs-xl:15px; --fs-2xl:18px; }
+body.fs-large  { --fs-xs:12px; --fs-sm:14px; --fs-md:16px; --fs-lg:18px; --fs-xl:21px; --fs-2xl:24px; }
+
+/* Apply font size variables throughout */
+.card, .card *        { font-size: var(--fs-md); }
+.section-label        { font-size: var(--fs-xs) !important; }
+.settings-row-label   { font-size: var(--fs-md); }
+.settings-row-sub     { font-size: var(--fs-sm); }
+.hday-row .hday-name  { font-size: var(--fs-md); }
+.np-name              { font-size: var(--fs-md); }
+.cal-cell             { font-size: var(--fs-md); }
+
+/* Font size button active state */
+.fs-btn { padding:5px 10px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text3);cursor:pointer;transition:all .15s; }
+.fs-btn.active { border-color:var(--teal);background:rgba(78,205,196,0.15);color:var(--teal);font-weight:500; }
+.fs-btn:active { opacity:.7; }
 
 /* LIGHT MODE */
 body.light-mode {
@@ -361,9 +385,9 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           </div>
         </div>
         <div style="display:flex;gap:6px">
-          <button onclick="setFontSize('small')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:11px;cursor:pointer">A</button>
-          <button onclick="setFontSize('normal')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:14px;cursor:pointer">A</button>
-          <button onclick="setFontSize('large')" style="padding:4px 8px;border-radius:6px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text);font-size:18px;cursor:pointer">A</button>
+          <button onclick="setFontSize('small')"  class="fs-btn" id="fs-btn-small"  style="font-size:11px">A</button>
+          <button onclick="setFontSize('normal')" class="fs-btn" id="fs-btn-normal" style="font-size:15px">A</button>
+          <button onclick="setFontSize('large')"  class="fs-btn" id="fs-btn-large"  style="font-size:19px">A</button>
         </div>
       </div>
     </div>
@@ -4783,12 +4807,18 @@ function renderLangGrid() {
 
 // ── SCHRIFTGRÖSSE ─────────────────────────────────────────────────────────────
 function setFontSize(size) {
-  const sizes = {small:'13px', normal:'15px', large:'18px'};
   const labels = {small:'Klein', normal:'Normal', large:'Groß'};
-  document.documentElement.style.fontSize = sizes[size] || '15px';
+  document.body.classList.remove('fs-small','fs-normal','fs-large');
+  if (size !== 'normal') document.body.classList.add('fs-' + size);
   localStorage.setItem('fontSize', size);
+  // Label
   const lbl = document.getElementById('fontsize-label');
   if (lbl) lbl.textContent = labels[size] || 'Normal';
+  // Buttons aktiv markieren
+  ['small','normal','large'].forEach(s => {
+    const btn = document.getElementById('fs-btn-' + s);
+    if (btn) btn.classList.toggle('active', s === size);
+  });
 }
 function loadFontSize() {
   const s = localStorage.getItem('fontSize') || 'normal';
