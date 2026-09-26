@@ -51,14 +51,13 @@
 body.fs-small  { --fs-xs:9px;  --fs-sm:10px; --fs-md:11px; --fs-lg:13px; --fs-xl:15px; --fs-2xl:18px; }
 body.fs-large  { --fs-xs:12px; --fs-sm:14px; --fs-md:16px; --fs-lg:18px; --fs-xl:21px; --fs-2xl:24px; }
 
-/* Apply font size variables throughout */
-.card, .card *        { font-size: var(--fs-md); }
-.section-label        { font-size: var(--fs-xs) !important; }
-.settings-row-label   { font-size: var(--fs-md); }
-.settings-row-sub     { font-size: var(--fs-sm); }
-.hday-row .hday-name  { font-size: var(--fs-md); }
-.np-name              { font-size: var(--fs-md); }
-.cal-cell             { font-size: var(--fs-md); }
+/* Global font scaling via zoom on the scroll container */
+body.fs-small  .app-scroll { zoom: 0.88; }
+body.fs-large  .app-scroll { zoom: 1.14; }
+body.fs-small  .app-header { zoom: 0.88; }
+body.fs-large  .app-header { zoom: 1.14; }
+body.fs-small  .tab-bar    { zoom: 0.88; }
+body.fs-large  .tab-bar    { zoom: 1.14; }
 
 /* Font size button active state */
 .fs-btn { padding:5px 10px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text3);cursor:pointer;transition:all .15s; }
@@ -405,7 +404,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <div style="padding:16px 20px 0;font-size:11px;color:var(--text3);line-height:1.6;">
-      Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.
+      <span data-i18n="tabs_hint">Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.</span>
     </div>
   </div>
 </div>
@@ -426,10 +425,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 
     <div id="install-banner" class="install-banner">
       <button class="install-close" onclick="this.parentElement.classList.remove('visible')">×</button>
-      <strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.
+      <span data-i18n="install_hint"><strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.</span>
     </div>
 
-    <div class="section-label">Kalender</div>
+    <div class="section-label" data-i18n="sec_calendar">Kalender</div>
     <div class="card">
       <div class="cal-nav">
         <button class="cal-nav-btn" onclick="shiftMonth(-1)">‹</button>
@@ -440,12 +439,12 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="cal-grid" id="cal-grid"></div>
     </div>
 
-    <div class="section-label">Sonne heute</div>
+    <div class="section-label" data-i18n="sec_sun">Sonne heute</div>
     <div class="card" id="cal-sun-times" style="padding:10px"></div>
-    <div class="section-label">Feiertage dieses Monats</div>
+    <div class="section-label" data-i18n="sec_holidays_month">Feiertage dieses Monats</div>
     <div class="card" id="hday-month"></div>
 
-    <div class="section-label">Sonnenwenden &amp; Äquinoktien 2026</div>
+    <div class="section-label" data-i18n="sec_solstices">Sonnenwenden &amp; Äquinoktien 2026</div>
     <div class="card">
       <div class="solstice-grid" id="solstice-grid"></div>
     </div>
@@ -486,10 +485,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- Feiertags-Liste -->
-    <div class="section-label">Gesetzliche Feiertage</div>
+    <div class="section-label" data-i18n="sec_legal">Gesetzliche Feiertage</div>
     <div class="card" id="feiertage-legal-list"></div>
 
-    <div class="section-label">Weitere Feste &amp; Gedenktage</div>
+    <div class="section-label" data-i18n="sec_other">Weitere Feste &amp; Gedenktage</div>
     <div class="card" id="feiertage-other-list"></div>
 
   </div>
@@ -524,12 +523,12 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       </div>
     </div>
 
-    <div class="section-label">Nächste Ereignisse</div>
+    <div class="section-label" data-i18n="sec_next">Nächste Ereignisse</div>
     <div class="card">
       <div class="next-phase-list" id="next-phase-list"></div>
     </div>
 
-    <div class="section-label">Mondphasen 2026 – Überblick</div>
+    <div class="section-label" data-i18n="sec_moonoverview">Mondphasen – Überblick</div>
     <div class="moon-year-grid" id="moon-year-grid"></div>
   </div>
 
@@ -551,7 +550,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- Sol & Ophiuchus -->
-    <div class="section-label">Sol – Der 13. Monat & Ophiuchus</div>
+    <div class="section-label" data-i18n="sec_sol">Sol – Der 13. Monat &amp; Ophiuchus</div>
     <div class="card" style="border-color:rgba(91,141,238,0.2);background:linear-gradient(135deg,rgba(13,13,40,0.8) 0%,rgba(13,13,26,0.8) 100%)">
       <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
         <div style="flex-shrink:0;text-align:center">
@@ -591,24 +590,24 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- Historische Tiefe -->
-    <div class="section-label">Sol in alten Kulturen</div>
+    <div class="section-label" data-i18n="sec_sol_history">Sol in alten Kulturen</div>
     <div class="card">
       <div id="ifc-sol-history"></div>
     </div>
 
     <!-- 13 Tierkreiszeichen -->
-    <div class="section-label">Die 13 Sternzeichen (mit Ophiuchus)</div>
+    <div class="section-label" data-i18n="sec_zodiac13">Die 13 Sternzeichen (mit Ophiuchus)</div>
     <div class="card" style="padding:10px">
       <div id="ifc-zodiac-13" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px"></div>
     </div>
 
     <!-- Alle 13 Monate -->
-    <div class="section-label">Alle 13 IFC-Monate</div>
+    <div class="section-label" data-i18n="sec_ifc_months">Alle 13 IFC-Monate</div>
     <div class="card">
       <div class="ifc-months-grid" id="ifc-months-grid"></div>
     </div>
 
-    <div class="section-label">Über den IFC-Kalender</div>
+    <div class="section-label" data-i18n="sec_ifc_about">Über den IFC-Kalender</div>
     <div class="ifc-info-box">
       Der <strong>Internationale Feste Kalender</strong> (IFC) hat <strong>13 Monate</strong> à <strong>28 Tage</strong> (= 364 Tage). Der 13. Monat heißt <strong>Sol</strong> und liegt zwischen Juni und Juli. Jeder Monat beginnt stets auf einen <strong>Sonntag</strong>. Der <strong>Jahrestag</strong> (1. Januar) steht außerhalb der Wochenstruktur. In Schaltjahren gibt es am Ende von Juni einen Schalttag.
     </div>
@@ -648,7 +647,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- 16-Stunden-Übersicht -->
-    <div class="section-label">Die 16 Swarog-Stunden des Tages</div>
+    <div class="section-label" data-i18n="sec_swarog_hours">Die 16 Swarog-Stunden des Tages</div>
     <div class="card" style="padding:10px">
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px" id="swarog-hours-grid"></div>
     </div>
@@ -660,11 +659,11 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <div class="efst-sub" id="swarog-year-sub">– greg. = – EFST (+ 5508)<br>Neujahr: 22. September (Herbstäquinoktium)</div>
       </div>
     </div>
-    <div class="section-label">Aktuelle Epoche</div>
+    <div class="section-label" data-i18n="sec_cur_epoch">Aktuelle Epoche</div>
     <div class="epoch-current" id="epoch-current"></div>
-    <div class="section-label">Nächste Epoche</div>
+    <div class="section-label" data-i18n="sec_next_epoch">Nächste Epoche</div>
     <div class="epoch-next" id="epoch-next"></div>
-    <div class="section-label">Was bedeutet EFST?</div>
+    <div class="section-label" data-i18n="sec_efst">Was bedeutet EFST?</div>
     <div class="card" style="border-color:rgba(155,127,232,0.2)">
       <div style="font-size:16px;font-weight:500;color:var(--purple);font-family:var(--font-display);margin-bottom:10px;letter-spacing:.04em">Erschaffung des Friedens im Sternen-Tempel</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.75">
@@ -688,7 +687,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         </div>
       </div>
     </div>
-    <div class="section-label">Der Große Swarog-Kreis (25.920 Jahre · 16 Epochen)</div>
+    <div class="section-label" data-i18n="sec_swarog_circle">Der Große Swarog-Kreis (25.920 Jahre · 16 Epochen)</div>
     <div class="card">
       <div class="swarog-wheel" id="swarog-wheel"></div>
     </div>
@@ -697,7 +696,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- DARISCHER KALENDER -->
-    <div class="section-label">Darischer Kalender · Да'Арийский Календарь</div>
+    <div class="section-label" data-i18n="sec_daric">Darischer Kalender · Да'Арийский Календарь</div>
     <div class="card" style="border-color:rgba(155,127,232,0.3);background:linear-gradient(135deg,#1a1030 0%,#111126 100%)">
       <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);letter-spacing:.06em;margin-bottom:10px">Das vollständige Datum</div>
       <div id="daric-full-date" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
@@ -707,25 +706,25 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <!-- 16-Zeichen Tierkreis -->
-    <div class="section-label">16-Zeichen Tierkreis · Круголет Числобога</div>
+    <div class="section-label" data-i18n="sec_daric_zodiac">16-Zeichen Tierkreis · Круголет Числобога</div>
     <div class="card" style="padding:10px">
       <div id="daric-zodiac-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div>
     </div>
 
     <!-- Stichija (4 Elemente) -->
-    <div class="section-label">Stichija – Die 4 Elemente des Jahres</div>
+    <div class="section-label" data-i18n="sec_stichija">Stichija – Die 4 Elemente des Jahres</div>
     <div class="card">
       <div id="daric-stichija" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
     </div>
 
     <!-- Kreise der Zeit -->
-    <div class="section-label">Die drei Kreise der Zeit</div>
+    <div class="section-label" data-i18n="sec_circles">Die drei Kreise der Zeit</div>
     <div class="card">
       <div id="daric-circles"></div>
     </div>
 
     <!-- SMZH vs EFST Erklärung -->
-    <div class="section-label">SMZH · EFST · Da'Ariya – Epochen im Vergleich</div>
+    <div class="section-label" data-i18n="sec_epochs">SMZH · EFST · Da'Ariya – Epochen im Vergleich</div>
     <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="padding:8px 10px;background:rgba(155,127,232,0.1);border-radius:8px;border-left:2px solid var(--purple)">
@@ -4723,8 +4722,7 @@ function renderSunTimesInCal() {
   const el = document.getElementById('cal-sun-times');
   if(!el) return;
   if(!window._swarogLat) {
-    el.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px">
-      Standort nicht verfügbar – bitte Swarog-Tab öffnen um Standort zu aktivieren</div>`;
+    el.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px">${t('noLocation')}</div>`;
     return;
   }
   const now=new Date();
@@ -4738,67 +4736,316 @@ function renderSunTimesInCal() {
     <div style="display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,200,50,0.12);border:0.5px solid rgba(255,200,50,0.3);border-radius:8px">
         <span style="font-size:16px">🌅</span>
-        <div><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em">Aufgang</div>
+        <div><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em">${t('sunrise')}</div>
         <div style="font-size:15px;font-weight:500;color:var(--gold)">${riseStr}</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,140,50,0.12);border:0.5px solid rgba(255,140,50,0.3);border-radius:8px">
         <span style="font-size:16px">🌇</span>
-        <div><div style="font-size:10px;color:#ff8c32;text-transform:uppercase;letter-spacing:.05em">Untergang</div>
+        <div><div style="font-size:10px;color:#ff8c32;text-transform:uppercase;letter-spacing:.05em">${t('sunset')}</div>
         <div style="font-size:15px;font-weight:500;color:#ff8c32">${setStr}</div></div>
       </div>
       ${dayLen?`<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(91,141,238,0.1);border:0.5px solid rgba(91,141,238,0.25);border-radius:8px">
         <span style="font-size:16px">⏱</span>
-        <div><div style="font-size:10px;color:var(--blue2);text-transform:uppercase;letter-spacing:.05em">Tageslänge</div>
+        <div><div style="font-size:10px;color:var(--blue2);text-transform:uppercase;letter-spacing:.05em">${t('daylength')}</div>
         <div style="font-size:15px;font-weight:500;color:var(--blue2)">${h}h ${m}m</div></div>
       </div>`:''}
     </div>`;
 }
 
 // ── MEHRSPRACHIGKEIT (i18n) ───────────────────────────────────────────────────
-const LANGUAGES = {
-  de: { flag:'🇩🇪', name:'Deutsch',    dir:'ltr', months:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'], days:['So','Mo','Di','Mi','Do','Fr','Sa'], daysLong:['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'], ui:{calendar:'Kalender',holidays:'Feiertage',moon:'Mondphasen',settings:'Einstellungen',today:'Heute',sunrise:'Sonnenaufgang',sunset:'Sonnenuntergang',daylength:'Tageslänge',countdown:'Countdown',yearview:'Jahresübersicht',dateconv:'Datumsrechner',dark:'Dunkler Modus',fontsize:'Schriftgröße',language:'Sprache',tabs:'Aktive Tabs',legal:'gesetzl.',noLocation:'Standort nicht verfügbar – bitte Swarog-Tab öffnen',enterDate:'Datum eingeben',allFests:'Alle Feste',legalOnly:'Nur gesetzliche Feiertage',astroOnly:'Nur astronomische',days:'Tage',nextEvents:'Nächste Ereignisse'} },
-  en: { flag:'🇬🇧', name:'English',    dir:'ltr', months:['January','February','March','April','May','June','July','August','September','October','November','December'], days:['Su','Mo','Tu','We','Th','Fr','Sa'], daysLong:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], ui:{calendar:'Calendar',holidays:'Holidays',moon:'Moon Phases',settings:'Settings',today:'Today',sunrise:'Sunrise',sunset:'Sunset',daylength:'Day Length',countdown:'Countdown',yearview:'Year Overview',dateconv:'Date Converter',dark:'Dark Mode',fontsize:'Font Size',language:'Language',tabs:'Active Tabs',legal:'legal',noLocation:'Location unavailable – please open Swarog tab',enterDate:'Enter date',allFests:'All Events',legalOnly:'Public Holidays Only',astroOnly:'Astronomical Only',days:'days',nextEvents:'Next Events'} },
-  fr: { flag:'🇫🇷', name:'Français',   dir:'ltr', months:['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'], days:['Di','Lu','Ma','Me','Je','Ve','Sa'], daysLong:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'], ui:{calendar:'Calendrier',holidays:'Jours fériés',moon:'Phases lunaires',settings:'Paramètres',today:'Aujourd\'hui',sunrise:'Lever du soleil',sunset:'Coucher du soleil',daylength:'Durée du jour',countdown:'Compte à rebours',yearview:'Aperçu annuel',dateconv:'Convertisseur',dark:'Mode sombre',fontsize:'Taille de police',language:'Langue',tabs:'Onglets actifs',legal:'légal',noLocation:'Localisation indisponible',enterDate:'Entrer une date',allFests:'Tous les événements',legalOnly:'Jours fériés uniquement',astroOnly:'Astronomique uniquement',days:'jours',nextEvents:'Prochains événements'} },
-  es: { flag:'🇪🇸', name:'Español',    dir:'ltr', months:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], days:['Do','Lu','Ma','Mi','Ju','Vi','Sá'], daysLong:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], ui:{calendar:'Calendario',holidays:'Festivos',moon:'Fases lunares',settings:'Ajustes',today:'Hoy',sunrise:'Amanecer',sunset:'Atardecer',daylength:'Duración del día',countdown:'Cuenta atrás',yearview:'Vista anual',dateconv:'Convertidor',dark:'Modo oscuro',fontsize:'Tamaño fuente',language:'Idioma',tabs:'Pestañas activas',legal:'oficial',noLocation:'Ubicación no disponible',enterDate:'Introducir fecha',allFests:'Todos los eventos',legalOnly:'Solo días festivos',astroOnly:'Solo astronómico',days:'días',nextEvents:'Próximos eventos'} },
-  fa: { flag:'🇮🇷', name:'فارسی',      dir:'rtl', months:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], days:['ی','د','س','چ','پ','ج','ش'], daysLong:['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'], ui:{calendar:'تقویم',holidays:'تعطیلات',moon:'فازهای ماه',settings:'تنظیمات',today:'امروز',sunrise:'طلوع',sunset:'غروب',daylength:'طول روز',countdown:'شمارش معکوس',yearview:'نمای سال',dateconv:'مبدل تاریخ',dark:'حالت تاریک',fontsize:'اندازه فونت',language:'زبان',tabs:'برگه‌های فعال',legal:'رسمی',noLocation:'موقعیت مکانی در دسترس نیست',enterDate:'تاریخ را وارد کنید',allFests:'همه رویدادها',legalOnly:'فقط تعطیلات رسمی',astroOnly:'فقط نجومی',days:'روز',nextEvents:'رویدادهای بعدی'} },
-  ar: { flag:'🇸🇦', name:'العربية',   dir:'rtl', months:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'], days:['أح','اث','ث','أر','خ','ج','س'], daysLong:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'], ui:{calendar:'التقويم',holidays:'الأعياد',moon:'أطوار القمر',settings:'الإعدادات',today:'اليوم',sunrise:'الشروق',sunset:'الغروب',daylength:'طول النهار',countdown:'العد التنازلي',yearview:'نظرة عامة سنوية',dateconv:'محول التاريخ',dark:'الوضع المظلم',fontsize:'حجم الخط',language:'اللغة',tabs:'علامات التبويب',legal:'رسمي',noLocation:'الموقع غير متاح',enterDate:'أدخل التاريخ',allFests:'جميع الأحداث',legalOnly:'العطلات الرسمية فقط',astroOnly:'فلكي فقط',days:'يوم',nextEvents:'الأحداث القادمة'} },
-  hi: { flag:'🇮🇳', name:'हिन्दी',    dir:'ltr', months:['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'], days:['र','स','मं','बु','गु','शु','श'], daysLong:['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'], ui:{calendar:'कैलेंडर',holidays:'त्योहार',moon:'चंद्र कलाएं',settings:'सेटिंग्स',today:'आज',sunrise:'सूर्योदय',sunset:'सूर्यास्त',daylength:'दिन की अवधि',countdown:'उलटी गिनती',yearview:'वार्षिक अवलोकन',dateconv:'तिथि परिवर्तक',dark:'डार्क मोड',fontsize:'फ़ॉन्ट आकार',language:'भाषा',tabs:'सक्रिय टैब',legal:'कानूनी',noLocation:'स्थान उपलब्ध नहीं',enterDate:'तारीख दर्ज करें',allFests:'सभी कार्यक्रम',legalOnly:'केवल सार्वजनिक अवकाश',astroOnly:'केवल खगोलीय',days:'दिन',nextEvents:'अगले कार्यक्रम'} },
-  ja: { flag:'🇯🇵', name:'日本語',     dir:'ltr', months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], days:['日','月','火','水','木','金','土'], daysLong:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'], ui:{calendar:'カレンダー',holidays:'祝日',moon:'月の満ち欠け',settings:'設定',today:'今日',sunrise:'日の出',sunset:'日の入り',daylength:'日照時間',countdown:'カウントダウン',yearview:'年間概要',dateconv:'日付変換',dark:'ダークモード',fontsize:'フォントサイズ',language:'言語',tabs:'アクティブタブ',legal:'法定',noLocation:'位置情報が利用できません',enterDate:'日付を入力',allFests:'すべてのイベント',legalOnly:'祝日のみ',astroOnly:'天文のみ',days:'日',nextEvents:'次のイベント'} },
-  zh: { flag:'🇨🇳', name:'中文',       dir:'ltr', months:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'], days:['日','一','二','三','四','五','六'], daysLong:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'], ui:{calendar:'日历',holidays:'节假日',moon:'月相',settings:'设置',today:'今天',sunrise:'日出',sunset:'日落',daylength:'白昼长度',countdown:'倒计时',yearview:'年度概览',dateconv:'日期转换',dark:'深色模式',fontsize:'字体大小',language:'语言',tabs:'活跃标签',legal:'法定',noLocation:'位置不可用',enterDate:'输入日期',allFests:'所有活动',legalOnly:'仅公众假期',astroOnly:'仅天文',days:'天',nextEvents:'即将发生的事件'} },
+const I18N = {
+  de: {
+    flag:'🇩🇪', name:'Deutsch', dir:'ltr',
+    months:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+    days:['So','Mo','Di','Mi','Do','Fr','Sa'],
+    daysLong:['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+    // UI
+    calendar:'Kalender', holidays:'Feiertage', moon:'Mondphasen', settings:'Einstellungen',
+    today:'Heute', sunrise:'Sonnenaufgang', sunset:'Sonnenuntergang', daylength:'Tageslänge',
+    countdown:'Countdown', yearview:'Jahresübersicht', dateconv:'Datumsrechner',
+    dark:'Dunkler Modus', fontsize:'Schriftgröße', language:'Sprache', tabs:'Aktive Tabs',
+    legal:'gesetzl.', noLocation:'Standort nicht verfügbar – bitte Swarog-Tab öffnen',
+    enterDate:'Datum eingeben', allFests:'Alle Feste', legalOnly:'Nur gesetzliche Feiertage',
+    astroOnly:'Nur astronomische', days:'Tage', nextEvents:'Nächste Ereignisse',
+    tabs_hint:'Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.',
+    install_hint:'<strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.',
+    // Section labels
+    sec_calendar:'Kalender', sec_sun:'Sonne heute', sec_holidays_month:'Feiertage dieses Monats',
+    sec_solstices:'Sonnenwenden & Äquinoktien', sec_legal:'Gesetzliche Feiertage',
+    sec_other:'Weitere Feste & Gedenktage', sec_next:'Nächste Ereignisse',
+    sec_moonoverview:'Mondphasen – Überblick', sec_sol:'Sol – Der 13. Monat & Ophiuchus',
+    sec_sol_history:'Sol in alten Kulturen', sec_zodiac13:'Die 13 Sternzeichen (mit Ophiuchus)',
+    sec_ifc_months:'Alle 13 IFC-Monate', sec_ifc_about:'Über den IFC-Kalender',
+    sec_swarog_hours:'Die 16 Swarog-Stunden des Tages', sec_cur_epoch:'Aktuelle Epoche',
+    sec_next_epoch:'Nächste Epoche', sec_efst:'Was bedeutet EFST?',
+    sec_swarog_circle:'Der Große Swarog-Kreis (25.920 Jahre · 16 Epochen)',
+    sec_daric:'Darischer Kalender · Да\'Арийский Календарь',
+    sec_daric_zodiac:'16-Zeichen Tierkreis · Круголет Числобога',
+    sec_stichija:'Stichija – Die 4 Elemente des Jahres',
+    sec_circles:'Die drei Kreise der Zeit',
+    sec_epochs:'СМЗХ · ЭФСТ · Da\'Ariya – Epochen im Vergleich',
+    sec_bl_select:'Bundesland & Jahr wählen',
+  },
+  en: {
+    flag:'🇬🇧', name:'English', dir:'ltr',
+    months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    days:['Su','Mo','Tu','We','Th','Fr','Sa'],
+    daysLong:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    calendar:'Calendar', holidays:'Holidays', moon:'Moon Phases', settings:'Settings',
+    today:'Today', sunrise:'Sunrise', sunset:'Sunset', daylength:'Day Length',
+    countdown:'Countdown', yearview:'Year Overview', dateconv:'Date Converter',
+    dark:'Dark Mode', fontsize:'Font Size', language:'Language', tabs:'Active Tabs',
+    legal:'public hol.', noLocation:'Location unavailable – please open Swarog tab',
+    enterDate:'Enter date', allFests:'All Events', legalOnly:'Public Holidays Only',
+    astroOnly:'Astronomical Only', days:'days', nextEvents:'Next Events',
+    tabs_hint:'Disabled tabs are hidden. The Gregorian calendar cannot be disabled.',
+    install_hint:'<strong>Install as App:</strong> Safari → Share → "Add to Home Screen". On Mac: Safari → File → Add to Dock.',
+    sec_calendar:'Calendar', sec_sun:'Sun Today', sec_holidays_month:'Holidays This Month',
+    sec_solstices:'Solstices & Equinoxes', sec_legal:'Public Holidays',
+    sec_other:'Other Festivals & Observances', sec_next:'Upcoming Events',
+    sec_moonoverview:'Moon Phases – Overview', sec_sol:'Sol – The 13th Month & Ophiuchus',
+    sec_sol_history:'Sol in Ancient Cultures', sec_zodiac13:'The 13 Zodiac Signs (with Ophiuchus)',
+    sec_ifc_months:'All 13 IFC Months', sec_ifc_about:'About the IFC Calendar',
+    sec_swarog_hours:'The 16 Swarog Hours of the Day', sec_cur_epoch:'Current Epoch',
+    sec_next_epoch:'Next Epoch', sec_efst:'What does EFST mean?',
+    sec_swarog_circle:'The Great Swarog Cycle (25,920 years · 16 Epochs)',
+    sec_daric:'Daric Calendar · Да\'Арийский Календарь',
+    sec_daric_zodiac:'16-Sign Zodiac · Круголет Числобога',
+    sec_stichija:'Stichija – The 4 Elements of the Year',
+    sec_circles:'The Three Circles of Time',
+    sec_epochs:'СМЗХ · ЭФСТ · Da\'Ariya – Epochs Compared',
+    sec_bl_select:'Select State & Year',
+  },
+  fr: {
+    flag:'🇫🇷', name:'Français', dir:'ltr',
+    months:['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+    days:['Di','Lu','Ma','Me','Je','Ve','Sa'],
+    daysLong:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+    calendar:'Calendrier', holidays:'Jours fériés', moon:'Phases lunaires', settings:'Paramètres',
+    today:'Aujourd\'hui', sunrise:'Lever du soleil', sunset:'Coucher du soleil', daylength:'Durée du jour',
+    countdown:'Compte à rebours', yearview:'Aperçu annuel', dateconv:'Convertisseur de dates',
+    dark:'Mode sombre', fontsize:'Taille de police', language:'Langue', tabs:'Onglets actifs',
+    legal:'officiel', noLocation:'Localisation indisponible', enterDate:'Entrer une date',
+    allFests:'Tous les événements', legalOnly:'Jours fériés uniquement', astroOnly:'Astronomique',
+    days:'jours', nextEvents:'Prochains événements',
+    tabs_hint:'Les onglets désactivés sont masqués. Le calendrier grégorien ne peut pas être désactivé.',
+    install_hint:'<strong>Installer comme app:</strong> Safari → Partager → "Sur l\'écran d\'accueil".',
+    sec_calendar:'Calendrier', sec_sun:'Soleil aujourd\'hui', sec_holidays_month:'Jours fériés ce mois',
+    sec_solstices:'Solstices & Équinoxes', sec_legal:'Jours fériés officiels',
+    sec_other:'Autres fêtes & commémorations', sec_next:'Prochains événements',
+    sec_moonoverview:'Phases lunaires – Aperçu', sec_sol:'Sol – Le 13e mois & Ophiuchus',
+    sec_sol_history:'Sol dans les cultures anciennes', sec_zodiac13:'Les 13 signes du zodiaque',
+    sec_ifc_months:'Les 13 mois IFC', sec_ifc_about:'À propos du calendrier IFC',
+    sec_swarog_hours:'Les 16 heures Svarog', sec_cur_epoch:'Époque actuelle',
+    sec_next_epoch:'Prochaine époque', sec_efst:'Que signifie EFST?',
+    sec_swarog_circle:'Le Grand Cercle Svarog (25 920 ans · 16 Époques)',
+    sec_daric:'Calendrier Darique', sec_daric_zodiac:'Zodiaque à 16 signes',
+    sec_stichija:'Stichija – Les 4 éléments de l\'année',
+    sec_circles:'Les trois cercles du temps', sec_epochs:'СМЗХ · ЭФСТ · Époques comparées',
+    sec_bl_select:'Choisir région & année',
+  },
+  es: {
+    flag:'🇪🇸', name:'Español', dir:'ltr',
+    months:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    days:['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+    daysLong:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    calendar:'Calendario', holidays:'Festivos', moon:'Fases lunares', settings:'Ajustes',
+    today:'Hoy', sunrise:'Amanecer', sunset:'Atardecer', daylength:'Duración del día',
+    countdown:'Cuenta atrás', yearview:'Vista anual', dateconv:'Conversor de fechas',
+    dark:'Modo oscuro', fontsize:'Tamaño de letra', language:'Idioma', tabs:'Pestañas activas',
+    legal:'oficial', noLocation:'Ubicación no disponible', enterDate:'Introducir fecha',
+    allFests:'Todos los eventos', legalOnly:'Solo días festivos', astroOnly:'Solo astronómico',
+    days:'días', nextEvents:'Próximos eventos',
+    tabs_hint:'Las pestañas desactivadas están ocultas. El calendario gregoriano no se puede desactivar.',
+    install_hint:'<strong>Instalar como app:</strong> Safari → Compartir → "Añadir a inicio".',
+    sec_calendar:'Calendario', sec_sun:'Sol hoy', sec_holidays_month:'Festivos este mes',
+    sec_solstices:'Solsticios & Equinoccios', sec_legal:'Días festivos oficiales',
+    sec_other:'Otras fiestas & conmemoraciones', sec_next:'Próximos eventos',
+    sec_moonoverview:'Fases lunares – Resumen', sec_sol:'Sol – El 13er mes & Ophiuchus',
+    sec_sol_history:'Sol en culturas antiguas', sec_zodiac13:'Los 13 signos del zodiaco',
+    sec_ifc_months:'Los 13 meses IFC', sec_ifc_about:'Sobre el calendario IFC',
+    sec_swarog_hours:'Las 16 horas Svarog', sec_cur_epoch:'Época actual',
+    sec_next_epoch:'Próxima época', sec_efst:'¿Qué significa EFST?',
+    sec_swarog_circle:'El Gran Círculo Svarog (25.920 años · 16 Épocas)',
+    sec_daric:'Calendario Dárico', sec_daric_zodiac:'Zodiaco de 16 signos',
+    sec_stichija:'Stichija – Los 4 elementos del año',
+    sec_circles:'Los tres círculos del tiempo', sec_epochs:'СМЗХ · ЭФСТ · Épocas comparadas',
+    sec_bl_select:'Seleccionar región & año',
+  },
+  fa: {
+    flag:'🇮🇷', name:'فارسی', dir:'rtl',
+    months:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+    days:['ی','د','س','چ','پ','ج','ش'],
+    daysLong:['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'],
+    calendar:'تقویم', holidays:'تعطیلات', moon:'فازهای ماه', settings:'تنظیمات',
+    today:'امروز', sunrise:'طلوع آفتاب', sunset:'غروب آفتاب', daylength:'طول روز',
+    countdown:'شمارش معکوس', yearview:'نمای سال', dateconv:'مبدل تاریخ',
+    dark:'حالت تاریک', fontsize:'اندازه فونت', language:'زبان', tabs:'برگه‌های فعال',
+    legal:'رسمی', noLocation:'موقعیت مکانی در دسترس نیست', enterDate:'تاریخ را وارد کنید',
+    allFests:'همه رویدادها', legalOnly:'فقط تعطیلات رسمی', astroOnly:'فقط نجومی',
+    days:'روز', nextEvents:'رویدادهای بعدی',
+    tabs_hint:'برگه‌های غیرفعال پنهان می‌شوند.',
+    install_hint:'<strong>نصب به عنوان برنامه:</strong> Safari → اشتراک‌گذاری → "افزودن به صفحه اصلی"',
+    sec_calendar:'تقویم', sec_sun:'خورشید امروز', sec_holidays_month:'تعطیلات این ماه',
+    sec_solstices:'انقلابین و اعتدالین', sec_legal:'تعطیلات رسمی',
+    sec_other:'جشن‌ها و مناسبت‌ها', sec_next:'رویدادهای آینده',
+    sec_moonoverview:'فازهای ماه – مرور', sec_sol:'سل – ماه سیزدهم',
+    sec_sol_history:'سل در فرهنگ‌های باستان', sec_zodiac13:'۱۳ نشانه زودیاک',
+    sec_ifc_months:'۱۳ ماه IFC', sec_ifc_about:'درباره تقویم IFC',
+    sec_swarog_hours:'۱۶ ساعت سواروگ', sec_cur_epoch:'دوره کنونی',
+    sec_next_epoch:'دوره بعدی', sec_efst:'EFST چیست؟',
+    sec_swarog_circle:'دایره بزرگ سواروگ', sec_daric:'تقویم داریک',
+    sec_daric_zodiac:'زودیاک ۱۶ نشانه‌ای', sec_stichija:'استیخیا – ۴ عنصر سال',
+    sec_circles:'سه دایره زمان', sec_epochs:'مقایسه دوران', sec_bl_select:'انتخاب منطقه و سال',
+  },
+  ar: {
+    flag:'🇸🇦', name:'العربية', dir:'rtl',
+    months:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+    days:['أح','اث','ث','أر','خ','ج','س'],
+    daysLong:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
+    calendar:'التقويم', holidays:'الأعياد', moon:'أطوار القمر', settings:'الإعدادات',
+    today:'اليوم', sunrise:'الشروق', sunset:'الغروب', daylength:'طول النهار',
+    countdown:'العد التنازلي', yearview:'نظرة عامة سنوية', dateconv:'محول التاريخ',
+    dark:'الوضع المظلم', fontsize:'حجم الخط', language:'اللغة', tabs:'علامات التبويب',
+    legal:'رسمي', noLocation:'الموقع غير متاح', enterDate:'أدخل التاريخ',
+    allFests:'جميع الأحداث', legalOnly:'العطلات الرسمية فقط', astroOnly:'فلكي فقط',
+    days:'يوم', nextEvents:'الأحداث القادمة',
+    tabs_hint:'علامات التبويب المعطلة مخفية.',
+    install_hint:'<strong>تثبيت كتطبيق:</strong> Safari → مشاركة → "إضافة إلى الشاشة الرئيسية"',
+    sec_calendar:'التقويم', sec_sun:'الشمس اليوم', sec_holidays_month:'أعياد هذا الشهر',
+    sec_solstices:'الانقلابات والاعتدالات', sec_legal:'العطلات الرسمية',
+    sec_other:'المهرجانات والمناسبات', sec_next:'الأحداث القادمة',
+    sec_moonoverview:'أطوار القمر – نظرة عامة', sec_sol:'سول – الشهر الثالث عشر',
+    sec_sol_history:'سول في الثقافات القديمة', sec_zodiac13:'13 علامة فلكية',
+    sec_ifc_months:'أشهر IFC الثلاثة عشر', sec_ifc_about:'حول تقويم IFC',
+    sec_swarog_hours:'16 ساعة سفاروغ', sec_cur_epoch:'العصر الحالي',
+    sec_next_epoch:'العصر التالي', sec_efst:'ماذا يعني EFST؟',
+    sec_swarog_circle:'الدائرة الكبرى لسفاروغ', sec_daric:'التقويم الداريكي',
+    sec_daric_zodiac:'دائرة الأبراج ذات 16 علامة', sec_stichija:'العناصر الأربعة للسنة',
+    sec_circles:'دوائر الزمن الثلاث', sec_epochs:'مقارنة العصور', sec_bl_select:'اختر المنطقة والسنة',
+  },
+  hi: {
+    flag:'🇮🇳', name:'हिन्दी', dir:'ltr',
+    months:['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'],
+    days:['र','स','मं','बु','गु','शु','श'],
+    daysLong:['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'],
+    calendar:'कैलेंडर', holidays:'त्योहार', moon:'चंद्र कलाएं', settings:'सेटिंग्स',
+    today:'आज', sunrise:'सूर्योदय', sunset:'सूर्यास्त', daylength:'दिन की अवधि',
+    countdown:'उलटी गिनती', yearview:'वार्षिक अवलोकन', dateconv:'तिथि परिवर्तक',
+    dark:'डार्क मोड', fontsize:'फ़ॉन्ट आकार', language:'भाषा', tabs:'सक्रिय टैब',
+    legal:'आधिकारिक', noLocation:'स्थान उपलब्ध नहीं', enterDate:'तारीख दर्ज करें',
+    allFests:'सभी कार्यक्रम', legalOnly:'केवल सार्वजनिक अवकाश', astroOnly:'केवल खगोलीय',
+    days:'दिन', nextEvents:'अगले कार्यक्रम',
+    tabs_hint:'निष्क्रिय टैब छिपे हुए हैं।',
+    install_hint:'<strong>ऐप के रूप में इंस्टॉल करें:</strong> Safari → शेयर → "होम स्क्रीन में जोड़ें"',
+    sec_calendar:'कैलेंडर', sec_sun:'आज का सूर्य', sec_holidays_month:'इस महीने के त्योहार',
+    sec_solstices:'अयनांत और विषुव', sec_legal:'सार्वजनिक छुट्टियां',
+    sec_other:'अन्य त्योहार और स्मृति दिवस', sec_next:'आने वाले कार्यक्रम',
+    sec_moonoverview:'चंद्र कलाएं – अवलोकन', sec_sol:'सोल – 13वां महीना',
+    sec_sol_history:'प्राचीन संस्कृतियों में सोल', sec_zodiac13:'13 राशि चिह्न',
+    sec_ifc_months:'सभी 13 IFC माह', sec_ifc_about:'IFC कैलेंडर के बारे में',
+    sec_swarog_hours:'16 स्वारोग घंटे', sec_cur_epoch:'वर्तमान युग',
+    sec_next_epoch:'अगला युग', sec_efst:'EFST का क्या अर्थ है?',
+    sec_swarog_circle:'महान स्वारोग चक्र', sec_daric:'डेरिक कैलेंडर',
+    sec_daric_zodiac:'16-चिह्न राशि चक्र', sec_stichija:'वर्ष के 4 तत्व',
+    sec_circles:'समय के तीन चक्र', sec_epochs:'युगों की तुलना', sec_bl_select:'राज्य और वर्ष चुनें',
+  },
+  ja: {
+    flag:'🇯🇵', name:'日本語', dir:'ltr',
+    months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    days:['日','月','火','水','木','金','土'],
+    daysLong:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],
+    calendar:'カレンダー', holidays:'祝日', moon:'月の満ち欠け', settings:'設定',
+    today:'今日', sunrise:'日の出', sunset:'日の入り', daylength:'日照時間',
+    countdown:'カウントダウン', yearview:'年間概要', dateconv:'日付変換',
+    dark:'ダークモード', fontsize:'フォントサイズ', language:'言語', tabs:'アクティブタブ',
+    legal:'法定', noLocation:'位置情報が利用できません', enterDate:'日付を入力',
+    allFests:'すべてのイベント', legalOnly:'祝日のみ', astroOnly:'天文のみ',
+    days:'日', nextEvents:'次のイベント',
+    tabs_hint:'無効なタブは非表示になります。グレゴリオ暦は無効にできません。',
+    install_hint:'<strong>アプリとしてインストール：</strong> Safari → 共有 → 「ホーム画面に追加」',
+    sec_calendar:'カレンダー', sec_sun:'今日の太陽', sec_holidays_month:'今月の祝日',
+    sec_solstices:'至点と分点', sec_legal:'祝日・公休日',
+    sec_other:'その他の祭り・記念日', sec_next:'今後のイベント',
+    sec_moonoverview:'月の満ち欠け – 概要', sec_sol:'ソル – 第13月',
+    sec_sol_history:'古代文化におけるソル', sec_zodiac13:'13の星座',
+    sec_ifc_months:'IFC全13ヶ月', sec_ifc_about:'IFCカレンダーについて',
+    sec_swarog_hours:'スワログの16時間', sec_cur_epoch:'現在の時代',
+    sec_next_epoch:'次の時代', sec_efst:'EFSTとは？',
+    sec_swarog_circle:'スワログ大循環', sec_daric:'ダーリック暦',
+    sec_daric_zodiac:'16星座ゾディアック', sec_stichija:'年の4つの元素',
+    sec_circles:'三つの時間の輪', sec_epochs:'時代の比較', sec_bl_select:'州と年を選択',
+  },
+  zh: {
+    flag:'🇨🇳', name:'中文', dir:'ltr',
+    months:['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+    days:['日','一','二','三','四','五','六'],
+    daysLong:['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+    calendar:'日历', holidays:'节假日', moon:'月相', settings:'设置',
+    today:'今天', sunrise:'日出', sunset:'日落', daylength:'白昼长度',
+    countdown:'倒计时', yearview:'年度概览', dateconv:'日期转换',
+    dark:'深色模式', fontsize:'字体大小', language:'语言', tabs:'活跃标签',
+    legal:'法定', noLocation:'位置不可用', enterDate:'输入日期',
+    allFests:'所有活动', legalOnly:'仅公众假期', astroOnly:'仅天文',
+    days:'天', nextEvents:'即将发生的事件',
+    tabs_hint:'已禁用的标签将被隐藏。公历不能被禁用。',
+    install_hint:'<strong>安装为应用：</strong> Safari → 分享 → "添加到主屏幕"',
+    sec_calendar:'日历', sec_sun:'今日太阳', sec_holidays_month:'本月节假日',
+    sec_solstices:'至点与分点', sec_legal:'法定假日',
+    sec_other:'其他节日与纪念日', sec_next:'即将到来的活动',
+    sec_moonoverview:'月相 – 概览', sec_sol:'索尔 – 第13个月',
+    sec_sol_history:'古代文化中的索尔', sec_zodiac13:'13个星座',
+    sec_ifc_months:'IFC全13个月', sec_ifc_about:'关于IFC历法',
+    sec_swarog_hours:'斯瓦罗格的16小时', sec_cur_epoch:'当前纪元',
+    sec_next_epoch:'下一纪元', sec_efst:'EFST是什么？',
+    sec_swarog_circle:'斯瓦罗格大循环', sec_daric:'达里克历法',
+    sec_daric_zodiac:'16星座黄道带', sec_stichija:'年的四大元素',
+    sec_circles:'三个时间圆圈', sec_epochs:'纪元比较', sec_bl_select:'选择州和年份',
+  },
 };
 
+// Active language (also used as LANGUAGES alias for countdown etc.)
+const LANGUAGES = I18N;
 let _lang = localStorage.getItem('lang') || 'de';
 
-function t(key) { return (LANGUAGES[_lang]||LANGUAGES.de).ui[key] || (LANGUAGES.de).ui[key] || key; }
-function lMonths() { return (LANGUAGES[_lang]||LANGUAGES.de).months; }
-function lDays()   { return (LANGUAGES[_lang]||LANGUAGES.de).days; }
-function lDaysLong(){ return (LANGUAGES[_lang]||LANGUAGES.de).daysLong; }
-function isRTL()   { return (LANGUAGES[_lang]||LANGUAGES.de).dir === 'rtl'; }
+function L() { return I18N[_lang] || I18N.de; }
+function t(key) { return L()[key] || I18N.de[key] || key; }
+function lMonths() { return L().months; }
+function lDays()   { return L().days; }
+function lDaysLong(){ return L().daysLong; }
+function isRTL()   { return L().dir === 'rtl'; }
 
 function applyLanguage(lang) {
   _lang = lang;
   localStorage.setItem('lang', lang);
-  document.documentElement.dir = isRTL() ? 'rtl' : 'ltr';
+  const l = L();
+  // RTL
+  document.documentElement.dir = l.dir;
   document.documentElement.lang = lang;
-  renderLangGrid();
-  // Update tab labels
-  ALL_TABS.forEach(tab => {
-    const btn = document.getElementById('tab-' + tab.id);
-    if (btn) {
-      const span = btn.querySelector('.tab-label');
-      if (span) span.textContent = tab.label; // keep original labels
-    }
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (l[key] !== undefined) el.innerHTML = l[key];
   });
-  // Re-render current tab
+  // Update settings labels
+  const sdm = document.querySelector('[data-i18n="sec_dark"]');
+  const darkLabel = document.querySelector('.settings-row-label');
+  // Re-render current view
+  renderLangGrid();
   renderCal();
+  // Re-render active tab if needed
+  if (activeTab === 'feiertage') renderFeiertage();
+  if (activeTab === 'moon') renderMoon();
+  if (activeTab === 'countdown') renderCountdown();
+  if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
 }
 
 function renderLangGrid() {
   const grid = document.getElementById('lang-grid');
   if (!grid) return;
-  grid.innerHTML = Object.entries(LANGUAGES).map(([code, l]) => {
+  grid.innerHTML = Object.entries(I18N).map(([code, l]) => {
     const cur = code === _lang;
-    return `<button onclick="applyLanguage('${code}')" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center">
+    return `<button onclick="applyLanguage('${code}')" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent">
       <div style="font-size:18px">${l.flag}</div>
       <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};margin-top:3px;font-weight:${cur?500:400}">${l.name}</div>
     </button>`;
