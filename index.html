@@ -488,17 +488,79 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 
   <!-- VIEW: IFC KALENDER -->
   <div class="view" id="view-ifc">
+
+    <!-- Heutiges IFC-Datum -->
     <div class="card">
       <div class="ifc-big">
         <div class="ifc-day-big" id="ifc-day">–</div>
         <div class="ifc-month-big" id="ifc-month">–</div>
         <div class="ifc-sub" id="ifc-sub">–</div>
       </div>
+      <div id="ifc-sol-banner" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(91,141,238,0.12);border:0.5px solid rgba(91,141,238,0.3);border-radius:10px;text-align:center">
+        <div style="font-size:22px">🐍</div>
+        <div style="font-size:13px;color:var(--blue2);font-weight:500;margin-top:4px">Willkommen im Monat Sol</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Der Monat des Ophiuchus · des 13. Sternzeichens</div>
+      </div>
     </div>
+
+    <!-- Sol & Ophiuchus -->
+    <div class="section-label">Sol – Der 13. Monat & Ophiuchus</div>
+    <div class="card" style="border-color:rgba(91,141,238,0.2);background:linear-gradient(135deg,rgba(13,13,40,0.8) 0%,rgba(13,13,26,0.8) 100%)">
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
+        <div style="flex-shrink:0;text-align:center">
+          <div id="ifc-ophiuchus-svg" style="width:72px;height:72px;margin:0 auto"></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">Ophiuchus</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-family:var(--font-display);font-size:16px;color:var(--blue2);letter-spacing:.04em;margin-bottom:6px">Ophiuchus – der Schlangenträger</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7">
+            Das <strong style="color:var(--text)">13. Sternzeichen</strong> (ὀφιοῦχος) kreuzt die Ekliptik zwischen Skorpion und Schütze. Die Sonne steht jedes Jahr ca. <strong style="color:var(--blue2)">30. Nov – 18. Dez</strong> im Ophiuchus. Die Babylonier ließen ihn vor ~3000 Jahren bewusst aus dem Tierkreis heraus – um 12 Zeichen für 12 Mondmonate zu haben.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tierkreis-Rad mit 13 Zeichen -->
+      <div id="ifc-zodiac-wheel" style="margin:8px auto;text-align:center"></div>
+
+      <!-- Infoleiste -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
+        <div style="background:rgba(91,141,238,0.1);border-radius:8px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Ekliptik-Zeitraum</div>
+          <div style="font-size:13px;color:var(--blue2);margin-top:2px">30. Nov – 18. Dez</div>
+        </div>
+        <div style="background:rgba(91,141,238,0.1);border-radius:8px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Hauptstern</div>
+          <div style="font-size:13px;color:var(--blue2);margin-top:2px">Rasalhague (α Oph)</div>
+        </div>
+        <div style="background:rgba(91,141,238,0.1);border-radius:8px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Symbol</div>
+          <div style="font-size:13px;color:var(--blue2);margin-top:2px">🐍 Schlange + Heiler</div>
+        </div>
+        <div style="background:rgba(91,141,238,0.1);border-radius:8px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Mythologie</div>
+          <div style="font-size:13px;color:var(--blue2);margin-top:2px">Asklepios (Heilgott)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historische Tiefe -->
+    <div class="section-label">Sol in alten Kulturen</div>
+    <div class="card">
+      <div id="ifc-sol-history"></div>
+    </div>
+
+    <!-- 13 Tierkreiszeichen -->
+    <div class="section-label">Die 13 Sternzeichen (mit Ophiuchus)</div>
+    <div class="card" style="padding:10px">
+      <div id="ifc-zodiac-13" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px"></div>
+    </div>
+
+    <!-- Alle 13 Monate -->
     <div class="section-label">Alle 13 IFC-Monate</div>
     <div class="card">
       <div class="ifc-months-grid" id="ifc-months-grid"></div>
     </div>
+
     <div class="section-label">Über den IFC-Kalender</div>
     <div class="ifc-info-box">
       Der <strong>Internationale Feste Kalender</strong> (IFC) hat <strong>13 Monate</strong> à <strong>28 Tage</strong> (= 364 Tage). Der 13. Monat heißt <strong>Sol</strong> und liegt zwischen Juni und Juli. Jeder Monat beginnt stets auf einen <strong>Sonntag</strong>. Der <strong>Jahrestag</strong> (1. Januar) steht außerhalb der Wochenstruktur. In Schaltjahren gibt es am Ende von Juni einen Schalttag.
@@ -1803,6 +1865,129 @@ function changeMoonYear(delta){
 }
 
 // ── IFC ───────────────────────────────────────────────────────────────────────
+// ── IFC + OPHIUCHUS ───────────────────────────────────────────────────────────
+const ZODIAC_13 = [
+  {name:'Widder',      lat:'Aries',       icon:'♈', dates:'21. Mär – 19. Apr', days:30, sol:false},
+  {name:'Stier',       lat:'Taurus',      icon:'♉', dates:'20. Apr – 20. Mai', days:31, sol:false},
+  {name:'Zwillinge',   lat:'Gemini',      icon:'♊', dates:'21. Mai – 20. Jun', days:31, sol:false},
+  {name:'Krebs',       lat:'Cancer',      icon:'♋', dates:'21. Jun – 22. Jul', days:32, sol:false},
+  {name:'Löwe',        lat:'Leo',         icon:'♌', dates:'23. Jul – 22. Aug', days:31, sol:false},
+  {name:'Jungfrau',    lat:'Virgo',       icon:'♍', dates:'23. Aug – 22. Sep', days:31, sol:false},
+  {name:'Waage',       lat:'Libra',       icon:'♎', dates:'23. Sep – 22. Okt', days:30, sol:false},
+  {name:'Skorpion',    lat:'Scorpius',    icon:'♏', dates:'23. Okt – 29. Nov', days:38, sol:false},
+  {name:'Schlangenträger',lat:'Ophiuchus',icon:'🐍', dates:'30. Nov – 17. Dez', days:18, sol:true},
+  {name:'Schütze',     lat:'Sagittarius', icon:'♐', dates:'18. Dez – 18. Jan', days:32, sol:false},
+  {name:'Steinbock',   lat:'Capricornus', icon:'♑', dates:'19. Jan – 15. Feb', days:28, sol:false},
+  {name:'Wassermann',  lat:'Aquarius',    icon:'♒', dates:'16. Feb – 11. Mär', days:24, sol:false},
+  {name:'Fische',      lat:'Pisces',      icon:'♓', dates:'12. Mär – 18. Apr', days:38, sol:false},
+];
+
+const SOL_HISTORY = [
+  {
+    kultur:'Sumerisch / Babylonisch',icon:'🏺',farbe:'#e8a050',
+    text:'Die ältesten bekannten Kalender (~3000 v.Chr.) hatten 13 Mondmonate. Der 13. Monat (intercalary month) wurde bewusst eingefügt um Mond- und Sonnenjahr zu synchronisieren. In babylonischen Texten erscheint er als „Zusatzmonat" – ein kosmisches Gleichgewichtsinstrument.'
+  },
+  {
+    kultur:'Keltisch (Baumkalender)',icon:'🌿',farbe:'#4ecdc4',
+    text:'Der keltische Baumkalender (Ogham) kennt 13 Mondmonate à 28 Tage. Jeder Monat trägt den Namen eines heiligen Baumes. Der 13. Monat ( Elder/Holunder) steht am Jahresende und symbolisiert Tod, Erneuerung und die Verbindung zwischen den Welten – der Schlange verwandt.'
+  },
+  {
+    kultur:'Ägyptisch',icon:'𓂀',farbe:'#e8c87a',
+    text:'Der altägyptische Kalender hatte 12 Monate à 30 Tage + 5 Zusatztage (Epagomene). Diese 5 Tage galten als „außerhalb der Zeit" – nicht dem normalen Jahreskreis zugehörig. Die Schlange Apophis (Apep) symbolisierte das Chaos und den ewigen Kreislauf – bezwungen, aber nie vernichtet.'
+  },
+  {
+    kultur:'Maya (Tzolkin)',icon:'🌞',farbe:'#9b7fe8',
+    text:'Der Maya-Tzolkin hat 260 Tage = 13 × 20. Die Zahl 13 ist heilig und repräsentiert die 13 Himmelssphären. Die Federschlange Quetzalcoatl verbindet als 13. kosmische Kraft alle Ebenen – Erde, Wasser, Himmel. Im Haab (365 Tage) gibt es ebenfalls einen 13. Monat-Äquivalent.'
+  },
+  {
+    kultur:'Nordamerikanisch (Cherokee)',icon:'🦅',farbe:'#e87850',
+    text:'Viele indigene nordamerikanische Völker (Cherokee, Lakota) kannten einen 13-Mond-Kalender basierend auf den 13 Vollmonden pro Jahr. Die Schildkröte, Symbol der Welt, hat 13 Felder auf ihrem Rücken – ein Kalender in der Natur selbst.'
+  },
+  {
+    kultur:'Vedisch (Nakshatras)',icon:'⭐',farbe:'#b478ff',
+    text:'Im vedischen System gibt es 27 Mondstationen (Nakshatras), aufgeteilt in 13 sogenannte Nakshatra-Paare plus einen Zentralpunkt. Die Schlange Naga erscheint als Nakshatra Ashlesha (9. Station) – Qualität: bindend, umschlingend, alles vereinend.'
+  },
+];
+
+function drawOphiuchusSVG(size=72, color='var(--blue2)') {
+  return `<svg viewBox="0 0 80 80" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="color:${color}">
+    <!-- Körper des Schlangenträgers -->
+    <ellipse cx="40" cy="32" rx="12" ry="14" fill="none" stroke="currentColor" stroke-width="2"/>
+    <!-- Arme ausgestreckt -->
+    <path d="M10 30 Q24 26 28 32 Q32 38 28 42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <path d="M70 30 Q56 26 52 32 Q48 38 52 42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <!-- Schlange links -->
+    <path d="M10 30 Q6 22 10 16 Q14 10 18 14 Q22 18 18 24 Q14 30 18 36 Q22 42 26 40" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+    <!-- Schlange rechts -->
+    <path d="M70 30 Q74 22 70 16 Q66 10 62 14 Q58 18 62 24 Q66 30 62 36 Q58 42 54 40" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+    <!-- Schlangenkopf links -->
+    <ellipse cx="9" cy="14" rx="4" ry="3" fill="none" stroke="${color}" stroke-width="1.5"/>
+    <circle cx="7.5" cy="13" r="1" fill="${color}"/>
+    <!-- Schlangenkopf rechts -->
+    <ellipse cx="71" cy="14" rx="4" ry="3" fill="none" stroke="${color}" stroke-width="1.5"/>
+    <circle cx="72.5" cy="13" r="1" fill="${color}"/>
+    <!-- Beine -->
+    <path d="M34 46 L30 60 M46 46 L50 60" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <!-- Sterne -->
+    <circle cx="40" cy="6" r="1.5" fill="${color}" opacity="0.7"/>
+    <circle cx="20" cy="8" r="1" fill="${color}" opacity="0.5"/>
+    <circle cx="60" cy="8" r="1" fill="${color}" opacity="0.5"/>
+    <circle cx="40" cy="70" r="1" fill="${color}" opacity="0.4"/>
+  </svg>`;
+}
+
+function drawZodiacWheel13(currentZodiacIdx) {
+  const n = 13, r = 100, ri = 36, size = 240;
+  const cx = size/2, cy = size/2;
+  let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">`;
+  ZODIAC_13.forEach((z, i) => {
+    const slice = 2*Math.PI/n;
+    const a0 = -Math.PI/2 + i*slice, a1 = a0 + slice;
+    const mid = a0 + slice/2;
+    const isCur = i === currentZodiacIdx;
+    const isSol = z.sol;
+    // Segment
+    const x0 = cx+Math.cos(a0)*r, y0 = cy+Math.sin(a0)*r;
+    const x1 = cx+Math.cos(a1)*r, y1 = cy+Math.sin(a1)*r;
+    const xi0 = cx+Math.cos(a0)*ri, yi0 = cy+Math.sin(a0)*ri;
+    const xi1 = cx+Math.cos(a1)*ri, yi1 = cy+Math.sin(a1)*ri;
+    const fill = isSol ? 'rgba(91,141,238,0.25)' : isCur ? 'rgba(232,200,122,0.2)' : 'rgba(255,255,255,0.04)';
+    const stroke = isSol ? '#5b8dee' : isCur ? '#e8c87a' : 'rgba(255,255,255,0.12)';
+    svg += `<path d="M${xi0},${yi0} L${x0},${y0} A${r},${r} 0 0,1 ${x1},${y1} L${xi1},${yi1} A${ri},${ri} 0 0,0 ${xi0},${yi0} Z" fill="${fill}" stroke="${stroke}" stroke-width="${isSol||isCur?1.5:.5}"/>`;
+    // Icon
+    const ix = cx+Math.cos(mid)*(r+ri)/2, iy = cy+Math.sin(mid)*(r+ri)/2;
+    svg += `<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="${isSol?14:12}" style="user-select:none">${z.icon}</text>`;
+    // Name bei Sol extra
+    if (isSol) {
+      svg += `<text x="${cx+Math.cos(mid)*128}" y="${cy+Math.sin(mid)*128}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#5b8dee" font-weight="bold" style="user-select:none">Ophiuchus</text>`;
+    }
+  });
+  // Innenkreis
+  svg += `<circle cx="${cx}" cy="${cy}" r="${ri}" fill="#0d0d1a" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>`;
+  svg += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="rgba(255,255,255,0.4)" style="user-select:none">13</text>`;
+  svg += '</svg>';
+  return svg;
+}
+
+function getCurrentZodiacIdx() {
+  const l = localNow();
+  const m = l.getUTCMonth()+1, d = l.getUTCDate();
+  const doy = m*100+d; // MMDD
+  if(doy>=321&&doy<=419) return 0;  // Widder
+  if(doy>=420&&doy<=520) return 1;  // Stier
+  if(doy>=521&&doy<=620) return 2;  // Zwillinge
+  if(doy>=621&&doy<=722) return 3;  // Krebs
+  if(doy>=723&&doy<=822) return 4;  // Löwe
+  if(doy>=823&&doy<=922) return 5;  // Jungfrau
+  if(doy>=923&&doy<=1022) return 6; // Waage
+  if(doy>=1023&&doy<=1129) return 7;// Skorpion
+  if(doy>=1130&&doy<=1217) return 8;// Ophiuchus !!
+  if(doy>=1218||doy<=118) return 9; // Schütze
+  if(doy>=119&&doy<=215) return 10; // Steinbock
+  if(doy>=216&&doy<=311) return 11; // Wassermann
+  return 12; // Fische
+}
+
 function renderIFC(){
   const l=localNow();
   const year=l.getUTCFullYear();
@@ -1821,15 +2006,55 @@ function renderIFC(){
   document.getElementById('ifc-month').textContent=ifcMonth>=0?IFC_MONTHS[ifcMonth]:'Jahrestag';
   document.getElementById('ifc-sub').textContent=`${dowLabel} · IFC ${year}`;
 
+  // Sol-Banner anzeigen wenn im Sol-Monat (Monat 6, Index 6)
+  const solBanner = document.getElementById('ifc-sol-banner');
+  if (solBanner) solBanner.style.display = ifcMonth === 6 ? 'block' : 'none';
+
+  // Ophiuchus SVG
+  const ophEl = document.getElementById('ifc-ophiuchus-svg');
+  if (ophEl) ophEl.innerHTML = drawOphiuchusSVG(72, 'var(--blue2)');
+
+  // Tierkreis-Rad
+  const zodiacIdx = getCurrentZodiacIdx();
+  const wheelEl = document.getElementById('ifc-zodiac-wheel');
+  if (wheelEl) wheelEl.innerHTML = drawZodiacWheel13(zodiacIdx);
+
+  // Sol-Geschichte
+  const histEl = document.getElementById('ifc-sol-history');
+  if (histEl) histEl.innerHTML = SOL_HISTORY.map(s => `
+    <div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:22px;flex-shrink:0;width:28px;text-align:center">${s.icon}</span>
+      <div>
+        <div style="font-size:12px;color:${s.farbe};font-weight:500;margin-bottom:3px">${s.kultur}</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.65">${s.text}</div>
+      </div>
+    </div>`).join('');
+
+  // 13 Tierkreiszeichen
+  const z13el = document.getElementById('ifc-zodiac-13');
+  if (z13el) z13el.innerHTML = ZODIAC_13.map((z,i) => {
+    const isCur = i === zodiacIdx;
+    return `<div style="background:${z.sol?'rgba(91,141,238,0.15)':isCur?'rgba(232,200,122,0.15)':'var(--surface2)'};border:0.5px solid ${z.sol?'rgba(91,141,238,0.4)':isCur?'rgba(232,200,122,0.4)':'var(--border)'};border-radius:10px;padding:6px 8px;text-align:center">
+      <div style="font-size:18px">${z.icon}</div>
+      <div style="font-size:10px;color:${z.sol?'var(--blue2)':isCur?'var(--gold)':'var(--text2)'};font-weight:${z.sol||isCur?500:400};margin-top:3px;line-height:1.2">${z.name}</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:1px">${z.dates}</div>
+      ${z.sol?'<div style="font-size:8px;color:var(--blue2);margin-top:1px">13. Zeichen</div>':''}
+      ${isCur&&!z.sol?'<div style="font-size:8px;color:var(--gold);margin-top:1px">● aktuell</div>':''}
+    </div>`;
+  }).join('');
+
+  // 13 Monate
   let g='';
   for(let m=0;m<13;m++){
     const active=m===ifcMonth;
+    const isSol=m===6;
     const gregStart=new Date(Date.UTC(year,0,m*28+2));
     const label=`${gregStart.getUTCDate()}. ${DE_MONTHS[gregStart.getUTCMonth()].slice(0,3)}`;
-    g+=`<div class="ifc-m${active?' active':''}">
-      <div class="ifc-m-name">${IFC_MONTHS[m].slice(0,3)}</div>
+    g+=`<div class="ifc-m${active?' active':''}" style="${isSol?'border:0.5px solid rgba(91,141,238,0.4);background:rgba(91,141,238,0.1)':''}">
+      <div class="ifc-m-name" style="${isSol?'color:var(--blue2)':''}">${IFC_MONTHS[m].slice(0,3)}</div>
       <div class="ifc-m-num">${m+1}</div>
       <div class="ifc-m-start">${label}</div>
+      ${isSol?'<div style="font-size:8px;color:var(--blue2);margin-top:2px">🐍</div>':''}
     </div>`;
   }
   document.getElementById('ifc-months-grid').innerHTML=g;
