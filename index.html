@@ -398,7 +398,24 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <!-- Sprache -->
     <div class="settings-section" style="padding-top:12px">
       <div class="settings-section-title">Sprache / Language</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:4px" id="lang-grid"></div>
+      <!-- Statische Buttons direkt im HTML – kein innerHTML, kein Event-Problem -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:4px">
+        <button id="lb-de" onclick="_setLang('de')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--teal);background:rgba(78,205,196,0.15);cursor:pointer;text-align:center"><div style="font-size:18px">🇩🇪</div><div style="font-size:10px;color:var(--teal);margin-top:3px;font-weight:500">Deutsch</div></button>
+        <button id="lb-en" onclick="_setLang('en')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇬🇧</div><div style="font-size:10px;color:var(--text3);margin-top:3px">English</div></button>
+        <button id="lb-fr" onclick="_setLang('fr')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇫🇷</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Français</div></button>
+        <button id="lb-es" onclick="_setLang('es')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇪🇸</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Español</div></button>
+        <button id="lb-fa" onclick="_setLang('fa')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇮🇷</div><div style="font-size:10px;color:var(--text3);margin-top:3px">فارسی</div></button>
+        <button id="lb-ar" onclick="_setLang('ar')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇸🇦</div><div style="font-size:10px;color:var(--text3);margin-top:3px">العربية</div></button>
+        <button id="lb-hi" onclick="_setLang('hi')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇮🇳</div><div style="font-size:10px;color:var(--text3);margin-top:3px">हिन्दी</div></button>
+        <button id="lb-ja" onclick="_setLang('ja')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇯🇵</div><div style="font-size:10px;color:var(--text3);margin-top:3px">日本語</div></button>
+        <button id="lb-zh" onclick="_setLang('zh')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇨🇳</div><div style="font-size:10px;color:var(--text3);margin-top:3px">中文</div></button>
+      </div>
+      <!-- Fallback: immer sichtbarer Reset-Button auf Deutsch -->
+      <div style="margin-top:8px;padding:6px 10px;background:rgba(232,200,122,0.1);border:0.5px solid rgba(232,200,122,0.2);border-radius:8px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">🔄</span>
+        <div style="flex:1;font-size:11px;color:var(--text3)">Sprache zurücksetzen / Reset language</div>
+        <button onclick="_setLang('de')" style="padding:4px 10px;border-radius:6px;border:0.5px solid var(--gold);background:rgba(232,200,122,0.15);color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap">🇩🇪 DE</button>
+      </div>
     </div>
 
     <!-- Tabs -->
@@ -5026,31 +5043,42 @@ const I18N = {
 // Active language (also used as LANGUAGES alias for countdown etc.)
 const LANGUAGES = I18N;
 
-function applyLanguage(lang) {
+function _setLang(lang) {
+  // Update _lang
   _lang = lang;
   localStorage.setItem('lang', lang);
+  // Update button styles directly
+  const codes = ['de','en','fr','es','fa','ar','hi','ja','zh'];
+  codes.forEach(c => {
+    const btn = document.getElementById('lb-' + c);
+    if (!btn) return;
+    const isActive = c === lang;
+    btn.style.border = `0.5px solid ${isActive ? 'var(--teal)' : 'var(--border)'}`;
+    btn.style.background = isActive ? 'rgba(78,205,196,0.15)' : 'var(--surface2)';
+    const label = btn.querySelector('div:last-child');
+    if (label) label.style.color = isActive ? 'var(--teal)' : 'var(--text3)';
+    if (label) label.style.fontWeight = isActive ? '500' : '400';
+  });
+  // Apply RTL
   const l = L();
-  // RTL
   document.documentElement.dir = l.dir;
   document.documentElement.lang = lang;
-  // Update all data-i18n elements immediately
+  // Update data-i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (l[key] !== undefined) el.innerHTML = l[key];
   });
-  // Re-render language grid (active state)
-  renderLangGrid();
-  // Re-render calendar (month name, weekday headers)
+  // Re-render
   renderCal();
-  // Update clock text immediately
   tick();
-  // Re-render active tab
-  const id = activeTab;
-  if(id==='feiertage') renderFeiertage();
-  if(id==='moon') renderMoon();
-  if(id==='countdown') renderCountdown();
-  if(id==='jahresuebersicht') renderJahresuebersicht();
+  if (activeTab === 'feiertage') renderFeiertage();
+  if (activeTab === 'moon') renderMoon();
+  if (activeTab === 'countdown') renderCountdown();
+  if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
 }
+// Keep applyLanguage as alias
+function applyLanguage(lang) { _setLang(lang); }
+window._setLang = _setLang;
 
 function renderLangGrid() {
   const grid = document.getElementById('lang-grid');
@@ -5289,6 +5317,8 @@ renderCal();
 renderSolstices();
 checkInstallHint();
 rebuildTabBar();
+// Sprach-Buttons initial markieren
+if (_lang !== 'de') _setLang(_lang);
 
 // Expose key functions globally so inline onclick in innerHTML works
 window.applyLanguage = applyLanguage;
