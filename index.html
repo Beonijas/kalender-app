@@ -47,22 +47,26 @@
   --fs-2xl: 20px;
 }
 
-/* FONT SIZE SCALES */
-body.fs-small  { --fs-xs:9px;  --fs-sm:10px; --fs-md:11px; --fs-lg:13px; --fs-xl:15px; --fs-2xl:18px; }
-body.fs-large  { --fs-xs:12px; --fs-sm:14px; --fs-md:16px; --fs-lg:18px; --fs-xl:21px; --fs-2xl:24px; }
+/* FONT SIZE SCALES – via CSS custom property on :root */
+:root { --app-scale: 1; }
+body.fs-small { --app-scale: 0.88; }
+body.fs-large { --app-scale: 1.14; }
 
-/* Global font scaling via zoom on the scroll container */
-body.fs-small  .app-scroll { zoom: 0.88; }
-body.fs-large  .app-scroll { zoom: 1.14; }
-body.fs-small  .app-header { zoom: 0.88; }
-body.fs-large  .app-header { zoom: 1.14; }
-body.fs-small  .tab-bar    { zoom: 0.88; }
-body.fs-large  .tab-bar    { zoom: 1.14; }
+.app-scroll,
+.app-header,
+.tab-bar {
+  transform-origin: top center;
+}
+body.fs-small .app-scroll,
+body.fs-small .app-header,
+body.fs-small .tab-bar { transform: scale(0.88); margin-top: calc((0.88 - 1) * 0px); }
+body.fs-large .app-scroll,
+body.fs-large .app-header,
+body.fs-large .tab-bar { transform: scale(1.14); }
 
 /* Font size button active state */
 .fs-btn { padding:5px 10px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface3);color:var(--text3);cursor:pointer;transition:all .15s; }
-.fs-btn.active { border-color:var(--teal);background:rgba(78,205,196,0.15);color:var(--teal);font-weight:500; }
-.fs-btn:active { opacity:.7; }
+.fs-btn.active { border-color:var(--teal) !important;background:rgba(78,205,196,0.2) !important;color:var(--teal) !important;font-weight:600; }
 
 /* LIGHT MODE */
 body.light-mode {
@@ -384,9 +388,9 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           </div>
         </div>
         <div style="display:flex;gap:6px">
-          <button onclick="setFontSize('small')"  class="fs-btn" id="fs-btn-small"  style="font-size:11px">A</button>
-          <button onclick="setFontSize('normal')" class="fs-btn" id="fs-btn-normal" style="font-size:15px">A</button>
-          <button onclick="setFontSize('large')"  class="fs-btn" id="fs-btn-large"  style="font-size:19px">A</button>
+          <button data-fs="small"  class="fs-btn" id="fs-btn-small"  style="font-size:11px">A</button>
+          <button data-fs="normal" class="fs-btn" id="fs-btn-normal" style="font-size:15px">A</button>
+          <button data-fs="large"  class="fs-btn" id="fs-btn-large"  style="font-size:19px">A</button>
         </div>
       </div>
     </div>
@@ -1714,7 +1718,7 @@ function localNow() {
   const now=new Date(), off=isDST(now)?2:1;
   return new Date(now.getTime()+off*3600000);
 }
-function fmtDate(d){return `${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`}
+function fmtDate(d){return `${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]} ${d.getUTCFullYear()}`}
 function pad(n){return String(n).padStart(2,'0')}
 function todayStr(){const l=localNow();return `${l.getUTCFullYear()}-${pad(l.getUTCMonth()+1)}-${pad(l.getUTCDate())}`}
 
@@ -1752,7 +1756,7 @@ function tick() {
   document.getElementById('tz-badge').textContent=`${tz} UTC+${off}`;
   document.getElementById('dst-badge').textContent=dst?'☀️ Sommerzeit':'❄️ Winterzeit';
   const wd=l.getUTCDay(), day=l.getUTCDate(), mo=l.getUTCMonth(), yr=l.getUTCFullYear();
-  document.getElementById('clock-date').textContent=`${DE_DAYS_LONG[wd]}, ${day}. ${DE_MONTHS[mo]} ${yr}`;
+  document.getElementById('clock-date').textContent=`${lDaysLong()[wd]}, ${day}. ${lMonths()[mo]} ${yr}`;
   const m=moonCalc(now);
   document.getElementById('moon-badge-small').textContent=`${m.icon} ${m.phase}`;
 }
@@ -1763,9 +1767,9 @@ function renderCal() {
   const first=new Date(Date.UTC(viewY,viewM,1));
   const last=new Date(Date.UTC(viewY,viewM+1,0)).getUTCDate();
   const startDow=first.getUTCDay();
-  document.getElementById('cal-title').textContent=`${DE_MONTHS[viewM]} ${viewY}`;
+  document.getElementById('cal-title').textContent=`${lMonths()[viewM]} ${viewY}`;
   let dow='';
-  for(const d of DE_DAYS_SHORT) dow+=`<div class="cal-dow">${d}</div>`;
+  for(const d of lDays()) dow+=`<div class="cal-dow">${d}</div>`;
   document.getElementById('cal-dow').innerHTML=dow;
   let g='';
   for(let i=0;i<startDow;i++) g+=`<div class="cal-cell other"></div>`;
@@ -1787,7 +1791,7 @@ function renderCal() {
   } else {
     document.getElementById('hday-month').innerHTML=month_hdays.map(h=>{
       const d=new Date(h.ds+'T12:00:00Z');
-      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
+      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
     }).join('');
   }
   renderSunTimesInCal();
@@ -1980,8 +1984,8 @@ function renderFeiertage() {
 
   function fmtRow(f) {
     const d = f.date;
-    const dow = DE_DAYS_SHORT[d.getUTCDay()];
-    const dateLabel = `${dow} ${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}`;
+    const dow = lDays()[d.getUTCDay()];
+    const dateLabel = `${dow} ${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)}`;
     const isToday = f.ds === today;
     const isPast  = f.ds < today;
     return `<div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?'.55':'1'}">
@@ -2024,7 +2028,7 @@ function renderMoon(){
   const now=new Date(), m=moonCalc(now), l=localNow();
   document.getElementById('moon-icon').textContent=m.icon;
   document.getElementById('moon-phase-name').textContent=m.phase;
-  document.getElementById('moon-date-now').textContent=`${DE_DAYS_LONG[l.getUTCDay()]}, ${fmtDate(l)}`;
+  document.getElementById('moon-date-now').textContent=`${lDaysLong()[l.getUTCDay()]}, ${fmtDate(l)}`;
   document.getElementById('moon-age').textContent=m.age;
   document.getElementById('moon-illum').textContent=m.illum+'%';
   const ts=todayStr();
@@ -2070,7 +2074,7 @@ function renderMoon(){
     <button onclick="changeMoonYear(1)" class="cal-nav-btn">›</button>
   </div>`;
   for(let mo=0;mo<12;mo++){
-    yg+=`<div class="moon-month-card"><div class="moon-month-title">${DE_MONTHS[mo]}</div>`;
+    yg+=`<div class="moon-month-card"><div class="moon-month-title">${lMonths()[mo]}</div>`;
     for(const e of (byMonth[mo]||[])){
       const day=parseInt(e.d.slice(8,10));
       yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${e.p}${e.t?' '+e.t:''}</span></div>`;
@@ -2222,7 +2226,7 @@ function renderIFC(){
     const d=dayOfYear-1;
     ifcMonth=Math.floor((d-1)/28);
     ifcDay=((d-1)%28)+1;
-    dowLabel=DE_DAYS_LONG[dow];
+    dowLabel=lDaysLong()[dow];
   }
   document.getElementById('ifc-day').textContent=typeof ifcDay==='number'?ifcDay:'★';
   document.getElementById('ifc-month').textContent=ifcMonth>=0?IFC_MONTHS[ifcMonth]:'Jahrestag';
@@ -2271,7 +2275,7 @@ function renderIFC(){
     const active=m===ifcMonth;
     const isSol=m===6;
     const gregStart=new Date(Date.UTC(year,0,m*28+2));
-    const label=`${gregStart.getUTCDate()}. ${DE_MONTHS[gregStart.getUTCMonth()].slice(0,3)}`;
+    const label=`${gregStart.getUTCDate()}. ${lMonths()[gregStart.getUTCMonth()].slice(0,3)}`;
     g+=`<div class="ifc-m${active?' active':''}" style="${isSol?'border:0.5px solid rgba(91,141,238,0.4);background:rgba(91,141,238,0.1)':''}">
       <div class="ifc-m-name" style="${isSol?'color:var(--blue2)':''}">${IFC_MONTHS[m].slice(0,3)}</div>
       <div class="ifc-m-num">${m+1}</div>
@@ -2442,7 +2446,7 @@ function updateSwarogClock(){
   const off=isDST(new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),Math.floor(su/60),su%60)))?2:1;
   const sLH=Math.floor((su/60+off)%24),sMm=Math.floor(su%60);
   const gd=document.getElementById('swarog-greg-date');
-  if(gd)gd.textContent=`${DE_DAYS_LONG[l.getUTCDay()]}, ${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${l.getUTCFullYear()} · ${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())} ${dst?'MESZ':'MEZ'}`;
+  if(gd)gd.textContent=`${lDaysLong()[l.getUTCDay()]}, ${l.getUTCDate()}. ${lMonths()[l.getUTCMonth()]} ${l.getUTCFullYear()} · ${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())} ${dst?'MESZ':'MEZ'}`;
   const tb=document.getElementById('swarog-time-big');
   if(tb)tb.textContent=`${st.hourNum}:${String(st.parts).padStart(3,'0')}`;
   const hn=document.getElementById('swarog-hour-name');
@@ -2856,7 +2860,7 @@ function getIslamicHolidays(hY){
     const g=hijriToGregorian(hY,h.hM,h.hD);
     const ds=`${g.year}-${pad(g.month)}-${pad(g.day)}`;
     const d=new Date(Date.UTC(g.year,g.month-1,g.day));
-    return{...h,greg:ds,dateLabel:`${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`};
+    return{...h,greg:ds,dateLabel:`${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]} ${d.getUTCFullYear()}`};
   }).sort((a,b)=>a.greg.localeCompare(b.greg));
 }
 
@@ -2885,7 +2889,7 @@ function monthsGrid(hY,hM){
     return `<div style="background:${cur?'rgba(78,205,196,0.12)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(78,205,196,0.3)':'var(--border)'};border-radius:10px;padding:8px 10px">
       <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};text-transform:uppercase">${i+1}.</div>
       <div style="font-size:12px;color:${cur?'var(--teal)':'var(--text)'};font-weight:${cur?500:400};margin-top:2px">${HIJRI_MONTHS[i].split(' ')[0]}</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g.day}. ${DE_MONTHS[g.month-1]} · ${days} T.</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g.day}. ${lMonths()[g.month-1]} · ${days} T.</div>
     </div>`;}).join('');}
 
 function renderIslamCal(){
@@ -3226,7 +3230,7 @@ function renderSettingsTabs() {
       html += `
       <div style="border:0.5px solid var(--border2);border-radius:12px;margin-bottom:8px;overflow:hidden">
         <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);cursor:pointer"
-             onclick="toggleGroupExpand('${grp.id}')">
+             data-expand="${grp.id}">
           <span style="font-size:18px">${grp.icon}</span>
           <div style="flex:1">
             <div style="font-size:14px;color:var(--text);font-weight:500">${grp.label}</div>
@@ -3404,7 +3408,7 @@ function renderHebrew() {
     const d = new Date(Date.UTC(g.year, g.month-1, g.day));
     const isT = ds === today, isPast = ds < today;
     return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)} ${g.year}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)} ${g.year}</span>
       <div style="flex:1">
         <div style="font-size:13px;color:${hol.important?'var(--gold)':isT?'var(--blue2)':'var(--text)'};font-weight:${hol.important||isT?500:400}">${hol.name}</div>
         <div style="font-size:12px;color:var(--text3);direction:rtl;font-family:serif;margin-top:1px">${hol.he}</div>
@@ -3423,7 +3427,7 @@ function renderHebrew() {
     return `<div style="background:${cur?'rgba(91,141,238,0.12)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(91,141,238,0.3)':'var(--border)'};border-radius:10px;padding:8px 10px">
       <div style="font-size:10px;color:${cur?'var(--blue2)':'var(--text3)'};text-transform:uppercase">${i+1}.</div>
       <div style="font-size:12px;color:${cur?'var(--blue2)':'var(--text)'};font-weight:${cur?500:400};margin-top:2px">${mn}</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g2.day}. ${DE_MONTHS[g2.month-1].slice(0,3)} · ${hebDaysInMonth(mo,h.year)} T.</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${g2.day}. ${lMonths()[g2.month-1].slice(0,3)} · ${hebDaysInMonth(mo,h.year)} T.</div>
     </div>`;
   }).join('');
 }
@@ -3489,7 +3493,7 @@ function renderChinese() {
   document.getElementById('cn-year-name').textContent = `Jahr des ${cy.zodiac.en} (${cy.zodiac.zh})`;
   document.getElementById('cn-cycle').textContent = `Element: ${cy.element} · ${cy.cycle}. Zyklus`;
   document.getElementById('cn-date-today').textContent =
-    `Chinesisches Neujahr ${cnYear+1}: ${cny.getUTCDate()}. ${DE_MONTHS[cny.getUTCMonth()]} ${cny.getUTCFullYear()}`;
+    `Chinesisches Neujahr ${cnYear+1}: ${cny.getUTCDate()}. ${lMonths()[cny.getUTCMonth()]} ${cny.getUTCFullYear()}`;
   document.getElementById('cn-year-label').textContent = `${cnYear} chin.`;
 
   // Zodiac Grid
@@ -3513,7 +3517,7 @@ function renderChinese() {
     const ds = h.date.toISOString().slice(0,10);
     const isPast = ds < todayStr2;
     return `<div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${h.date.getUTCDate()}. ${DE_MONTHS[h.date.getUTCMonth()].slice(0,3)} ${h.date.getUTCFullYear()}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${h.date.getUTCDate()}. ${lMonths()[h.date.getUTCMonth()].slice(0,3)} ${h.date.getUTCFullYear()}</span>
       <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
     </div>`;
   }).join('');
@@ -3954,7 +3958,7 @@ function renderSaka() {
     const ds = d.toISOString().slice(0,10);
     const isPast = ds < today;
     return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)}</span>
       <div>
         <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
         ${h.note?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${h.note}</div>`:''}
@@ -4024,7 +4028,7 @@ function renderVikram() {
     const ds = d.toISOString().slice(0,10);
     const isPast = ds < today;
     return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)}</span>
       <div>
         <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
         ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}
@@ -4091,7 +4095,7 @@ function renderBengali() {
     const ds = d.toISOString().slice(0,10);
     const isPast = ds < today;
     return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()].slice(0,3)}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:84px;flex-shrink:0">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)}</span>
       <div>
         <div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
         ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}
@@ -4210,7 +4214,7 @@ function renderJapanese(){
   document.getElementById('jp-date-full').textContent=`${era.name} ${year}年 ${l.getUTCMonth()+1}月 ${l.getUTCDate()}日 (${l.getUTCFullYear()} n.Chr.)`;
   document.getElementById('jp-eras-list').innerHTML=JP_ERAS.map(e=>{const cur=!e.end;const sy=e.start.getFullYear();const ey=e.end?e.end.getFullYear():l.getUTCFullYear();return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><span style="font-size:20px;width:36px;text-align:center;flex-shrink:0">${e.kanji}</span><div style="flex:1"><div style="font-size:13px;color:${cur?'#dc3232':'var(--text)'};font-weight:${cur?500:400}">${e.name}${cur?' (aktuell)':''}</div><div style="font-size:11px;color:var(--text3)">${sy}–${e.end?ey:'heute'}</div></div></div>`;}).join('');
   const gY=l.getUTCFullYear(),today=todayStr();
-  document.getElementById('jp-holidays').innerHTML=JP_HOLIDAYS.map(h=>{const d2=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d2.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${DE_MONTHS[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:var(--text)">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.jp}</div></div></div>`;}).join('');
+  document.getElementById('jp-holidays').innerHTML=JP_HOLIDAYS.map(h=>{const d2=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d2.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${lMonths()[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:var(--text)">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.jp}</div></div></div>`;}).join('');
 }
 
 // ── BUDDHISTISCHER KALENDER ───────────────────────────────────────────────────
@@ -4224,12 +4228,12 @@ const BE_HOLIDAYS=[
 function renderBuddhist(){
   const l=localNow();const gY=l.getUTCFullYear();const beY=gY+543;
   document.getElementById('be-year').textContent=beY;
-  document.getElementById('be-date').textContent=`${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${beY} BE`;
+  document.getElementById('be-date').textContent=`${l.getUTCDate()}. ${lMonths()[l.getUTCMonth()]} ${beY} BE`;
   document.getElementById('be-thai').textContent=`${l.getUTCDate()} ${BE_THAI_MONTHS[l.getUTCMonth()]} พ.ศ. ${beY}`;
   document.getElementById('be-greg-inline').textContent=gY;
   document.getElementById('be-be-inline').textContent=beY;
   const today=todayStr();
-  document.getElementById('be-holidays').innerHTML=BE_HOLIDAYS.map(h=>{const d=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${DE_MONTHS[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;}).join('');
+  document.getElementById('be-holidays').innerHTML=BE_HOLIDAYS.map(h=>{const d=new Date(Date.UTC(gY,h.m-1,h.d));const ds=d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d}. ${lMonths()[h.m-1].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;}).join('');
 }
 
 // ── 13-MOND-KALENDER ──────────────────────────────────────────────────────────
@@ -4287,7 +4291,7 @@ function renderPersian(){
   const yalda=new Date(Date.UTC(l.getUTCFullYear(),11,22));
   const today=todayStr();
   const perH=[{d:nowruz,name:'Nowruz – Persisches Neujahr',fa:'نوروز',important:true},{d:yalda,name:'Yalda-Nacht (Wintersonnenwende)',fa:'شب یلدا',important:true}];
-  document.getElementById('per-holidays').innerHTML=perH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${DE_MONTHS[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:500">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.fa}</div></div></div>`;}).join('');
+  document.getElementById('per-holidays').innerHTML=perH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${lMonths()[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:500">${h.name}</div><div style="font-size:11px;color:var(--text3);direction:rtl;font-family:serif">${h.fa}</div></div></div>`;}).join('');
 }
 
 // ── ZOROASTRISCHER KALENDER ───────────────────────────────────────────────────
@@ -4331,7 +4335,7 @@ function renderEthiopian(){
   document.getElementById('eth-months-grid').innerHTML=ETH_MONTHS.map((mn,i)=>{const cur=i===e.month;return`<div style="background:${cur?'rgba(0,160,80,0.15)':'var(--surface2)'};border:0.5px solid ${cur?'rgba(0,160,80,0.4)':'var(--border)'};border-radius:10px;padding:8px 10px"><div style="font-size:11px;color:${cur?'#00a050':'var(--text)'};font-weight:${cur?500:400}">${i+1}. ${mn}</div><div style="font-size:10px;color:var(--text3);font-family:serif">${ETH_MONTHS_GE[i]}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${i===12?5:30} Tage</div></div>`;}).join('');
   const gY=l.getUTCFullYear(),today=todayStr();
   const ethH=[{d:new Date(Date.UTC(gY,8,11)),name:'Enkutatash (Äthiopisches Neujahr)',ge:'እንቁጣጣሽ',important:true},{d:new Date(Date.UTC(gY,8,27)),name:'Meskel (Kreuzauffindung)',ge:'መስቀል',important:true},{d:new Date(Date.UTC(gY,0,7)),name:'Genna (Äthiopisches Weihnachten)',ge:'ገና'},{d:new Date(Date.UTC(gY,0,19)),name:'Timkat (Taufe Christi)',ge:'ጥምቀት',important:true}];
-  document.getElementById('eth-holidays').innerHTML=ethH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${DE_MONTHS[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div><div style="font-size:11px;color:var(--text3);font-family:serif">${h.ge}</div></div></div>`;}).join('');
+  document.getElementById('eth-holidays').innerHTML=ethH.map(h=>{const ds=h.d.toISOString().slice(0,10);return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.d.getUTCDate()}. ${lMonths()[h.d.getUTCMonth()].slice(0,3)}</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div><div style="font-size:11px;color:var(--text3);font-family:serif">${h.ge}</div></div></div>`;}).join('');
 }
 
 // ── KOPTISCHER KALENDER ───────────────────────────────────────────────────────
@@ -4365,7 +4369,7 @@ function gregorianToJulian(gY,gM,gD){
 function renderJulian(){
   const l=localNow();const j=gregorianToJulian(l.getUTCFullYear(),l.getUTCMonth()+1,l.getUTCDate());
   document.getElementById('jul-day').textContent=j.day;
-  document.getElementById('jul-month').textContent=DE_MONTHS[j.month-1];
+  document.getElementById('jul-month').textContent=lMonths()[j.month-1];
   document.getElementById('jul-year').textContent=`${j.year} n.Chr. (Julianisch)`;
   document.getElementById('jul-diff').textContent=`Aktuell 13 Tage hinter dem gregorianischen Kalender`;
   const gY=l.getUTCFullYear(),today=todayStr();
@@ -4377,7 +4381,7 @@ function renderJulian(){
   document.getElementById('jul-holidays').innerHTML=julH.map(h=>{
     const gregDate=new Date(Date.UTC(gY,h.jM===12?0:h.jM-1,h.jM===12?7:h.jD+13));
     const ds=gregDate.toISOString().slice(0,10);
-    return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:76px;flex-shrink:0">${gregDate.getUTCDate()}. ${DE_MONTHS[gregDate.getUTCMonth()].slice(0,3)} (greg.)</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;
+    return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<today?.5:1}"><span style="font-size:11px;color:var(--text3);min-width:76px;flex-shrink:0">${gregDate.getUTCDate()}. ${lMonths()[gregDate.getUTCMonth()].slice(0,3)} (greg.)</span><div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div></div>`;
   }).join('');
 }
 
@@ -4398,7 +4402,7 @@ const HOL_MILESTONES=[
 function renderHolocene(){
   const l=localNow();const heYear=l.getUTCFullYear()+10000;
   document.getElementById('hol-year').textContent=heYear;
-  document.getElementById('hol-greg').textContent=`${l.getUTCDate()}. ${DE_MONTHS[l.getUTCMonth()]} ${l.getUTCFullYear()} n.Chr. = ${heYear} HE`;
+  document.getElementById('hol-greg').textContent=`${l.getUTCDate()}. ${lMonths()[l.getUTCMonth()]} ${l.getUTCFullYear()} n.Chr. = ${heYear} HE`;
   document.getElementById('hol-year-inline').textContent=heYear;
   document.getElementById('hol-milestones').innerHTML=HOL_MILESTONES.map(m=>{const cur=m.name==='Heute';return`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><span style="font-size:12px;color:var(--blue2);min-width:62px;flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:500">${m.year} HE</span><div><div style="font-size:13px;color:${cur?'var(--gold)':'var(--text)'};font-weight:${cur?500:400}">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.note}</div></div></div>`;}).join('');
 }
@@ -4677,7 +4681,7 @@ function renderTibetan() {
     const d=new Date(Date.UTC(gY,h.greg.m-1,h.greg.d));
     const ds=d.toISOString().slice(0,10);
     return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${ds<todayStr2?.5:1}">
-      <span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.greg.d}. ${DE_MONTHS[h.greg.m-1].slice(0,3)}</span>
+      <span style="font-size:11px;color:var(--text3);min-width:60px;flex-shrink:0">${h.greg.d}. ${lMonths()[h.greg.m-1].slice(0,3)}</span>
       <div><div style="font-size:13px;color:${h.important?'var(--gold)':'var(--text)'};font-weight:${h.important?500:400}">${h.name}</div>
       ${h.note?`<div style="font-size:10px;color:var(--text3)">${h.note}</div>`:''}</div>
     </div>`;
@@ -5022,22 +5026,23 @@ function applyLanguage(lang) {
   // RTL
   document.documentElement.dir = l.dir;
   document.documentElement.lang = lang;
-  // Update all data-i18n elements
+  // Update all data-i18n elements immediately
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (l[key] !== undefined) el.innerHTML = l[key];
   });
-  // Update settings labels
-  const sdm = document.querySelector('[data-i18n="sec_dark"]');
-  const darkLabel = document.querySelector('.settings-row-label');
-  // Re-render current view
+  // Re-render language grid (active state)
   renderLangGrid();
+  // Re-render calendar (month name, weekday headers)
   renderCal();
-  // Re-render active tab if needed
-  if (activeTab === 'feiertage') renderFeiertage();
-  if (activeTab === 'moon') renderMoon();
-  if (activeTab === 'countdown') renderCountdown();
-  if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
+  // Update clock text immediately
+  tick();
+  // Re-render active tab
+  const id = activeTab;
+  if(id==='feiertage') renderFeiertage();
+  if(id==='moon') renderMoon();
+  if(id==='countdown') renderCountdown();
+  if(id==='jahresuebersicht') renderJahresuebersicht();
 }
 
 function renderLangGrid() {
@@ -5045,7 +5050,7 @@ function renderLangGrid() {
   if (!grid) return;
   grid.innerHTML = Object.entries(I18N).map(([code, l]) => {
     const cur = code === _lang;
-    return `<button onclick="applyLanguage('${code}')" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent">
+    return `<button data-lang="${code}" style="padding:7px 4px;border-radius:8px;border:0.5px solid ${cur?'var(--teal)':'var(--border)'};background:${cur?'rgba(78,205,196,0.15)':'var(--surface2)'};cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:all .15s">
       <div style="font-size:18px">${l.flag}</div>
       <div style="font-size:10px;color:${cur?'var(--teal)':'var(--text3)'};margin-top:3px;font-weight:${cur?500:400}">${l.name}</div>
     </button>`;
@@ -5082,7 +5087,7 @@ function renderCountdown() {
     const diff = Math.ceil((new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())) - today) / 86400000);
     return diff;
   }
-  function fmtDate(d) { return `${d.getUTCDate()}. ${DE_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`; }
+  function fmtDate(d) { return `${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]} ${d.getUTCFullYear()}`; }
   function cdRow(name, date, color, icon) {
     const days = daysUntil(date);
     if (days < 0) return '';
@@ -5222,15 +5227,15 @@ function renderDatumsrechner() {
 
   // Alle Kalender berechnen
   const calendars = [
-    {name:'Gregorianisch',    icon:'📅', color:'var(--gold)',   val:`${gD}. ${DE_MONTHS[gM-1]} ${gY}`},
+    {name:'Gregorianisch',    icon:'📅', color:'var(--gold)',   val:`${gD}. ${lMonths()[gM-1]} ${gY}`},
     {name:'Islamisch',        icon:'☪️',  color:'var(--teal)',   val:(()=>{const h=gregorianToHijri(gY,gM,gD);return `${h.day}. ${['Muharram','Safar','Rabīʿ I','Rabīʿ II','Jumādā I','Jumādā II','Rajab','Schaʿbān','Ramadān','Schawwāl','Dhū l-Qaʿda','Dhū l-Hiddscha'][h.month-1]} ${h.year} AH`;})()},
     {name:'Hebräisch',        icon:'✡️',  color:'var(--blue2)',  val:(()=>{const h=gregorianToHebrew(gY,gM,gD);return `${h.day}. ${HEB_MONTHS[h.month-1]} ${h.year} AM`;})()},
     {name:'Persisch',         icon:'🇮🇷', color:'#00b478',      val:(()=>{const j=gregorianToJalali(gY,gM,gD);return `${j.day}. ${PER_MONTHS[j.month-1]} ${j.year} SH`;})()},
     {name:'Äthiopisch',       icon:'🇪🇹', color:'#00a050',      val:(()=>{const e=gregorianToEthiopian(gY,gM,gD);return `${e.day}. ${ETH_MONTHS[e.month]} ${e.year} ዓ.ም.`;})()},
     {name:'Koptisch',         icon:'✝️',  color:'#b43c3c',      val:(()=>{const c=gregorianToCoptic(gY,gM,gD);return `${c.day}. ${COP_MONTHS[c.month]} ${c.year} AM`;})()},
-    {name:'Julianisch',       icon:'📜',  color:'#8888cc',      val:(()=>{const j=gregorianToJulian(gY,gM,gD);return `${j.day}. ${DE_MONTHS[j.month-1]} ${j.year}`;})()},
-    {name:'Buddhistisch',     icon:'☸️',  color:'#ffb400',      val:`${gD}. ${DE_MONTHS[gM-1]} ${gY+543} BE`},
-    {name:'Holozän',          icon:'🔢',  color:'var(--blue2)', val:`${gD}. ${DE_MONTHS[gM-1]} ${gY+10000} HE`},
+    {name:'Julianisch',       icon:'📜',  color:'#8888cc',      val:(()=>{const j=gregorianToJulian(gY,gM,gD);return `${j.day}. ${lMonths()[j.month-1]} ${j.year}`;})()},
+    {name:'Buddhistisch',     icon:'☸️',  color:'#ffb400',      val:`${gD}. ${lMonths()[gM-1]} ${gY+543} BE`},
+    {name:'Holozän',          icon:'🔢',  color:'var(--blue2)', val:`${gD}. ${lMonths()[gM-1]} ${gY+10000} HE`},
     {name:'Saka',             icon:'🇮🇳', color:'#e87850',      val:(()=>{const s=gregorianToSaka(gY,gM,gD);return `${s.day}. ${SAKA_MONTHS[s.month].name} ${s.year} Saka`;})()},
     {name:'Bengali',          icon:'🌸',  color:'#dc5078',      val:(()=>{const b=gregorianToBengali(gY,gM,gD);return `${b.day}. ${b.monthName} ${b.year} BS`;})()},
     {name:'Maya Tzolkin',     icon:'🌞',  color:'var(--teal)',  val:(()=>{const m=getMayaDate(gY,gM,gD);return `${m.tzolkinNum} ${m.tzolkinName} · ${m.haabDay} ${m.haabMonth}`;})()},
@@ -5249,6 +5254,20 @@ function renderDatumsrechner() {
       </div>
     </div>`).join('');
 }
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// Event delegation for settings sheet (onclick in innerHTML is unreliable in WKWebView)
+document.getElementById('settings-sheet').addEventListener('click', function(e) {
+  // Font size buttons
+  const btn = e.target.closest('button[data-fs]');
+  if (btn) { setFontSize(btn.dataset.fs); return; }
+  // Language buttons
+  const lbtn = e.target.closest('button[data-lang]');
+  if (lbtn) { applyLanguage(lbtn.dataset.lang); return; }
+  // Group expand divs
+  const expDiv = e.target.closest('[data-expand]');
+  if (expDiv) { toggleGroupExpand(expDiv.dataset.expand); return; }
+});
 
 const savedTheme = localStorage.getItem('theme');
 applyTheme(savedTheme !== 'light');
