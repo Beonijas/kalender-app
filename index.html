@@ -2001,8 +2001,10 @@ function initFeiertageSelects() {
 function renderFeiertage() {
   const blSel = document.getElementById('feiertage-bundesland');
   const ySel  = document.getElementById('feiertage-year');
+  // Auto-init if not yet populated
+  if (ySel && ySel.options.length === 0) initFeiertageSelects();
   if (blSel) _feiertageBL = blSel.value;
-  if (ySel)  _feiertageYear = parseInt(ySel.value);
+  if (ySel)  _feiertageYear = parseInt(ySel.value) || new Date().getFullYear();
   _feiertageBLForCal = _feiertageBL;
 
   const all = buildFeiertageForYear(_feiertageYear, _feiertageBL);
