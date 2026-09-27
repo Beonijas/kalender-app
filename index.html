@@ -346,7 +346,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="clock-time" id="h-clock">--:--</div>
       <div class="clock-tz" id="h-tz">MEZ</div>
     </div>
-    <button class="gear-btn" onclick="openSettings()" title="<span data-i18n="settings_title">Einstellungen</span>">
+    <button class="gear-btn" onclick="openSettings()" title="Settings">
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -358,7 +358,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <div class="settings-sheet" id="settings-sheet">
     <div class="settings-handle"></div>
     <div class="settings-header">
-      <div class="settings-title">Einstellungen</div>
+      <div class="settings-title" data-i18n="settings_title">Einstellungen</div>
       <button class="settings-close" onclick="closeSettings()">×</button>
     </div>
 
@@ -383,7 +383,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <div class="settings-row-left">
           <span class="settings-row-icon">🔠</span>
           <div>
-            <div class="settings-row-label">Schriftgröße</div>
+            <div class="settings-row-label" data-i18n="fontsize_label_title">Schriftgröße</div>
             <div class="settings-row-sub" id="fontsize-label">Normal</div>
           </div>
         </div>
@@ -525,22 +525,22 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="moon-stats">
         <div class="stat-card">
           <div class="stat-val" id="moon-age">–</div>
-          <div class="stat-label">Tage alt</div>
+          <div class="stat-label" data-i18n="moon_age_label">Tage alt</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" id="moon-illum">–</div>
-          <div class="stat-label">Beleuchtg.</div>
+          <div class="stat-label" data-i18n="moon_illum_label">Beleuchtg.</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" id="moon-remain">–</div>
-          <div class="stat-label">Tage bis VM</div>
+          <div class="stat-label" data-i18n="moon_remain_label">Tage bis VM</div>
         </div>
       </div>
       <div class="progress-bar" style="margin-top:14px">
         <div class="progress-fill" id="moon-progress" style="width:0%"></div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
-        <span>🌑 Neumond</span><span>🌕 Vollmond</span><span>🌑 Neumond</span>
+        <span>🌑 <span data-i18n="p_new">Neumond</span></span><span>🌕 <span data-i18n="p_full">Vollmond</span></span><span>🌑 <span data-i18n="p_new_2">Neumond</span></span>
       </div>
     </div>
 
@@ -1779,11 +1779,11 @@ function getMoonForDate(ds){const y=parseInt(ds.slice(0,4));for(const e of moonE
 function tick() {
   const now=new Date(), dst=isDST(now), off=dst?2:1;
   const l=new Date(now.getTime()+off*3600000);
-  const t=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())}`;
-  const t2=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}`;
+  const timeStr=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}:${pad(l.getUTCSeconds())}`;
+  const timeStr2=`${pad(l.getUTCHours())}:${pad(l.getUTCMinutes())}`;
   const tz=dst?'MESZ':'MEZ';
-  document.getElementById('clock-big').textContent=t;
-  document.getElementById('h-clock').textContent=t2;
+  document.getElementById('clock-big').textContent=timeStr;
+  document.getElementById('h-clock').textContent=timeStr2;
   document.getElementById('h-tz').textContent=tz;
   document.getElementById('tz-badge').textContent=`${tz} UTC+${off}`;
   document.getElementById('dst-badge').textContent=dst?t('summertime'):t('wintertime');
@@ -2012,12 +2012,12 @@ function renderFeiertage() {
   const blLabel = BL_NAMES[_feiertageBL] || _feiertageBL;
 
   document.getElementById('feiertage-count').textContent =
-    `${legal.length} gesetzliche Feiertage · ${other.length} weitere Feste · ${blLabel} · ${_feiertageYear}`;
+    `${legal.length} ${t('legal_hol')} · ${other.length} ${t('more_festivals_short')} · ${blLabel} · ${_feiertageYear}`;
 
   function fmtRow(f) {
     const d = f.date;
-    const dow = lDays()[d.getUTCDay()];
-    const dateLabel = `${dow} ${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()].slice(0,3)}`;
+    const days=lDays(); const dow = (days&&days[d.getUTCDay()])||['So','Mo','Di','Mi','Do','Fr','Sa'][d.getUTCDay()];
+    const mos=lMonths(); const dateLabel = `${dow} ${d.getUTCDate()}. ${(mos&&mos[d.getUTCMonth()]||['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][d.getUTCMonth()]).slice(0,3)}`;
     const isToday = f.ds === today;
     const isPast  = f.ds < today;
     return `<div style="display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:0.5px solid var(--border);opacity:${isPast?'.55':'1'}">
@@ -2025,7 +2025,7 @@ function renderFeiertage() {
       <div style="flex:1">
         <span style="font-size:13px;color:${isToday?'var(--gold)':f.blOnly?'var(--teal)':'var(--text)'};font-weight:${isToday||f.legal?'500':'400'}">${f.name}</span>
         ${f.blOnly?`<span style="font-size:9px;padding:1px 5px;border-radius:6px;background:rgba(78,205,196,0.15);color:var(--teal);margin-left:5px">${_feiertageBL==='alle'?'BL-spez.':'nur '+blLabel.split('-')[0]}</span>`:''}
-        ${isToday?'<span style="font-size:9px;padding:1px 6px;border-radius:6px;background:rgba(232,200,122,0.2);color:var(--gold);margin-left:5px">Heute</span>':''}
+        ${isToday?`<span style="font-size:9px;padding:1px 6px;border-radius:6px;background:rgba(232,200,122,0.2);color:var(--gold);margin-left:5px">${t('today')}</span>`:''}
         ${f.note?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${f.note}</div>`:''}
       </div>
     </div>`;
@@ -2033,8 +2033,8 @@ function renderFeiertage() {
 
   const legalEl = document.getElementById('feiertage-legal-list');
   const otherEl = document.getElementById('feiertage-other-list');
-  if (legalEl) legalEl.innerHTML = legal.map(fmtRow).join('') || '<div style="font-size:13px;color:var(--text3)">Keine Einträge</div>';
-  if (otherEl) otherEl.innerHTML = other.map(fmtRow).join('') || '<div style="font-size:13px;color:var(--text3)">Keine Einträge</div>';
+  if (legalEl) legalEl.innerHTML = legal.map(fmtRow).join('') || `<div style="font-size:13px;color:var(--text3)">${t('no_entries')}</div>`;
+  if (otherEl) otherEl.innerHTML = other.map(fmtRow).join('') || `<div style="font-size:13px;color:var(--text3)">${t('no_entries')}</div>`;
 
   // Kalender-Tab ebenfalls aktualisieren
   renderCal();
@@ -2089,7 +2089,7 @@ function renderMoon(){
     const d=ev?new Date(ev.d):null;
     const ds=d?fmtDate(d):'–';
     const icon=ev?ev.i:'';
-    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${prioLabels[p]||p}</div><div class="np-date">${ds}${ev&&ev.t?' · '+ev.t+' Uhr':''}</div></div></div>`;
+    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${prioLabels[p]||p}</div><div class="np-date">${ds}${ev&&ev.t?' · '+ev.t+' '+t('oclock'):''}</div></div></div>`;
   }).join('');
 
   // Jahresübersicht mit Jahres-Umschalter
@@ -2111,7 +2111,7 @@ function renderMoon(){
     for(const e of (byMonth[mo]||[])){
       const day=parseInt(e.d.slice(8,10));
       const phL={Vollmond:t('p_full'),Neumond:t('p_new'),'Erstes Viertel':t('p_first'),'Letztes Viertel':t('p_last')};
-      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${phL[e.p]||e.p}${e.t?' '+e.t:''}</span></div>`;
+      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${phL[e.p]||e.p}${e.t?' '+e.t+' '+t('oclock'):''}</span></div>`;
     }
     yg+='</div>';
   }
@@ -2127,19 +2127,19 @@ function changeMoonYear(delta){
 // ── IFC ───────────────────────────────────────────────────────────────────────
 // ── IFC + OPHIUCHUS ───────────────────────────────────────────────────────────
 const ZODIAC_13 = [
-  {name:'Widder',      lat:'Aries',       icon:'♈', dates:'21. Mär – 19. Apr', days:30, sol:false},
-  {name:'Stier',       lat:'Taurus',      icon:'♉', dates:'20. Apr – 20. Mai', days:31, sol:false},
-  {name:'Zwillinge',   lat:'Gemini',      icon:'♊', dates:'21. Mai – 20. Jun', days:31, sol:false},
-  {name:'Krebs',       lat:'Cancer',      icon:'♋', dates:'21. Jun – 22. Jul', days:32, sol:false},
-  {name:'Löwe',        lat:'Leo',         icon:'♌', dates:'23. Jul – 22. Aug', days:31, sol:false},
-  {name:'Jungfrau',    lat:'Virgo',       icon:'♍', dates:'23. Aug – 22. Sep', days:31, sol:false},
-  {name:'Waage',       lat:'Libra',       icon:'♎', dates:'23. Sep – 22. Okt', days:30, sol:false},
+  {name:'Widder',      en:'Aries',        lat:'Aries',       icon:'♈', dates:'21. Mär – 19. Apr', datesEn:'21 Mar – 19 Apr', days:30, sol:false},
+  {name:'Stier',       en:'Taurus',       lat:'Taurus',      icon:'♉', dates:'20. Apr – 20. Mai', datesEn:'20 Apr – 20 May', days:31, sol:false},
+  {name:'Zwillinge',   en:'Gemini',       lat:'Gemini',      icon:'♊', dates:'21. Mai – 20. Jun', datesEn:'21 May – 20 Jun', days:31, sol:false},
+  {name:'Krebs',       en:'Cancer',       lat:'Cancer',      icon:'♋', dates:'21. Jun – 22. Jul', datesEn:'21 Jun – 22 Jul', days:32, sol:false},
+  {name:'Löwe',        en:'Leo',          lat:'Leo',         icon:'♌', dates:'23. Jul – 22. Aug', datesEn:'23 Jul – 22 Aug', days:31, sol:false},
+  {name:'Jungfrau',    en:'Virgo',        lat:'Virgo',       icon:'♍', dates:'23. Aug – 22. Sep', datesEn:'23 Aug – 22 Sep', days:31, sol:false},
+  {name:'Waage',       en:'Libra',        lat:'Libra',       icon:'♎', dates:'23. Sep – 22 Oct', datesEn:'23 Sep – 22 Oct', days:30, sol:false},
   {name:'Skorpion',    lat:'Scorpius',    icon:'♏', dates:'23. Okt – 29. Nov', days:38, sol:false},
   {name:'Schlangenträger',lat:'Ophiuchus',icon:'🐍', dates:'30. Nov – 17. Dez', days:18, sol:true},
-  {name:'Schütze',     lat:'Sagittarius', icon:'♐', dates:'18. Dez – 18. Jan', days:32, sol:false},
+  {name:'Schütze',     en:'Sagittarius',  lat:'Sagittarius', icon:'♐', dates:'18. Dez – 18. Jan', datesEn:'18 Dec – 18 Jan', days:32, sol:false},
   {name:'Steinbock',   lat:'Capricornus', icon:'♑', dates:'19. Jan – 15. Feb', days:28, sol:false},
-  {name:'Wassermann',  lat:'Aquarius',    icon:'♒', dates:'16. Feb – 11. Mär', days:24, sol:false},
-  {name:'Fische',      lat:'Pisces',      icon:'♓', dates:'12. Mär – 18. Apr', days:38, sol:false},
+  {name:'Wassermann',  en:'Aquarius',     lat:'Aquarius',    icon:'♒', dates:'16. Feb – 11. Mär', datesEn:'16 Feb – 11 Mar', days:24, sol:false},
+  {name:'Fische',      en:'Pisces',       lat:'Pisces',      icon:'♓', dates:'12. Mär – 18. Apr', datesEn:'12 Mar – 18 Apr', days:38, sol:false},
 ];
 
 // SOL_HISTORY: text is now looked up via t() at render time
@@ -2279,10 +2279,10 @@ function renderIFC(){
     const isCur = i === zodiacIdx;
     return `<div style="background:${z.sol?'rgba(91,141,238,0.15)':isCur?'rgba(232,200,122,0.15)':'var(--surface2)'};border:0.5px solid ${z.sol?'rgba(91,141,238,0.4)':isCur?'rgba(232,200,122,0.4)':'var(--border)'};border-radius:10px;padding:6px 8px;text-align:center">
       <div style="font-size:18px">${z.icon}</div>
-      <div style="font-size:10px;color:${z.sol?'var(--blue2)':isCur?'var(--gold)':'var(--text2)'};font-weight:${z.sol||isCur?500:400};margin-top:3px;line-height:1.2">${z.name}</div>
-      <div style="font-size:8px;color:var(--text3);margin-top:1px">${z.dates}</div>
-      ${z.sol?'<div style="font-size:8px;color:var(--blue2);margin-top:1px">13. Zeichen</div>':''}
-      ${isCur&&!z.sol?'<div style="font-size:8px;color:var(--gold);margin-top:1px">● aktuell</div>':''}
+      <div style="font-size:10px;color:${z.sol?'var(--blue2)':isCur?'var(--gold)':'var(--text2)'};font-weight:${z.sol||isCur?500:400};margin-top:3px;line-height:1.2">${_lang==='en'?(z.en||z.name):z.name}</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:1px">${_lang==='en'?(z.datesEn||z.dates):z.dates}</div>
+      ${z.sol?`<div style="font-size:8px;color:var(--blue2);margin-top:1px">${t('sign_13')}</div>`:''}
+      ${isCur&&!z.sol?`<div style="font-size:8px;color:var(--gold);margin-top:1px">${t('current_sign')}</div>`:''}
     </div>`;
   }).join('');
 
@@ -4850,6 +4850,11 @@ const I18N = {
     moon_overview:'Mondphasen-Übersicht',
     moon_next_events:'Nächste Mondphasen',
     always_active:'Immer aktiv',
+    moon_age_label:'Tage alt', moon_illum_label:'Beleuchtg.', moon_remain_label:'Tage bis VM',
+    oclock:'Uhr', today:'Heute', no_entries:'Keine Einträge',
+    more_festivals_short:'weitere Feste',
+    sign_13:'13. Zeichen', current_sign:'● aktuell',
+    p_new_2:'Neumond',
   },
   en: {
     flag:'🇬🇧', name:'English', dir:'ltr',
@@ -4924,6 +4929,11 @@ const I18N = {
     moon_overview:'Moon Phase Overview',
     moon_next_events:'Upcoming Moon Phases',
     always_active:'Always active',
+    moon_age_label:'Days old', moon_illum_label:'Illumination', moon_remain_label:'Days to FM',
+    oclock:'h', today:'Today', no_entries:'No entries',
+    more_festivals_short:'other festivals',
+    sign_13:'13th Sign', current_sign:'● current',
+    p_new_2:'New Moon',
   },
   fr: {
     flag:'🇫🇷', name:'Français', dir:'ltr',
