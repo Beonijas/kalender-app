@@ -414,6 +414,8 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <div style="flex:1;font-size:11px;color:var(--text3)">Sprache zurücksetzen / Reset language</div>
         <button onclick="_setLang('de')" style="padding:4px 10px;border-radius:6px;border:0.5px solid var(--gold);background:rgba(232,200,122,0.15);color:var(--gold);font-size:11px;cursor:pointer">🇩🇪 DE</button>
       </div>
+      <!-- Debug-Anzeige: zeigt ob _setLang aufgerufen wird -->
+      <div id="lang-debug" style="margin-top:6px;padding:5px 8px;background:rgba(0,0,0,0.3);border-radius:6px;font-size:10px;color:var(--text3);font-family:monospace">–</div>
     </div>
 
     <!-- Tabs -->
@@ -5069,39 +5071,52 @@ const LANGUAGES = I18N;
 _i18nReady = true; // I18N ist jetzt verfügbar – L() kann es nutzen
 
 function _setLang(lang) {
-  if (lang !== 'de' && lang !== 'en') lang = 'de';
-  _lang = lang;
-  localStorage.setItem('lang', lang);
-  // Update button styles
-  ['de','en'].forEach(c => {
-    const btn = document.getElementById('lb-' + c);
-    if (!btn) return;
-    const active = c === lang;
-    btn.style.border = `0.5px solid ${active ? 'var(--teal)' : 'var(--border)'}`;
-    btn.style.background = active ? 'rgba(78,205,196,0.15)' : 'var(--surface2)';
-    const lbl = btn.querySelector('div:last-child');
-    if (lbl) { lbl.style.color = active ? 'var(--teal)' : 'var(--text3)'; lbl.style.fontWeight = active ? '500' : '400'; }
-  });
-  // Apply RTL (neither DE nor EN is RTL)
-  document.documentElement.dir = 'ltr';
-  document.documentElement.lang = lang;
-  // Update all data-i18n elements
-  const l = L();
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (l[key] !== undefined) el.innerHTML = l[key];
-  });
-  // Re-render calendar and active tab
-  renderCal();
-  tick();
-  if (typeof activeTab !== 'undefined') {
-    if (activeTab === 'feiertage') renderFeiertage();
-    if (activeTab === 'moon') renderMoon();
-    if (activeTab === 'ifc') renderIFC();
-    if (activeTab === 'jahreskreis') renderJahreskreis && renderJahreskreis();
-    if (activeTab === 'countdown') renderCountdown();
-    if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
-    if (activeTab === 'swarog') renderSwarog();
+  try {
+    if (lang !== 'de' && lang !== 'en') lang = 'de';
+    _lang = lang;
+    localStorage.setItem('lang', lang);
+
+    // Debug: zeige was passiert
+    const dbg = document.getElementById('lang-debug');
+    if (dbg) dbg.textContent = `Sprache: ${lang} | i18nReady: ${_i18nReady} | Januar→${L().months[0]}`;
+
+    // Buttons updaten
+    ['de','en'].forEach(c => {
+      const btn = document.getElementById('lb-' + c);
+      if (!btn) return;
+      const active = c === lang;
+      btn.style.border = `0.5px solid ${active ? 'var(--teal)' : 'var(--border)'}`;
+      btn.style.background = active ? 'rgba(78,205,196,0.15)' : 'var(--surface2)';
+      const lbl = btn.querySelector('div:last-child');
+      if (lbl) { lbl.style.color = active ? 'var(--teal)' : 'var(--text3)'; lbl.style.fontWeight = active ? '500' : '400'; }
+    });
+
+    document.documentElement.dir = 'ltr';
+    document.documentElement.lang = lang;
+
+    // data-i18n updaten
+    const l = L();
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (l[key] !== undefined) el.innerHTML = l[key];
+    });
+
+    // Kalender neu rendern
+    renderCal();
+    tick();
+
+    if (typeof activeTab !== 'undefined') {
+      if (activeTab === 'feiertage') renderFeiertage();
+      if (activeTab === 'moon') renderMoon();
+      if (activeTab === 'ifc') renderIFC();
+      if (activeTab === 'countdown') renderCountdown();
+      if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
+      if (activeTab === 'swarog') renderSwarog();
+    }
+  } catch(e) {
+    const dbg = document.getElementById('lang-debug');
+    if (dbg) dbg.textContent = 'FEHLER: ' + e.message + ' | Stack: ' + e.stack;
+    alert('Sprachfehler: ' + e.message);
   }
 }
 window._setLang = _setLang;
