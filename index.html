@@ -576,7 +576,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
         <div style="flex-shrink:0;text-align:center">
           <div id="ifc-ophiuchus-svg" style="width:72px;height:72px;margin:0 auto"></div>
-          <div style="font-size:10px;color:var(--text3);margin-top:4px">Ophiuchus</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px"><span data-i18n="ophiuchus_label">Ophiuchus</span></div>
         </div>
         <div style="flex:1">
           <div style="font-family:var(--font-display);font-size:16px;color:var(--blue2);letter-spacing:.04em;margin-bottom:6px">Ophiuchus – der Schlangenträger</div>
@@ -1601,13 +1601,12 @@ function getSolstices(y) {
     2451900.05952+365242.74049*Y-0.06223*Y*Y-0.00823*Y*Y*Y+0.00032*Y*Y*Y*Y,
   ];
   const names=[
-    {icon:'🌱',name:'März-Äquinoktium'},
-    {icon:'☀️',name:'Juni-Sonnenwende'},
-    {icon:'🍂',name:'Sept.-Äquinoktium'},
-    {icon:'❄️',name:'Dez.-Sonnenwende'},
+    {icon:'🌱', nameKey:'sol_spring'},
+    {icon:'☀️', nameKey:'sol_summer'},
+    {icon:'🍂', nameKey:'sol_autumn'},
+    {icon:'❄️', nameKey:'sol_winter'},
   ];
   return jde0.map((jde,i)=>{
-    // JDE → Date (Julian Day Number to Unix)
     const unix=(jde-2440587.5)*86400000;
     const d=new Date(unix);
     const dst=isDST(d);
@@ -1615,7 +1614,7 @@ function getSolstices(y) {
     const local=new Date(d.getTime()+off*3600000);
     const dateStr=`${pad(local.getUTCDate())}.${pad(local.getUTCMonth()+1)}.${local.getUTCFullYear()}`;
     const timeStr=`${pad(local.getUTCHours())}:${pad(local.getUTCMinutes())} ${dst?'MESZ':'MEZ'}`;
-    return {...names[i], date:dateStr, time:timeStr};
+    return {...names[i], name:t(names[i].nameKey), date:dateStr, time:timeStr};
   });
 }
 
@@ -1762,13 +1761,13 @@ function moonCalc(date) {
   let age=((diff%syn)+syn)%syn;
   const illum=(1-Math.cos(2*Math.PI*age/syn))/2;
   let phase,icon;
-  if(age<1.85){phase='Neumond';icon='🌑';}
+  if(age<1.85){phase=t('p_new');icon='🌑';}
   else if(age<7.38){phase='Zun. Sichel';icon='🌒';}
-  else if(age<9.22){phase='Erstes Viertel';icon='🌓';}
+  else if(age<9.22){phase=t('p_first');icon='🌓';}
   else if(age<14.77){phase='Zun. Dreiviertel';icon='🌔';}
-  else if(age<16.61){phase='Vollmond';icon='🌕';}
+  else if(age<16.61){phase=t('p_full');icon='🌕';}
   else if(age<22.15){phase='Abn. Dreiviertel';icon='🌖';}
-  else if(age<23.99){phase='Letztes Viertel';icon='🌗';}
+  else if(age<23.99){phase=t('p_last');icon='🌗';}
   else{phase='Abn. Sichel';icon='🌘';}
   return {age:+age.toFixed(1),phase,icon,illum:Math.round(illum*100)};
 }
@@ -1787,7 +1786,7 @@ function tick() {
   document.getElementById('h-clock').textContent=t2;
   document.getElementById('h-tz').textContent=tz;
   document.getElementById('tz-badge').textContent=`${tz} UTC+${off}`;
-  document.getElementById('dst-badge').textContent=dst?'☀️ Sommerzeit':'❄️ Winterzeit';
+  document.getElementById('dst-badge').textContent=dst?t('summertime'):t('wintertime');
   const wd=l.getUTCDay(), day=l.getUTCDate(), mo=l.getUTCMonth(), yr=l.getUTCFullYear();
   document.getElementById('clock-date').textContent=`${lDaysLong()[wd]}, ${day}. ${lMonths()[mo]} ${yr}`;
   const m=moonCalc(now);
@@ -1820,11 +1819,11 @@ function renderCal() {
   const blHdays = buildFeiertageForYear(viewY, _feiertageBLForCal);
   const month_hdays = blHdays.filter(h=>h.ds.startsWith(`${viewY}-${pad(viewM+1)}`));
   if(!month_hdays.length){
-    document.getElementById('hday-month').innerHTML='<div style="font-size:13px;color:var(--text3)">Keine Feiertage in diesem Monat</div>';
+    document.getElementById('hday-month').innerHTML=`<div style="font-size:13px;color:var(--text3)">${t('no_holidays')}</div>`;
   } else {
     document.getElementById('hday-month').innerHTML=month_hdays.map(h=>{
       const d=new Date(h.ds+'T12:00:00Z');
-      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?'<span class="hday-badge">gesetzl.</span>':''}</div>`;
+      return `<div class="hday-row"><span class="hday-date">${d.getUTCDate()}. ${lMonths()[d.getUTCMonth()]}</span><span class="hday-name">${h.name}${h.note?` <span style="font-size:10px;color:var(--text3)">(${h.note})</span>`:''}</span>${h.legal?`<span class="hday-badge">${t('legal')}</span>`:''}</div>`;
     }).join('');
   }
   renderSunTimesInCal();
@@ -2072,7 +2071,7 @@ function renderMoon(){
   for(const e of eventsNow){
     if(e.p==='Vollmond'&&e.d>=ts){
       const diff=Math.round((new Date(e.d)-new Date(ts+'T12:00:00Z'))/86400000);
-      daysToFull=diff===0?'Heute':diff;
+      daysToFull=diff===0?t('today_label'):diff;
       break;
     }
   }
@@ -2081,6 +2080,7 @@ function renderMoon(){
 
   const next={};
   const prios=['Vollmond','Neumond','Erstes Viertel','Letztes Viertel'];
+  const prioLabels={Vollmond:t('p_full'),Neumond:t('p_new'),'Erstes Viertel':t('p_first'),'Letztes Viertel':t('p_last')};
   for(const e of eventsNow){
     if(e.d>=ts&&!next[e.p]) next[e.p]=e;
   }
@@ -2089,7 +2089,7 @@ function renderMoon(){
     const d=ev?new Date(ev.d):null;
     const ds=d?fmtDate(d):'–';
     const icon=ev?ev.i:'';
-    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${p}</div><div class="np-date">${ds}${ev&&ev.t?' · '+ev.t+' Uhr':''}</div></div></div>`;
+    return `<div class="next-phase-row"><span class="np-icon">${icon}</span><div class="np-info"><div class="np-name">${prioLabels[p]||p}</div><div class="np-date">${ds}${ev&&ev.t?' · '+ev.t+' Uhr':''}</div></div></div>`;
   }).join('');
 
   // Jahresübersicht mit Jahres-Umschalter
@@ -2103,14 +2103,15 @@ function renderMoon(){
   }
   let yg=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;grid-column:1/-1">
     <button onclick="changeMoonYear(-1)" class="cal-nav-btn">‹</button>
-    <span style="font-size:14px;font-weight:500;color:var(--gold);flex:1;text-align:center">Mondphasen ${moonYear}</span>
+    <span style="font-size:14px;font-weight:500;color:var(--gold);flex:1;text-align:center">${t('moon_overview')} ${moonYear}</span>
     <button onclick="changeMoonYear(1)" class="cal-nav-btn">›</button>
   </div>`;
   for(let mo=0;mo<12;mo++){
     yg+=`<div class="moon-month-card"><div class="moon-month-title">${lMonths()[mo]}</div>`;
     for(const e of (byMonth[mo]||[])){
       const day=parseInt(e.d.slice(8,10));
-      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${e.p}${e.t?' '+e.t:''}</span></div>`;
+      const phL={Vollmond:t('p_full'),Neumond:t('p_new'),'Erstes Viertel':t('p_first'),'Letztes Viertel':t('p_last')};
+      yg+=`<div class="moon-event-row"><span class="moon-event-icon">${e.i}</span><span>${day}. – ${phL[e.p]||e.p}${e.t?' '+e.t:''}</span></div>`;
     }
     yg+='</div>';
   }
@@ -2201,7 +2202,7 @@ function drawZodiacWheel13(currentZodiacIdx) {
     svg += `<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="${isSol?14:12}" style="user-select:none">${z.icon}</text>`;
     // Name bei Sol extra
     if (isSol) {
-      svg += `<text x="${cx+Math.cos(mid)*128}" y="${cy+Math.sin(mid)*128}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#5b8dee" font-weight="bold" style="user-select:none">Ophiuchus</text>`;
+      svg += `<text x="${cx+Math.cos(mid)*128}" y="${cy+Math.sin(mid)*128}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#5b8dee" font-weight="bold" style="user-select:none"><span data-i18n="ophiuchus_label">Ophiuchus</span></text>`;
     }
   });
   // Innenkreis
@@ -3268,7 +3269,7 @@ function renderSettingsTabs() {
           <span class="settings-row-icon">${t.icon}</span>
           <div>
             <div class="settings-row-label">${t.label}</div>
-            ${t.required ? '<div class="settings-row-sub">Immer aktiv</div>' : ''}
+            ${t.required ? `<div class="settings-row-sub">${t('always_active')}</div>` : ''}
           </div>
         </div>
         <label class="toggle" ${t.required?'style="opacity:.4;pointer-events:none"':''}>
@@ -4807,7 +4808,7 @@ const I18N = {
     sec_bl_select:'Bundesland & Jahr wählen',
     // Content texts
     ifc_sol_subtitle:'Der 7. IFC-Monat · Ophiuchus · Schlangenträger',
-    ifc_about_text:'Der <strong>International Fixed Calendar</strong> (IFC) teilt das Jahr in <strong>13 Monate à 28 Tage</strong> ein (= 364 Tage), plus einen extra <strong>Weltfeiertag</strong>. Jeder Monat beginnt immer am Sonntag. Der 7. Monat <strong>Sol</strong> liegt zwischen Juni und Juli – genau wo <strong>Ophiuchus</strong> die Ekliptik kreuzt.',
+    ifc_about_text:'Der <strong>International Fixed Calendar</strong> (IFC) teilt das Jahr in <strong>13 Monate à 28 Tage</strong> ein (= 364 Tage), plus einen extra <strong>Weltfeiertag</strong>. Jeder Monat beginnt immer am Sonntag. Der 7. Monat <strong>Sol</strong> liegt zwischen Juni und Juli – genau wo <strong><span data-i18n="ophiuchus_label">Ophiuchus</span></strong> die Ekliptik kreuzt.',
     sol_sumer_text:'Die ältesten bekannten Kalender (~3000 v.Chr.) hatten 13 Mondmonate. Der 13. Monat wurde bewusst eingefügt um Mond- und Sonnenjahr zu synchronisieren – ein kosmisches Gleichgewichtsinstrument.',
     sol_celtic_text:'Der keltische Baumkalender (Ogham) kennt 13 Mondmonate à 28 Tage. Der 13. Monat (Holunder) symbolisiert Tod, Erneuerung und die Verbindung zwischen den Welten.',
     sol_egypt_text:'12 × 30 Tage + 5 Epagomene (Zusatztage außerhalb der Zeit). Die Schlange Apophis symbolisiert das ewige Chaos – bezwungen, aber nie vernichtet.',
@@ -4826,6 +4827,29 @@ const I18N = {
     cult_egypt:'Ägyptisch', cult_maya:'Maya (Tzolkin)',
     cult_native:'Nordamerikanisch', cult_vedic:'Vedisch (Nakshatras)',
     swarog_time_label:'Slawisch-Arische Zeit',
+    // Moon phases
+    p_new:'Neumond', p_first:'Erstes Viertel', p_full:'Vollmond', p_last:'Letztes Viertel',
+    moon_age:'Mondalter', moon_illum:'Beleuchtung', moon_next:'Nächste Phase',
+    moon_rise:'Mondaufgang', moon_set:'Monduntergang',
+    no_holidays:'Keine Feiertage in diesem Monat',
+    summertime:'☀️ Sommerzeit', wintertime:'❄️ Winterzeit',
+    // Ophiuchus
+    ophiuchus_desc:'Das <strong>13. Sternzeichen</strong> (ὀφιοῦχος) kreuzt die Ekliptik zwischen Skorpion und Schütze. Die Sonne steht jedes Jahr ca. <strong>30. Nov – 18. Dez</strong> im Ophiuchus. Die Babylonier ließen ihn vor ~3000 Jahren bewusst aus dem Tierkreis heraus – um 12 Zeichen für 12 Mondmonate zu haben.',
+    ecliptic_period:'EKLIPTIK-ZEITRAUM', main_star:'HAUPTSTERN',
+    symbol_label:'SYMBOL', mythology:'MYTHOLOGIE', ophiuchus_label:'Ophiuchus',
+    // Solstices
+    sol_spring:'Frühlingsäquinoktium', sol_summer:'Sommersonnenwende',
+    sol_autumn:'Herbstäquinoktium', sol_winter:'Wintersonnenwende',
+    // Countdown / Jahresübersicht
+    days_until:'Tage', today_label:'Heute!',
+    astro_events:'Astronomische Ereignisse', new_year_dates:'Neujahrsdaten',
+    // Feiertage
+    choose_state:'Bundesland wählen', legal_hol:'Gesetzliche Feiertage',
+    more_festivals:'Weitere Feste & Gedenktage',
+    // Moon tab
+    moon_overview:'Mondphasen-Übersicht',
+    moon_next_events:'Nächste Mondphasen',
+    always_active:'Immer aktiv',
   },
   en: {
     flag:'🇬🇧', name:'English', dir:'ltr',
@@ -4858,7 +4882,7 @@ const I18N = {
     sec_bl_select:'Select State & Year',
     // Content texts
     ifc_sol_subtitle:'The 7th IFC Month · Ophiuchus · Serpent Bearer',
-    ifc_about_text:'The <strong>International Fixed Calendar</strong> (IFC) divides the year into <strong>13 months of 28 days</strong> each (= 364 days), plus one <strong>World Holiday</strong>. Every month starts on Sunday. The 7th month <strong>Sol</strong> falls between June and July – exactly where <strong>Ophiuchus</strong> crosses the ecliptic.',
+    ifc_about_text:'The <strong>International Fixed Calendar</strong> (IFC) divides the year into <strong>13 months of 28 days</strong> each (= 364 days), plus one <strong>World Holiday</strong>. Every month starts on Sunday. The 7th month <strong>Sol</strong> falls between June and July – exactly where <strong><span data-i18n="ophiuchus_label">Ophiuchus</span></strong> crosses the ecliptic.',
     sol_sumer_text:'The oldest known calendars (~3000 BCE) had 13 lunar months. The 13th month was deliberately inserted to synchronize lunar and solar years – a cosmic balancing instrument.',
     sol_celtic_text:'The Celtic tree calendar (Ogham) has 13 lunar months of 28 days. The 13th month (Elder) symbolizes death, renewal, and the connection between worlds.',
     sol_egypt_text:'12 × 30 days + 5 Epagomene (extra days outside of time). The serpent Apophis symbolizes eternal chaos – subdued, but never destroyed.',
@@ -4877,6 +4901,29 @@ const I18N = {
     cult_egypt:'Egyptian', cult_maya:'Maya (Tzolkin)',
     cult_native:'North American', cult_vedic:'Vedic (Nakshatras)',
     swarog_time_label:'Slavic-Aryan Time',
+    // Moon phases
+    p_new:'New Moon', p_first:'First Quarter', p_full:'Full Moon', p_last:'Last Quarter',
+    moon_age:'Moon Age', moon_illum:'Illumination', moon_next:'Next Phase',
+    moon_rise:'Moonrise', moon_set:'Moonset',
+    no_holidays:'No holidays this month',
+    summertime:'☀️ Summer Time', wintertime:'❄️ Winter Time',
+    // Ophiuchus
+    ophiuchus_desc:'The <strong>13th zodiac sign</strong> (ὀφιοῦχος) crosses the ecliptic between Scorpio and Sagittarius. The Sun passes through Ophiuchus each year approx. <strong>30 Nov – 18 Dec</strong>. The Babylonians deliberately excluded it from the zodiac ~3000 years ago – to have 12 signs for 12 lunar months.',
+    ecliptic_period:'ECLIPTIC PERIOD', main_star:'MAIN STAR',
+    symbol_label:'SYMBOL', mythology:'MYTHOLOGY', ophiuchus_label:'Ophiuchus',
+    // Solstices
+    sol_spring:'Spring Equinox', sol_summer:'Summer Solstice',
+    sol_autumn:'Autumn Equinox', sol_winter:'Winter Solstice',
+    // Countdown / Jahresübersicht
+    days_until:'days', today_label:'Today!',
+    astro_events:'Astronomical Events', new_year_dates:'New Year Dates',
+    // Feiertage
+    choose_state:'Choose State', legal_hol:'Public Holidays',
+    more_festivals:'Further Festivals & Observances',
+    // Moon tab
+    moon_overview:'Moon Phase Overview',
+    moon_next_events:'Upcoming Moon Phases',
+    always_active:'Always active',
   },
   fr: {
     flag:'🇫🇷', name:'Français', dir:'ltr',
@@ -5101,8 +5148,11 @@ function _setLang(lang) {
       if (l[key] !== undefined) el.innerHTML = l[key];
     });
 
+    // Clear caches that contain translated strings
+    if (typeof _solsticeCache !== 'undefined') { Object.keys(_solsticeCache).forEach(k=>delete _solsticeCache[k]); }
     // Kalender neu rendern
     renderCal();
+    renderSolstices();
     tick();
     // Settings schließen damit man die Änderung sieht
     closeSettings();
@@ -5177,8 +5227,8 @@ function renderCountdown() {
         <div style="font-size:11px;color:var(--text3);margin-top:1px">${fmtDate(date)}</div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:${days===0?20:18}px;font-weight:300;color:${days===0?'var(--gold)':days<=7?color:'var(--text2)'}">${days===0?'Heute!':days}</div>
-        ${days>0?`<div style="font-size:9px;color:var(--text3)">${t('days')}</div>`:''}
+        <div style="font-size:${days===0?20:18}px;font-weight:300;color:${days===0?'var(--gold)':days<=7?color:'var(--text2)'}">${days===0?t('today_label'):days}</div>
+        ${days>0?`<div style="font-size:9px;color:var(--text3)">${t('days_until')}</div>`:''}
       </div>
     </div>`;
   }
@@ -5188,11 +5238,11 @@ function renderCountdown() {
   const solstices = getSolstices(gY);
   const nextPhases = phases.filter(p=>new Date(p.d+'T12:00:00Z')>=today).slice(0,4);
   const astroEvents = [
-    {name:'Frühlingsäquinoktium', date:new Date(Date.UTC(gY,2,20)), icon:'🌸'},
-    {name:'Sommersonnenwende',     date:new Date(Date.UTC(gY,5,21)), icon:'☀️'},
-    {name:'Herbstäquinoktium',     date:new Date(Date.UTC(gY,8,22)), icon:'🍂'},
-    {name:'Wintersonnenwende',     date:new Date(Date.UTC(gY,11,21)), icon:'❄️'},
-    ...nextPhases.map(p=>({name:p.p, date:new Date(p.d+'T12:00:00Z'), icon:p.p==='Vollmond'?'🌕':p.p==='Neumond'?'🌑':p.p==='Erstes Viertel'?'🌓':'🌗'}))
+    {name:t('sol_spring'), date:new Date(Date.UTC(gY,2,20)), icon:'🌸'},
+    {name:t('sol_summer'), date:new Date(Date.UTC(gY,5,21)), icon:'☀️'},
+    {name:t('sol_autumn'), date:new Date(Date.UTC(gY,8,22)), icon:'🍂'},
+    {name:t('sol_winter'), date:new Date(Date.UTC(gY,11,21)), icon:'❄️'},
+    ...nextPhases.map(p=>({name:({Vollmond:t('p_full'),Neumond:t('p_new'),'Erstes Viertel':t('p_first'),'Letztes Viertel':t('p_last')})[p.p]||p.p, date:new Date(p.d+'T12:00:00Z'), icon:p.p==='Vollmond'?'🌕':p.p==='Neumond'?'🌑':p.p==='Erstes Viertel'?'🌓':'🌗'}))
   ].sort((a,b)=>a.date-b.date);
 
   document.getElementById('countdown-astro').innerHTML =
