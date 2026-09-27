@@ -346,7 +346,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="clock-time" id="h-clock">--:--</div>
       <div class="clock-tz" id="h-tz">MEZ</div>
     </div>
-    <button class="gear-btn" onclick="openSettings()" title="Einstellungen">
+    <button class="gear-btn" onclick="openSettings()" title="<span data-i18n="settings_title">Einstellungen</span>">
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -369,8 +369,8 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <div class="settings-row-left">
           <span class="settings-row-icon" id="theme-icon">🌙</span>
           <div>
-            <div class="settings-row-label">Dunkler Modus</div>
-            <div class="settings-row-sub">Wechselt zwischen Hell und Dunkel</div>
+            <div class="settings-row-label"><span data-i18n="dark_mode_label">Dunkler Modus</span></div>
+            <div class="settings-row-sub"><span data-i18n="dark_mode_sub">Wechselt zwischen Hell und Dunkel</span></div>
           </div>
         </div>
         <label class="toggle">
@@ -378,7 +378,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           <span class="toggle-slider"></span>
         </label>
       </div>
-      <!-- Schriftgröße -->
+      <!-- <span data-i18n="fontsize_label_title">Schriftgröße</span> -->
       <div class="settings-row">
         <div class="settings-row-left">
           <span class="settings-row-icon">🔠</span>
@@ -398,34 +398,32 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <!-- Sprache -->
     <div class="settings-section" style="padding-top:12px">
       <div class="settings-section-title">Sprache / Language</div>
-      <!-- Statische Buttons direkt im HTML – kein innerHTML, kein Event-Problem -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:4px">
-        <button id="lb-de" onclick="_setLang('de')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--teal);background:rgba(78,205,196,0.15);cursor:pointer;text-align:center"><div style="font-size:18px">🇩🇪</div><div style="font-size:10px;color:var(--teal);margin-top:3px;font-weight:500">Deutsch</div></button>
-        <button id="lb-en" onclick="_setLang('en')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇬🇧</div><div style="font-size:10px;color:var(--text3);margin-top:3px">English</div></button>
-        <button id="lb-fr" onclick="_setLang('fr')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇫🇷</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Français</div></button>
-        <button id="lb-es" onclick="_setLang('es')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇪🇸</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Español</div></button>
-        <button id="lb-fa" onclick="_setLang('fa')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇮🇷</div><div style="font-size:10px;color:var(--text3);margin-top:3px">فارسی</div></button>
-        <button id="lb-ar" onclick="_setLang('ar')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇸🇦</div><div style="font-size:10px;color:var(--text3);margin-top:3px">العربية</div></button>
-        <button id="lb-hi" onclick="_setLang('hi')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇮🇳</div><div style="font-size:10px;color:var(--text3);margin-top:3px">हिन्दी</div></button>
-        <button id="lb-ja" onclick="_setLang('ja')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇯🇵</div><div style="font-size:10px;color:var(--text3);margin-top:3px">日本語</div></button>
-        <button id="lb-zh" onclick="_setLang('zh')" style="padding:7px 4px;border-radius:8px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center"><div style="font-size:18px">🇨🇳</div><div style="font-size:10px;color:var(--text3);margin-top:3px">中文</div></button>
+      <div style="display:flex;gap:8px;padding-top:4px">
+        <button id="lb-de" onclick="_setLang('de')" style="flex:1;padding:10px 4px;border-radius:10px;border:0.5px solid var(--teal);background:rgba(78,205,196,0.15);cursor:pointer;text-align:center">
+          <div style="font-size:24px">🇩🇪</div>
+          <div style="font-size:12px;color:var(--teal);margin-top:4px;font-weight:500">Deutsch</div>
+        </button>
+        <button id="lb-en" onclick="_setLang('en')" style="flex:1;padding:10px 4px;border-radius:10px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center">
+          <div style="font-size:24px">🇬🇧</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">English</div>
+        </button>
       </div>
-      <!-- Fallback: immer sichtbarer Reset-Button auf Deutsch -->
+      <!-- Fallback Reset – immer sichtbar, zweisprachig -->
       <div style="margin-top:8px;padding:6px 10px;background:rgba(232,200,122,0.1);border:0.5px solid rgba(232,200,122,0.2);border-radius:8px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:16px">🔄</span>
+        <span style="font-size:15px">🔄</span>
         <div style="flex:1;font-size:11px;color:var(--text3)">Sprache zurücksetzen / Reset language</div>
-        <button onclick="_setLang('de')" style="padding:4px 10px;border-radius:6px;border:0.5px solid var(--gold);background:rgba(232,200,122,0.15);color:var(--gold);font-size:11px;cursor:pointer;white-space:nowrap">🇩🇪 DE</button>
+        <button onclick="_setLang('de')" style="padding:4px 10px;border-radius:6px;border:0.5px solid var(--gold);background:rgba(232,200,122,0.15);color:var(--gold);font-size:11px;cursor:pointer">🇩🇪 DE</button>
       </div>
     </div>
 
     <!-- Tabs -->
     <div class="settings-section" style="padding-top:12px;">
-      <div class="settings-section-title">Aktive Tabs</div>
+      <div class="settings-section-title"><span data-i18n="tabs_section_title">Aktive Tabs</span></div>
       <div id="settings-tabs-list"></div>
     </div>
 
     <div style="padding:16px 20px 0;font-size:11px;color:var(--text3);line-height:1.6;">
-      <span data-i18n="tabs_hint">Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.</span>
+      <span data-i18n="tabs_hint"><span data-i18n="settings_tabs_hint">Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.</span></span>
     </div>
   </div>
 </div>
@@ -446,7 +444,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
 
     <div id="install-banner" class="install-banner">
       <button class="install-close" onclick="this.parentElement.classList.remove('visible')">×</button>
-      <span data-i18n="install_hint"><strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.</span>
+      <span data-i18n="install_hint"><span data-i18n="install_hint"><strong>Als App installieren:</strong> Safari → Teilen-Symbol → „Zum Home-Bildschirm". Auf Mac: Safari → Ablage → Zum Dock hinzufügen.</span></span>
     </div>
 
     <div class="section-label" data-i18n="sec_calendar">Kalender</div>
@@ -629,8 +627,8 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
 
     <div class="section-label" data-i18n="sec_ifc_about">Über den IFC-Kalender</div>
-    <div class="ifc-info-box">
-      Der <strong>Internationale Feste Kalender</strong> (IFC) hat <strong>13 Monate</strong> à <strong>28 Tage</strong> (= 364 Tage). Der 13. Monat heißt <strong>Sol</strong> und liegt zwischen Juni und Juli. Jeder Monat beginnt stets auf einen <strong>Sonntag</strong>. Der <strong>Jahrestag</strong> (1. Januar) steht außerhalb der Wochenstruktur. In Schaltjahren gibt es am Ende von Juni einen Schalttag.
+    <div class="ifc-info-box" data-i18n="ifc_about_text">
+      Der <strong>Internationale Feste Kalender</strong> (IFC) hat <strong>13 Monate</strong> à <strong>28 Tage</strong> (= 364 Tage). Der 13. Monat heißt <strong>Sol</strong> und liegt zwischen Juni und Juli. Jeder Monat beginnt stets auf einen <strong>Sonntag</strong>. Der <strong>Jahrestag</strong> (1. Januar) steht außerhalb der Wochenstruktur.
     </div>
   </div>
 
@@ -641,7 +639,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <div class="card" style="border-color:rgba(155,127,232,0.25);background:linear-gradient(135deg,#1a1a38 0%,#111126 100%)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div>
-          <div style="font-family:var(--font-display);font-size:11px;color:var(--purple);letter-spacing:.1em;text-transform:uppercase">Slawisch-Arische Zeit</div>
+          <div style="font-family:var(--font-display);font-size:11px;color:var(--purple);letter-spacing:.1em;text-transform:uppercase" data-i18n="swarog_time_label">Slawisch-Arische Zeit</div>
           <div style="font-size:10px;color:var(--text3);margin-top:2px" id="swarog-greg-date">–</div>
         </div>
         <div style="text-align:right">
@@ -713,7 +711,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div class="swarog-wheel" id="swarog-wheel"></div>
     </div>
     <div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:4px;padding:0 2px">
-      Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 n.Chr. befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.
+      <span data-i18n="swarog_circle_text"><span data-i18n="swarog_circle_text">Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 n.Chr. befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.</span></span>
     </div>
 
     <!-- DARISCHER KALENDER -->
@@ -722,7 +720,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
       <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);letter-spacing:.06em;margin-bottom:10px">Das vollständige Datum</div>
       <div id="daric-full-date" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
       <div style="font-size:11px;color:var(--text3);line-height:1.7;padding:8px 10px;background:rgba(155,127,232,0.08);border-radius:8px;border:0.5px solid rgba(155,127,232,0.15)">
-        Der <span style="color:var(--purple)">Darische Kalender</span> (Да'Арийский) ist das vollständige Datumssystem der slawisch-arischen Überlieferung. Er kombiniert das <span style="color:var(--gold)">SMZH-Jahr</span> (Kolyady Dar) mit dem <span style="color:var(--teal)">Stichija</span> (Element des Jahres), dem <span style="color:var(--purple)">16-Zeichen-Tierkreis</span> und dem <span style="color:var(--text)">Kreis der Ahnen</span> (144-jähriger Zyklus).
+        <span data-i18n="daric_explanation_text">Der Darische Kalender (Да'Арийский) ist das vollständige Datumssystem der slawisch-arischen Überlieferung. Er kombiniert das SMZH-Jahr (Kolyady Dar) mit dem Stichija (Element des Jahres), dem 16-Zeichen-Tierkreis und dem Kreis der Ahnen (144-jähriger Zyklus).</span>
       </div>
     </div>
 
@@ -779,7 +777,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <div id="jk-list"></div>
     <div class="section-label">Hintergrund</div>
     <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
-      Das <span style="color:var(--text)">Rad des Jahres</span> ist ein Jahreskreis aus acht Festen, der tief in keltischen und germanischen Traditionen verwurzelt ist. Die vier <span style="color:var(--teal)">Sonnenfeste</span> (Yule, Ostara, Litha, Mabon) richten sich nach den astronomischen Sonnenwenden und Äquinoktien – ihr Ursprung liegt überwiegend im germanischen Heidentum. Die vier <span style="color:var(--gold)">Feuerfeste</span> (Imbolc, Beltane, Lughnasadh, Samhain) stammen aus der keltischen Tradition und liegen jeweils in der Mitte zwischen zwei Sonnenereignissen.<br><br>
+      <span data-i18n="jahreskreis_text">Das <span style="color:var(--text)">Rad des Jahres</span> ist ein Jahreskreis aus acht Festen, der tief in keltischen und germanischen Traditionen verwurzelt ist. Die vier <span style="color:var(--teal)">Sonnenfeste</span> richten sich nach den astronomischen Sonnenwenden und Äquinoktien. Die vier <span style="color:var(--gold)">Feuerfeste</span> stammen aus der keltischen Tradition.</span>
       Viele dieser alten Feste leben bis heute fort: Samhain wurde zu Halloween, Imbolc zu Mariä Lichtmess, Ostara zu Ostern und Beltane zur Walpurgisnacht.
     </div>
   </div>
@@ -1212,7 +1210,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         <span style="font-size:32px">✝️</span>
         <div>
           <div style="font-family:var(--font-display);font-size:14px;color:#b43c3c;letter-spacing:.05em">Koptischer Kalender</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">Anno Martyrum · Ägyptisch-christlich · 13 Monate</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">Anno Martyrum · <span data-i18n="sol_egypt_title">Ägyptisch</span>-christlich · 13 Monate</div>
         </div>
       </div>
       <div style="text-align:center;padding:8px 0">
@@ -1313,7 +1311,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <div class="card" style="padding:10px"><div id="aztec-xiu-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div></div>
     <div class="section-label">Hintergrund</div>
     <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
-      Die Azteken (Mexica) nutzten zwei Kalender gleichzeitig: Der <span style="color:#dc6428">Tonalpohualli</span> (260 Tage = 20 Tageszeichen × 13 Zahlen) war ein heiliger Ritualkalender für Wahrsagung und Schicksal. Der <span style="color:var(--teal)">Xiuhpohualli</span> (365 Tage = 18 × 20 Tage + 5 Nemontemi-Unglückstage) war der Solarkalender. Beide synchronisieren sich alle 52 Jahre im <span style="color:var(--gold)">Xiuhmolpilli</span> (Bündelung der Jahre). Der berühmte <span style="color:var(--text)">Sonnenstein</span> (Piedra del Sol) zeigt diese kosmische Ordnung.
+      <span data-i18n="aztec_about_text">Die Azteken (Mexica) nutzten zwei Kalender gleichzeitig: Der Tonalpohualli (260 Tage) war ein heiliger Ritualkalender. Der Xiuhpohualli (365 Tage) war der Solarkalender. Beide synchronisieren sich alle 52 Jahre im Xiuhmolpilli (Bündelung der Jahre).</span>
     </div>
   </div>
 
@@ -1341,7 +1339,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     <div class="card" id="tib-holidays"></div>
     <div class="section-label">Hintergrund</div>
     <div class="card" style="font-size:13px;color:var(--text2);line-height:1.75">
-      Der <span style="color:var(--text)">Tibetische Kalender</span> (Bod Kyi Lo-tho) ist ein <span style="color:#b464dc">lunisolarer Kalender</span> der auf indischen und chinesischen Traditionen basiert. Er kombiniert 12 Tierkreiszeichen mit 5 Elementen zu einem <span style="color:var(--gold)">60-Jahres-Zyklus (Rabjung)</span>. Das Neujahr <span style="color:#b464dc">Losar</span> fällt auf den ersten Tag des ersten Mondmonats (Feb/März) und ist das wichtigste tibetische Fest. Besondere Mondtage (8., 15., 25., 30.) sind für Praxis und Gebet besonders günstig.
+      <span data-i18n="tibetan_about_text">Der Tibetische Kalender (Bod Kyi Lo-tho) ist ein lunisolarer Kalender basierend auf indischen und chinesischen Traditionen. Er kombiniert 12 Tierkreiszeichen mit 5 Elementen zu einem 60-Jahres-Zyklus (Rabjung). Das Neujahr Losar fällt auf den ersten Tag des ersten Mondmonats.</span> Besondere Mondtage (8., 15., 25., 30.) sind für Praxis und Gebet besonders günstig.
     </div>
   </div>
 
@@ -2141,31 +2139,14 @@ const ZODIAC_13 = [
   {name:'Fische',      lat:'Pisces',      icon:'♓', dates:'12. Mär – 18. Apr', days:38, sol:false},
 ];
 
+// SOL_HISTORY: text is now looked up via t() at render time
 const SOL_HISTORY = [
-  {
-    kultur:'Sumerisch / Babylonisch',icon:'🏺',farbe:'#e8a050',
-    text:'Die ältesten bekannten Kalender (~3000 v.Chr.) hatten 13 Mondmonate. Der 13. Monat (intercalary month) wurde bewusst eingefügt um Mond- und Sonnenjahr zu synchronisieren. In babylonischen Texten erscheint er als „Zusatzmonat" – ein kosmisches Gleichgewichtsinstrument.'
-  },
-  {
-    kultur:'Keltisch (Baumkalender)',icon:'🌿',farbe:'#4ecdc4',
-    text:'Der keltische Baumkalender (Ogham) kennt 13 Mondmonate à 28 Tage. Jeder Monat trägt den Namen eines heiligen Baumes. Der 13. Monat ( Elder/Holunder) steht am Jahresende und symbolisiert Tod, Erneuerung und die Verbindung zwischen den Welten – der Schlange verwandt.'
-  },
-  {
-    kultur:'Ägyptisch',icon:'𓂀',farbe:'#e8c87a',
-    text:'Der altägyptische Kalender hatte 12 Monate à 30 Tage + 5 Zusatztage (Epagomene). Diese 5 Tage galten als „außerhalb der Zeit" – nicht dem normalen Jahreskreis zugehörig. Die Schlange Apophis (Apep) symbolisierte das Chaos und den ewigen Kreislauf – bezwungen, aber nie vernichtet.'
-  },
-  {
-    kultur:'Maya (Tzolkin)',icon:'🌞',farbe:'#9b7fe8',
-    text:'Der Maya-Tzolkin hat 260 Tage = 13 × 20. Die Zahl 13 ist heilig und repräsentiert die 13 Himmelssphären. Die Federschlange Quetzalcoatl verbindet als 13. kosmische Kraft alle Ebenen – Erde, Wasser, Himmel. Im Haab (365 Tage) gibt es ebenfalls einen 13. Monat-Äquivalent.'
-  },
-  {
-    kultur:'Nordamerikanisch (Cherokee)',icon:'🦅',farbe:'#e87850',
-    text:'Viele indigene nordamerikanische Völker (Cherokee, Lakota) kannten einen 13-Mond-Kalender basierend auf den 13 Vollmonden pro Jahr. Die Schildkröte, Symbol der Welt, hat 13 Felder auf ihrem Rücken – ein Kalender in der Natur selbst.'
-  },
-  {
-    kultur:'Vedisch (Nakshatras)',icon:'⭐',farbe:'#b478ff',
-    text:'Im vedischen System gibt es 27 Mondstationen (Nakshatras), aufgeteilt in 13 sogenannte Nakshatra-Paare plus einen Zentralpunkt. Die Schlange Naga erscheint als Nakshatra Ashlesha (9. Station) – Qualität: bindend, umschlingend, alles vereinend.'
-  },
+  {kultKey:'cult_sumer', textKey:'sol_sumer_text', icon:'🏺', farbe:'#e8a050'},
+  {kultKey:'cult_celtic',textKey:'sol_celtic_text', icon:'🌿', farbe:'#4ecdc4'},
+  {kultKey:'cult_egypt', textKey:'sol_egypt_text',  icon:'𓂀', farbe:'#e8c87a'},
+  {kultKey:'cult_maya',  textKey:'sol_maya_text',   icon:'🌞', farbe:'#9b7fe8'},
+  {kultKey:'cult_native',textKey:'sol_native_text', icon:'🦅', farbe:'#e87850'},
+  {kultKey:'cult_vedic', textKey:'sol_vedic_text',  icon:'⭐', farbe:'#b478ff'},
 ];
 
 function drawOphiuchusSVG(size=72, color='var(--blue2)') {
@@ -2284,8 +2265,8 @@ function renderIFC(){
     <div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)">
       <span style="font-size:22px;flex-shrink:0;width:28px;text-align:center">${s.icon}</span>
       <div>
-        <div style="font-size:12px;color:${s.farbe};font-weight:500;margin-bottom:3px">${s.kultur}</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.65">${s.text}</div>
+        <div style="font-size:12px;color:${s.farbe};font-weight:500;margin-bottom:3px">${t(s.kultKey)}</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.65">${t(s.textKey)}</div>
       </div>
     </div>`).join('');
 
@@ -4822,6 +4803,27 @@ const I18N = {
     sec_circles:'Die drei Kreise der Zeit',
     sec_epochs:'СМЗХ · ЭФСТ · Da\'Ariya – Epochen im Vergleich',
     sec_bl_select:'Bundesland & Jahr wählen',
+    // Content texts
+    ifc_sol_subtitle:'Der 7. IFC-Monat · Ophiuchus · Schlangenträger',
+    ifc_about_text:'Der <strong>International Fixed Calendar</strong> (IFC) teilt das Jahr in <strong>13 Monate à 28 Tage</strong> ein (= 364 Tage), plus einen extra <strong>Weltfeiertag</strong>. Jeder Monat beginnt immer am Sonntag. Der 7. Monat <strong>Sol</strong> liegt zwischen Juni und Juli – genau wo <strong>Ophiuchus</strong> die Ekliptik kreuzt.',
+    sol_sumer_text:'Die ältesten bekannten Kalender (~3000 v.Chr.) hatten 13 Mondmonate. Der 13. Monat wurde bewusst eingefügt um Mond- und Sonnenjahr zu synchronisieren – ein kosmisches Gleichgewichtsinstrument.',
+    sol_celtic_text:'Der keltische Baumkalender (Ogham) kennt 13 Mondmonate à 28 Tage. Der 13. Monat (Holunder) symbolisiert Tod, Erneuerung und die Verbindung zwischen den Welten.',
+    sol_egypt_text:'12 × 30 Tage + 5 Epagomene (Zusatztage außerhalb der Zeit). Die Schlange Apophis symbolisiert das ewige Chaos – bezwungen, aber nie vernichtet.',
+    sol_maya_text:'260 Tage = 13 × 20. Die Zahl 13 ist heilig (13 Himmelssphären). Quetzalcoatl verbindet als 13. kosmische Kraft alle Ebenen der Schöpfung.',
+    sol_native_text:'13-Mond-Kalender basierend auf 13 Vollmonden pro Jahr. Die Schildkröte hat 13 Felder auf ihrem Rücken – ein Kalender der Natur selbst.',
+    sol_vedic_text:'27 Mondstationen eingeteilt in Paare. Die Schlange Naga erscheint als Nakshatra Ashlesha – bindend, umschlingend, alles vereinend.',
+    swarog_circle_text:'Der Swarog-Kreis umfasst 25.920 Jahre (Präzessionszyklus) in 16 Epochen à 1.620 Jahre. Seit 2012 befinden wir uns im Übergang zur 9. Epoche – dem Zeitalter des Wolfes unter dem Schutz von Weles.',
+    jahreskreis_text:'Der <strong>Keltisch-Germanische Jahreskreis</strong> teilt das Jahr in 8 Feste ein – 4 astronomische (Sonnenwenden & Äquinoktien) und 4 keltische Zwischenfeste. Viele leben in christlichen Festen weiter.',
+    aztec_about_text:'Die Azteken nutzten zwei Kalender: Der <strong>Tonalpohualli</strong> (260 Tage, heiliger Ritualkalender) und der <strong>Xiuhpohualli</strong> (365 Tage, Solarkalender). Beide synchronisieren sich alle 52 Jahre im <strong>Xiuhmolpilli</strong> (Bündelung der Jahre).',
+    tibetan_about_text:'Der Tibetische Kalender ist ein lunisolarer Kalender der indische und chinesische Traditionen verbindet. Er kombiniert 12 Tierkreiszeichen mit 5 Elementen zu einem 60-Jahres-Zyklus (Rabjung). Das Neujahr <strong>Losar</strong> fällt auf den ersten Tag des ersten Mondmonats.',
+    daric_explanation_text:'Der Darische Kalender kombiniert das SMZH-Jahr (Kolyady Dar) mit dem Stichija (Element des Jahres), dem 16-Zeichen-Tierkreis und dem Kreis der Ahnen (144-jähriger Zyklus).',
+    islam_intro:'Der islamische Kalender ist ein reiner Mondkalender mit 12 Monaten. Das islamische Jahr ist ~11 Tage kürzer als das gregorianische Jahr.',
+    heb_intro:'Der hebräische Kalender ist ein lunisolarer Kalender. Das Jahr beginnt mit Rosch ha-Schana.',
+    // Culture names (for SOL_HISTORY array)
+    cult_sumer:'Sumerisch / Babylonisch', cult_celtic:'Keltisch (Baumkalender)',
+    cult_egypt:'Ägyptisch', cult_maya:'Maya (Tzolkin)',
+    cult_native:'Nordamerikanisch', cult_vedic:'Vedisch (Nakshatras)',
+    swarog_time_label:'Slawisch-Arische Zeit',
   },
   en: {
     flag:'🇬🇧', name:'English', dir:'ltr',
@@ -4852,6 +4854,27 @@ const I18N = {
     sec_circles:'The Three Circles of Time',
     sec_epochs:'СМЗХ · ЭФСТ · Da\'Ariya – Epochs Compared',
     sec_bl_select:'Select State & Year',
+    // Content texts
+    ifc_sol_subtitle:'The 7th IFC Month · Ophiuchus · Serpent Bearer',
+    ifc_about_text:'The <strong>International Fixed Calendar</strong> (IFC) divides the year into <strong>13 months of 28 days</strong> each (= 364 days), plus one <strong>World Holiday</strong>. Every month starts on Sunday. The 7th month <strong>Sol</strong> falls between June and July – exactly where <strong>Ophiuchus</strong> crosses the ecliptic.',
+    sol_sumer_text:'The oldest known calendars (~3000 BCE) had 13 lunar months. The 13th month was deliberately inserted to synchronize lunar and solar years – a cosmic balancing instrument.',
+    sol_celtic_text:'The Celtic tree calendar (Ogham) has 13 lunar months of 28 days. The 13th month (Elder) symbolizes death, renewal, and the connection between worlds.',
+    sol_egypt_text:'12 × 30 days + 5 Epagomene (extra days outside of time). The serpent Apophis symbolizes eternal chaos – subdued, but never destroyed.',
+    sol_maya_text:'260 days = 13 × 20. The number 13 is sacred (13 celestial spheres). Quetzalcoatl connects all levels of creation as the 13th cosmic force.',
+    sol_native_text:'13-moon calendar based on 13 full moons per year. The turtle has 13 segments on its shell – a calendar written in nature itself.',
+    sol_vedic_text:'27 lunar stations arranged in pairs. The serpent Naga appears as Nakshatra Ashlesha – binding, encircling, unifying all.',
+    swarog_circle_text:'The Swarog Circle spans 25,920 years (precession cycle) in 16 epochs of 1,620 years each. Since 2012 we are transitioning to the 9th epoch – the Age of the Wolf under the protection of Veles.',
+    jahreskreis_text:'The <strong>Celtic-Germanic Wheel of the Year</strong> divides the year into 8 festivals – 4 astronomical (solstices & equinoxes) and 4 Celtic cross-quarter days. Many live on in Christian holidays.',
+    aztec_about_text:'The Aztecs used two calendars: The <strong>Tonalpohualli</strong> (260 days, sacred ritual calendar) and the <strong>Xiuhpohualli</strong> (365 days, solar calendar). Both synchronize every 52 years in the <strong>Xiuhmolpilli</strong> (Binding of the Years).',
+    tibetan_about_text:'The Tibetan Calendar is a lunisolar calendar combining Indian and Chinese traditions. It pairs 12 zodiac signs with 5 elements in a 60-year cycle (Rabjung). The New Year <strong>Losar</strong> falls on the first day of the first lunar month.',
+    daric_explanation_text:'The Daric Calendar combines the SMZH year (Kolyady Dar) with the Stichija (element of the year), the 16-sign zodiac, and the Circle of Ancestors (144-year cycle).',
+    islam_intro:'The Islamic calendar is a purely lunar calendar with 12 months. The Islamic year is ~11 days shorter than the Gregorian year.',
+    heb_intro:'The Hebrew calendar is a lunisolar calendar. The year begins with Rosh Hashanah.',
+    // Culture names
+    cult_sumer:'Sumerian / Babylonian', cult_celtic:'Celtic (Tree Calendar)',
+    cult_egypt:'Egyptian', cult_maya:'Maya (Tzolkin)',
+    cult_native:'North American', cult_vedic:'Vedic (Nakshatras)',
+    swarog_time_label:'Slavic-Aryan Time',
   },
   fr: {
     flag:'🇫🇷', name:'Français', dir:'ltr',
@@ -5046,41 +5069,43 @@ const LANGUAGES = I18N;
 _i18nReady = true; // I18N ist jetzt verfügbar – L() kann es nutzen
 
 function _setLang(lang) {
-  // Update _lang
+  if (lang !== 'de' && lang !== 'en') lang = 'de';
   _lang = lang;
   localStorage.setItem('lang', lang);
-  // Update button styles directly
-  const codes = ['de','en','fr','es','fa','ar','hi','ja','zh'];
-  codes.forEach(c => {
+  // Update button styles
+  ['de','en'].forEach(c => {
     const btn = document.getElementById('lb-' + c);
     if (!btn) return;
-    const isActive = c === lang;
-    btn.style.border = `0.5px solid ${isActive ? 'var(--teal)' : 'var(--border)'}`;
-    btn.style.background = isActive ? 'rgba(78,205,196,0.15)' : 'var(--surface2)';
-    const label = btn.querySelector('div:last-child');
-    if (label) label.style.color = isActive ? 'var(--teal)' : 'var(--text3)';
-    if (label) label.style.fontWeight = isActive ? '500' : '400';
+    const active = c === lang;
+    btn.style.border = `0.5px solid ${active ? 'var(--teal)' : 'var(--border)'}`;
+    btn.style.background = active ? 'rgba(78,205,196,0.15)' : 'var(--surface2)';
+    const lbl = btn.querySelector('div:last-child');
+    if (lbl) { lbl.style.color = active ? 'var(--teal)' : 'var(--text3)'; lbl.style.fontWeight = active ? '500' : '400'; }
   });
-  // Apply RTL
-  const l = L();
-  document.documentElement.dir = l.dir;
+  // Apply RTL (neither DE nor EN is RTL)
+  document.documentElement.dir = 'ltr';
   document.documentElement.lang = lang;
-  // Update data-i18n elements
+  // Update all data-i18n elements
+  const l = L();
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (l[key] !== undefined) el.innerHTML = l[key];
   });
-  // Re-render
+  // Re-render calendar and active tab
   renderCal();
   tick();
-  if (activeTab === 'feiertage') renderFeiertage();
-  if (activeTab === 'moon') renderMoon();
-  if (activeTab === 'countdown') renderCountdown();
-  if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
+  if (typeof activeTab !== 'undefined') {
+    if (activeTab === 'feiertage') renderFeiertage();
+    if (activeTab === 'moon') renderMoon();
+    if (activeTab === 'ifc') renderIFC();
+    if (activeTab === 'jahreskreis') renderJahreskreis && renderJahreskreis();
+    if (activeTab === 'countdown') renderCountdown();
+    if (activeTab === 'jahresuebersicht') renderJahresuebersicht();
+    if (activeTab === 'swarog') renderSwarog();
+  }
 }
-// Keep applyLanguage as alias
-function applyLanguage(lang) { _setLang(lang); }
 window._setLang = _setLang;
+function applyLanguage(lang) { _setLang(lang); }
 
 function renderLangGrid() {
   const grid = document.getElementById('lang-grid');
