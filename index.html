@@ -403,7 +403,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
           <div style="font-size:24px;pointer-events:none">🇩🇪</div>
           <div style="font-size:12px;color:var(--teal);margin-top:4px;font-weight:500;pointer-events:none">Deutsch</div>
         </button>
-        <button id="lb-en" onclick="alert('EN geklickt – _setLang wird aufgerufen'); _setLang('en')" style="flex:1;padding:10px 4px;border-radius:10px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center">
+        <button id="lb-en" onclick="_setLang('en')" style="flex:1;padding:10px 4px;border-radius:10px;border:0.5px solid var(--border);background:var(--surface2);cursor:pointer;text-align:center">
           <div style="font-size:24px;pointer-events:none">🇬🇧</div>
           <div style="font-size:12px;color:var(--text3);margin-top:4px;pointer-events:none">English</div>
         </button>
@@ -5104,6 +5104,8 @@ function _setLang(lang) {
     // Kalender neu rendern
     renderCal();
     tick();
+    // Settings schließen damit man die Änderung sieht
+    closeSettings();
 
     if (typeof activeTab !== 'undefined') {
       if (activeTab === 'feiertage') renderFeiertage();
