@@ -2048,7 +2048,7 @@ let _feiertageYear = new Date().getFullYear();
 function initFeiertageSelects() {
   // Jahr-Dropdown befüllen
   const sel = document.getElementById('feiertage-year');
-  if (!sel) return;
+  if (!sel || sel.options.length > 0) return;
   const curY = new Date().getFullYear();
   for (let y = curY - 1; y <= curY + 5; y++) {
     const opt = document.createElement('option');
@@ -2063,8 +2063,11 @@ function renderFeiertage() {
   const ySel  = document.getElementById('feiertage-year');
   // Auto-init if not yet populated
   if (ySel && ySel.options.length === 0) initFeiertageSelects();
-  if (blSel) _feiertageBL = blSel.value;
-  if (ySel)  _feiertageYear = parseInt(ySel.value) || new Date().getFullYear();
+  if (blSel) { if (!blSel.value) blSel.value = 'RP'; _feiertageBL = blSel.value || 'RP'; }
+  if (ySel) {
+    if (ySel.selectedIndex < 0 || !ySel.value) { const cy = String(new Date().getFullYear()); ySel.value = cy; if (!ySel.value && ySel.options.length) ySel.selectedIndex = 0; }
+    _feiertageYear = parseInt(ySel.value) || new Date().getFullYear();
+  }
   _feiertageBLForCal = _feiertageBL;
 
   const all = buildFeiertageForYear(_feiertageYear, _feiertageBL);
