@@ -783,6 +783,46 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
     </div>
   </div>
 
+  <!-- VIEW: SONNENSYSTEM & ZYKLEN -->
+  <div class="view" id="view-solar">
+    <div class="card" style="border-color:rgba(255,204,51,0.25)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:32px">🪐</span>
+        <div>
+          <div style="font-family:var(--font-display);font-size:14px;color:var(--gold);letter-spacing:.05em" data-i18n="solar_title">Sonnensystem</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px" data-i18n="solar_subtitle">Isometrische Ansicht · Planetenstände nach Bahnelementen (JPL)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <button class="cal-nav-btn" onclick="spStep(-30)" style="width:auto;padding:0 10px">‹ 30</button>
+        <input type="date" id="solar-date" onchange="spDateChanged(this.value)" style="padding:6px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;font-family:var(--font-body)">
+        <button class="cal-nav-btn" onclick="spStep(30)" style="width:auto;padding:0 10px">30 ›</button>
+        <button class="cal-nav-btn" onclick="spToday()" style="width:auto;padding:0 10px" data-i18n="solar_today">Heute</button>
+        <button class="cal-nav-btn" id="solar-play" onclick="spTogglePlay()" style="width:auto;padding:0 12px">▶</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <select id="solar-speed" style="padding:6px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:12px">
+          <option value="1" data-i18n="solar_speed_day">1 Tag/s</option>
+          <option value="7" data-i18n="solar_speed_week">1 Woche/s</option>
+          <option value="30" selected data-i18n="solar_speed_month">1 Monat/s</option>
+          <option value="365.25" data-i18n="solar_speed_year">1 Jahr/s</option>
+        </select>
+        <select id="solar-scale" onchange="renderSolar()" style="padding:6px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-size:12px">
+          <option value="sqrt" data-i18n="solar_scale_all">Alle Planeten (Wurzelskala)</option>
+          <option value="inner" data-i18n="solar_scale_inner">Innere Planeten (linear)</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" style="padding:6px;background:radial-gradient(circle at 50% 50%,rgba(255,204,51,0.06),transparent 60%)">
+      <div id="solar-svg"></div>
+      <div style="font-size:10px;color:var(--text3);padding:0 8px 6px;line-height:1.5" data-i18n="solar_note">Draufsicht von schräg oben; Abstände in der Wurzelskala gestaucht, Bahnneigung ×6 überhöht. γ = Richtung des Frühlingspunkts.</div>
+    </div>
+    <div class="section-label" data-i18n="solar_cycles_title">Zyklen – vom Mond bis zur Milchstraße</div>
+    <div id="solar-cycles"></div>
+    <div class="section-label" data-i18n="solar_planets_title">Planeten: Abstand & Umlaufzeit</div>
+    <div class="card" id="solar-planet-table"></div>
+  </div>
+
   <!-- VIEW: ISLAMISCHER KALENDER -->
   <div class="view" id="view-islam">
     <div class="card" style="border-color:rgba(78,205,196,0.2)">
@@ -1424,6 +1464,10 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
   <button class="tab-btn" onclick="switchTab('jahreskreis')" id="tab-jahreskreis">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
     <span class="tab-label" data-i18n="tab_jahreskreis">Jahreskreis</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('solar')" id="tab-solar">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><ellipse cx="12" cy="12" rx="10" ry="5" transform="rotate(-25 12 12)"/><circle cx="19" cy="8" r="1.3"/></svg>
+    <span class="tab-label" data-i18n="tab_solar">Sonnensystem</span>
   </button>
   <button class="tab-btn" onclick="switchTab('islam')" id="tab-islam">
     <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/><path d="M19 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>
@@ -3082,6 +3126,7 @@ function renderTabContent(id){
   if(id==='ifc')renderIFC();
   if(id==='swarog')renderSwarog();
   if(id==='jahreskreis')renderJahreskreis();
+  if(id==='solar')renderSolar();
   if(id==='islam')renderIslam();
   if(id==='feiertage')renderFeiertage();
   if(id==='hebrew')renderHebrew();
@@ -3113,6 +3158,7 @@ function renderTabContent(id){
 
 function switchTab(id){
   activeTab=id;
+  if(id!=='solar')spStop();
   // Swarog-Uhr stoppen wenn Tab gewechselt
   if(id!=='swarog'&&_swarogClockInterval){clearInterval(_swarogClockInterval);_swarogClockInterval=null;}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -3134,7 +3180,7 @@ function checkInstallHint(){
 }
 
 // ── SWIPE NAVIGATION ──────────────────────────────────────────────────────────
-const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','islam','hebrew','chinese','japanese','buddhist','maya','aztec','moon13','saka','vikram','bengali','nakshatra','tibetan','persian','zoroastrian','ethiopian','coptic','julian','holocene','countdown','jahresuebersicht','datumsrechner'];
+const TABS=['greg','feiertage','moon','ifc','swarog','jahreskreis','solar','islam','hebrew','chinese','japanese','buddhist','maya','aztec','moon13','saka','vikram','bengali','nakshatra','tibetan','persian','zoroastrian','ethiopian','coptic','julian','holocene','countdown','jahresuebersicht','datumsrechner'];
 
 function prevTab(){
   const active=getActiveTabs();
@@ -3207,6 +3253,12 @@ const TAB_GROUPS = [
       {id:'ifc',        label:'IFC-Kalender',             icon:'📆'},
       {id:'swarog',     label:'Swarog-Kreis',             icon:'☯️'},
       {id:'jahreskreis',label:'Jahreskreis (kelt.-germ.)',icon:'🌿'},
+    ]
+  },
+  {
+    id: 'astronomie', label: 'Astronomie', icon: '🪐',
+    tabs: [
+      {id:'solar',      label:'Sonnensystem & Zyklen',    icon:'🪐'},
     ]
   },
   {
@@ -5242,6 +5294,13 @@ const I18N = {
     day_left:'Tag noch', days_left:'Tage noch', jk_deities:'Gottheiten', jk_christian:'Christl. Entsprechung',
     month_word:'Monat', swarog_hour_long:'Swarog-Stunde',
     persian_week_note:'Woche beginnt am <strong style="color:var(--text2)">Samstag</strong> · Freitag ist der Ruhetag (rot)',
+    // Sonnensystem
+    tab_solar:'Sonnensystem', tabfull_solar:'Sonnensystem & Zyklen', grp_astronomie:'Astronomie',
+    solar_title:'Sonnensystem', solar_subtitle:'Isometrische Ansicht · Planetenstände nach Bahnelementen (JPL)',
+    solar_today:'Heute', solar_speed_day:'1 Tag/s', solar_speed_week:'1 Woche/s', solar_speed_month:'1 Monat/s', solar_speed_year:'1 Jahr/s',
+    solar_scale_all:'Alle Planeten (Wurzelskala)', solar_scale_inner:'Innere Planeten (linear)',
+    solar_note:'Ansicht von schräg oben; Abstände in der Wurzelskala gestaucht, Bahnneigung ×6 überhöht. γ = Richtung des Frühlingspunkts.',
+    solar_cycles_title:'Zyklen – vom Mond bis zur Milchstraße', solar_planets_title:'Planeten: Abstand & Umlaufzeit',
     // Nachtrag: Lücken
     prev_tab:'Vorheriger Tab', next_tab:'Nächster Tab', app_title:'Universalkalender',
     ophiuchus_title:'Ophiuchus – der Schlangenträger', ophiuchus_symbol_value:'🐍 Schlange + Heiler', ophiuchus_myth_value:'Asklepios (Heilgott)',
@@ -5489,6 +5548,13 @@ const I18N = {
     day_left:'day left', days_left:'days left', jk_deities:'Deities', jk_christian:'Christian equivalent',
     month_word:'Month', swarog_hour_long:'Swarog hour',
     persian_week_note:'Week starts on <strong style="color:var(--text2)">Saturday</strong> · Friday is the day of rest (red)',
+    // Solar system
+    tab_solar:'Solar System', tabfull_solar:'Solar System & Cycles', grp_astronomie:'Astronomy',
+    solar_title:'Solar System', solar_subtitle:'Isometric view · planet positions from orbital elements (JPL)',
+    solar_today:'Today', solar_speed_day:'1 day/s', solar_speed_week:'1 week/s', solar_speed_month:'1 month/s', solar_speed_year:'1 year/s',
+    solar_scale_all:'All planets (square-root scale)', solar_scale_inner:'Inner planets (linear)',
+    solar_note:'Viewed obliquely from above; distances compressed on a square-root scale, orbital inclination exaggerated ×6. γ = direction of the vernal point.',
+    solar_cycles_title:'Cycles – from the Moon to the Milky Way', solar_planets_title:'Planets: distance & orbital period',
     // Additions
     prev_tab:'Previous tab', next_tab:'Next tab', app_title:'Universal Calendar',
     ophiuchus_title:'Ophiuchus – the Serpent Bearer', ophiuchus_symbol_value:'🐍 Serpent + healer', ophiuchus_myth_value:'Asclepius (god of healing)',
@@ -5959,6 +6025,188 @@ function renderDatumsrechner() {
         <div style="font-size:13px;color:${c.color};font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.val}</div>
       </div>
     </div>`).join('');
+}
+
+// ── SONNENSYSTEM & ZYKLEN ─────────────────────────────────────────────────────
+function solarPlanets(){ return [
+  {id:'mercury',name:bi('Merkur','Mercury'),col:'#b5b5b5',rad:3,per:0.2408},
+  {id:'venus',name:bi('Venus','Venus'),col:'#e8c98a',rad:4,per:0.6152},
+  {id:'earth',name:bi('Erde','Earth'),col:'#4b9cd3',rad:4.5,per:1.0000},
+  {id:'mars',name:bi('Mars','Mars'),col:'#d1603d',rad:3.5,per:1.8808},
+  {id:'jupiter',name:bi('Jupiter','Jupiter'),col:'#d9a066',rad:7,per:11.862},
+  {id:'saturn',name:bi('Saturn','Saturn'),col:'#e4d191',rad:6,per:29.457},
+  {id:'uranus',name:bi('Uranus','Uranus'),col:'#7de3e3',rad:5,per:84.011},
+  {id:'neptune',name:bi('Neptun','Neptune'),col:'#4062d8',rad:5,per:164.79},
+]; }
+const SOLAR_EL=[
+ {id:'mercury',a:[0.38709927,0.00000037],e:[0.20563593,0.00001906],I:[7.00497902,-0.00594749],L:[252.25032350,149472.67411175],w:[77.45779628,0.16047689],O:[48.33076593,-0.12534081]},
+ {id:'venus',a:[0.72333566,0.00000390],e:[0.00677672,-0.00004107],I:[3.39467605,-0.00078890],L:[181.97909950,58517.81538729],w:[131.60246718,0.00268329],O:[76.67984255,-0.27769418]},
+ {id:'earth',a:[1.00000261,0.00000562],e:[0.01671123,-0.00004392],I:[-0.00001531,-0.01294668],L:[100.46457166,35999.37244981],w:[102.93768193,0.32327364],O:[0,0]},
+ {id:'mars',a:[1.52371034,0.00001847],e:[0.09339410,0.00007882],I:[1.84969142,-0.00813131],L:[-4.55343205,19140.30268499],w:[-23.94362959,0.44441088],O:[49.55953891,-0.29257343]},
+ {id:'jupiter',a:[5.20288700,-0.00011607],e:[0.04838624,-0.00013253],I:[1.30439695,-0.00183714],L:[34.39644051,3034.74612775],w:[14.72847983,0.21252668],O:[100.47390909,0.20469106]},
+ {id:'saturn',a:[9.53667594,-0.00125060],e:[0.05386179,-0.00050991],I:[2.48599187,0.00193609],L:[49.95424423,1222.49362201],w:[92.59887831,-0.41897216],O:[113.66242448,-0.28867794]},
+ {id:'uranus',a:[19.18916464,-0.00196176],e:[0.04725744,-0.00004397],I:[0.77263783,-0.00242939],L:[313.23810451,428.48202785],w:[170.95427630,0.40805281],O:[74.01692503,0.04240589]},
+ {id:'neptune',a:[30.06992276,0.00026291],e:[0.00859048,0.00005105],I:[1.77004347,0.00035372],L:[-55.12002969,218.45945325],w:[44.96476227,-0.32241464],O:[131.78422574,-0.00508664]},
+];
+// Bahnelemente: JPL "Approximate Positions of the Planets" (gültig 1800–2050)
+function solarPlace(el,T,E){
+  const g=k=>el[k][0]+el[k][1]*T, R=Math.PI/180;
+  const a=g('a'),e=g('e'),I=g('I')*R,O=g('O')*R,om=(g('w')-g('O'))*R;
+  const xp=a*(Math.cos(E)-e), yp=a*Math.sqrt(1-e*e)*Math.sin(E);
+  const co=Math.cos(om),so=Math.sin(om),cO=Math.cos(O),sO=Math.sin(O),cI=Math.cos(I),sI=Math.sin(I);
+  return {x:(co*cO-so*sO*cI)*xp+(-so*cO-co*sO*cI)*yp, y:(co*sO+so*cO*cI)*xp+(-so*sO+co*cO*cI)*yp, z:(so*sI)*xp+(co*sI)*yp};
+}
+function solarPos(el,T){
+  const R=Math.PI/180, e=el.e[0]+el.e[1]*T, L=el.L[0]+el.L[1]*T, w=el.w[0]+el.w[1]*T;
+  const M=(((L-w)%360)+540)%360-180, Mr=M*R;
+  let E=Mr+e*Math.sin(Mr); for(let i=0;i<12;i++){E=E-(E-e*Math.sin(E)-Mr)/(1-e*Math.cos(E));}
+  const p=solarPlace(el,T,E); p.r=Math.sqrt(p.x*p.x+p.y*p.y+p.z*p.z);
+  p.lon=(Math.atan2(p.y,p.x)*180/Math.PI+360)%360;
+  return p;
+}
+let spMs=Date.now(), spTimer=null;
+function spT(){ return (spMs/86400000+2440587.5-2451545)/36525; }
+function spProj(p,mode){
+  let x=p.x,y=p.y,z=p.z, k;
+  if(mode==='inner'){ k=105; }
+  else { const r=Math.sqrt(x*x+y*y+z*z)||1; const f=1/Math.sqrt(r); x*=f;y*=f;z*=f; k=27; }
+  const ca=0.7071, X=x*ca-y*ca, Y=x*ca+y*ca;
+  return {sx:180+X*k, sy:150+Y*k*0.5774, sy0:150+Y*k*0.5774, sz:z*k*0.8165*6, depth:Y};
+}
+function renderSolarMap(){
+  const mode=(document.getElementById('solar-scale')||{}).value||'sqrt';
+  const T=spT(), PL=solarPlanets(), out=[];
+  const list=PL.filter(pl=>mode!=='inner'||['mercury','venus','earth','mars'].includes(pl.id));
+  let svg='';
+  // isometrisches Raster (Ekliptikebene) mit AE-Ringen
+  const gr=mode==='inner'?[0.5,1,1.5]:[1,5,10,20,30];
+  for(const g of gr){
+    let d='';
+    for(let i=0;i<=72;i++){ const a=i*Math.PI/36; const q=spProj({x:Math.cos(a)*g,y:Math.sin(a)*g,z:0},mode); d+=(i?'L':'M')+q.sx.toFixed(1)+' '+q.sy.toFixed(1); }
+    svg+=`<path d="${d}" fill="none" stroke="var(--border2)" stroke-width="0.5"/>`;
+    const lq=spProj({x:0,y:-g,z:0},mode); svg+=`<text x="${(lq.sx+2).toFixed(1)}" y="${(lq.sy-2).toFixed(1)}" font-size="7" fill="var(--text3)">${g} ${bi('AE','AU')}</text>`;
+  }
+  // Bahnen
+  for(const pl of list){
+    const el=SOLAR_EL.find(e=>e.id===pl.id); let d='';
+    for(let i=0;i<=120;i++){ const q=spProj(solarPlace(el,T,i*Math.PI/60),mode); d+=(i?'L':'M')+q.sx.toFixed(1)+' '+q.sy.toFixed(1); }
+    svg+=`<path d="${d}" fill="none" stroke="${pl.col}" stroke-opacity="0.45" stroke-width="0.9"/>`;
+  }
+  // Frühlingspunkt-Richtung ♈
+  const vp=spProj({x:mode==='inner'?1.9:38,y:0,z:0},mode), v0=spProj({x:0,y:0,z:0},mode);
+  svg+=`<line x1="${v0.sx}" y1="${v0.sy}" x2="${vp.sx}" y2="${vp.sy}" stroke="var(--gold)" stroke-opacity="0.3" stroke-dasharray="3 3"/><text x="${vp.sx+4}" y="${vp.sy+10}" font-size="10" fill="var(--gold)" opacity="0.8">γ 0°</text>`;
+  // Körper
+  const bodies=[{sun:true,q:{sx:180,sy:150,sz:0,depth:0}}];
+  for(const pl of list){ const p=solarPos(SOLAR_EL.find(e=>e.id===pl.id),T); out.push({pl,p}); bodies.push({pl,p,q:spProj(p,mode)}); }
+  bodies.sort((a,b)=>a.q.depth-b.q.depth);
+  for(const b of bodies){
+    if(b.sun){ svg+=`<circle cx="180" cy="150" r="14" fill="#ffcc33" opacity="0.18"/><circle cx="180" cy="150" r="8" fill="#ffd966"/>`; continue; }
+    const q=b.q, pl=b.pl;
+    svg+=`<line x1="${q.sx.toFixed(1)}" y1="${q.sy.toFixed(1)}" x2="${q.sx.toFixed(1)}" y2="${(q.sy-q.sz).toFixed(1)}" stroke="${pl.col}" stroke-opacity="0.5" stroke-width="0.8"/>`;
+    const cy=q.sy-q.sz;
+    if(pl.id==='saturn') svg+=`<ellipse cx="${q.sx.toFixed(1)}" cy="${cy.toFixed(1)}" rx="${pl.rad*1.9}" ry="${pl.rad*0.6}" fill="none" stroke="${pl.col}" stroke-opacity="0.7"/>`;
+    svg+=`<circle cx="${q.sx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${pl.rad}" fill="${pl.col}"/>`;
+    svg+=`<text x="${(q.sx+pl.rad+3).toFixed(1)}" y="${(cy+3).toFixed(1)}" font-size="9.5" fill="var(--text2)">${pl.name}</text>`;
+  }
+  document.getElementById('solar-svg').innerHTML=`<svg viewBox="0 0 360 300" width="100%" style="display:block;max-height:60vh">${svg}</svg>`;
+  return out;
+}
+function spBar(f,col){ return `<div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:6px"><div style="height:100%;width:${(Math.max(0,Math.min(1,f))*100).toFixed(1)}%;background:${col}"></div></div>`; }
+// kleine Umlauf-Grafik: Zentrum, Umlaufbahn, Körper bei Winkel (° gegen den Uhrzeigersinn, 0° = rechts)
+function spDiag(ang,o){
+  o=o||{}; const cx=48,cy=48,r=o.r||34, R=Math.PI/180;
+  const bx=cx+Math.cos(ang*R)*r, by=cy-Math.sin(ang*R)*r;
+  let s=`<svg viewBox="0 0 96 96" width="96" height="96"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border2)" stroke-dasharray="${o.dash||'2 3'}"/>`;
+  for(const t of (o.ticks||[])){ const tx=cx+Math.cos(t.a*R)*(r+8), ty=cy-Math.sin(t.a*R)*(r+8); s+=`<line x1="${cx+Math.cos(t.a*R)*(r-3)}" y1="${cy-Math.sin(t.a*R)*(r-3)}" x2="${cx+Math.cos(t.a*R)*(r+3)}" y2="${cy-Math.sin(t.a*R)*(r+3)}" stroke="var(--text3)"/><text x="${tx}" y="${ty+3}" font-size="7" text-anchor="middle" fill="var(--text3)">${t.l}</text>`; }
+  if(o.sunDir) s+=`<line x1="${cx+r+12}" y1="${cy}" x2="${cx+r+4}" y2="${cy}" stroke="#ffd966" stroke-width="1.5"/><text x="${cx+r+13}" y="${cy-3}" font-size="9">☀️</text>`;
+  s+=`<text x="${cx}" y="${cy+(o.cs||9)/3}" font-size="${o.cs||16}" text-anchor="middle">${o.center||'☀️'}</text>`;
+  s+=`<text x="${bx.toFixed(1)}" y="${(by+4).toFixed(1)}" font-size="${o.bs||12}" text-anchor="middle">${o.body||'🌍'}</text></svg>`;
+  return s;
+}
+function spCard(icon,title,period,f,detail,diag){
+  return `<div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 12px;margin-bottom:8px"><div style="flex-shrink:0">${diag}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--text)">${icon} ${title}</div><div style="font-size:11px;color:var(--gold);margin-top:2px">${period}</div>${f===null?'':spBar(f,'var(--teal)')+`<div style="font-size:10px;color:var(--text3);margin-top:3px">${(f*100).toFixed(1)} %</div>`}<div style="font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5">${detail}</div></div></div>`;
+}
+function renderSolarCycles(pos){
+  const d=new Date(spMs), T=spT(), jd=spMs/86400000+2440587.5;
+  const yr=d.getUTCFullYear()+(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-Date.UTC(d.getUTCFullYear(),0,1))/86400000/365.25;
+  const nf=(x,n)=>x.toLocaleString(_lang==='en'?'en-US':'de-DE',{maximumFractionDigits:n===undefined?0:n});
+  const earth=pos.find(o=>o.pl.id==='earth')||{p:solarPos(SOLAR_EL[2],T)}, eLon=earth.p.lon;
+  let h='';
+  // 1 Sonne – Milchstraße
+  h+=spCard('🌌',bi('Sonne → Zentrum der Milchstraße','Sun → Galactic Center'),bi('≈ 230 Mio. Jahre pro Umlauf (galaktisches Jahr)','≈ 230 million years per orbit (galactic year)'),null,
+    bi('Abstand ≈ 26.000 Lichtjahre, Bahngeschwindigkeit ≈ 230 km/s. Seit der Entstehung des Sonnensystems ≈ 20 Umläufe; das letzte galaktische Jahr begann etwa in der Trias, zur Zeit der ersten Dinosaurier. Schematische Darstellung – die genaue Bahnphase ist nicht als Datum messbar.','Distance ≈ 26,000 light-years, orbital speed ≈ 230 km/s. About 20 orbits since the solar system formed; the last galactic year began roughly in the Triassic, at the time of the first dinosaurs. Schematic – the exact orbital phase cannot be given as a date.'),
+    spDiag(70,{r:34,center:'🌀',body:'☀️',cs:22,bs:11,dash:'1 3'}));
+  // 2 Erde – Sonne
+  h+=spCard('🌍',bi('Erde → Sonne (Jahr)','Earth → Sun (year)'),bi('365,2422 Tage (tropisches Jahr) · Fortschritt seit Frühlingsbeginn','365.2422 days (tropical year) · progress since the March equinox'),((eLon-180+360)%360)/360,
+    bi(`Heliozentrische Länge ${nf(eLon,1)}° · Abstand ${nf(earth.p.r,3)} AE · Jahreszeit-Marken: Sonne im Frühlingspunkt = Erde bei 180°`,`Heliocentric longitude ${nf(eLon,1)}° · distance ${nf(earth.p.r,3)} AU · season marks: Sun at the vernal point = Earth at 180°`),
+    spDiag(eLon,{r:32,center:'☀️',body:'🌍',ticks:[{a:180,l:bi('Mär','Mar')},{a:270,l:bi('Jun','Jun')},{a:0,l:bi('Sep','Sep')},{a:90,l:bi('Dez','Dec')}]}));
+  // 3 Mond – Erde
+  const mc=moonCalc(d), syn=29.530588853, ma=mc.age;
+  h+=spCard('🌙',bi('Mond → Erde (Mondphase)','Moon → Earth (lunar phase)'),bi('29,53 Tage synodisch · 27,32 Tage siderisch','29.53 days synodic · 27.32 days sidereal'),ma/syn,
+    bi(`Mondalter ${nf(ma,1)} Tage · Beleuchtung ${mc.illum} % · ${mc.phase}`,`Moon age ${nf(ma,1)} days · illumination ${mc.illum}% · ${mc.phase}`),
+    spDiag(ma/syn*360,{r:32,center:'🌍',body:'🌙',sunDir:true,cs:18}));
+  // 4 Erdrotation
+  const hrs=d.getHours()+d.getMinutes()/60;
+  h+=spCard('🔄',bi('Erdrotation (Tag)','Earth rotation (day)'),bi('24 h Sonnentag · 23 h 56 min Sterntag','24 h solar day · 23 h 56 min sidereal day'),hrs/24,
+    bi(`Ortszeit ${pad(d.getHours())}:${pad(d.getMinutes())} · Rotation am Äquator ≈ 1.670 km/h`,`Local time ${pad(d.getHours())}:${pad(d.getMinutes())} · equatorial rotation speed ≈ 1,670 km/h`),
+    spDiag((hrs-12)*15,{r:24,center:'🌍',body:'📍',sunDir:true,cs:30,bs:11,dash:'0'}));
+  // 5 Mondknoten
+  const node=((125.04452-1934.136261*T)%360+360)%360;
+  h+=spCard('☯️',bi('Mondknoten (Finsternis-Zyklus)','Lunar nodes (eclipse cycle)'),bi('18,61 Jahre · Saros 18 J. 11 T. 8 h','18.61 years · Saros 18 y 11 d 8 h'),1-node/360,
+    bi(`Aufsteigender Knoten bei ${nf(node,1)}° ekliptikaler Länge (wandert rückläufig). Sonnen-/Mondfinsternisse treten auf, wenn Neu-/Vollmond nahe einem Knoten liegt.`,`Ascending node at ecliptic longitude ${nf(node,1)}° (regressing). Solar/lunar eclipses occur when new/full moon lies near a node.`),
+    spDiag(node,{r:32,center:'🌍',body:'☊',bs:14,dash:'0'}));
+  // 6 Sonnenfleckenzyklus
+  const spc=((yr-2019.95)%11+11)%11/11;
+  h+=spCard('☀️',bi('Sonnenfleckenzyklus (Aktivität)','Sunspot cycle (activity)'),bi('≈ 11 Jahre (Magnetzyklus 22 Jahre) – Zyklus 25 seit Dez. 2019','≈ 11 years (magnetic cycle 22 years) – cycle 25 since Dec 2019'),spc,
+    bi('Näherung mit mittlerer Länge 11 Jahre; Maximum etwa in der Zyklusmitte (Zyklus 25: ≈ 2024/25).','Approximation with mean length 11 years; maximum around mid-cycle (cycle 25: ≈ 2024/25).'),
+    spDiag(spc*360,{r:32,center:'☀️',body:'●',bs:9,dash:'0'}));
+  // 7 Jupiter–Saturn
+  const jp=pos.find(o=>o.pl.id==='jupiter'), sa=pos.find(o=>o.pl.id==='saturn');
+  const jl=jp?jp.p.lon:solarPos(SOLAR_EL[4],T).lon, sl=sa?sa.p.lon:solarPos(SOLAR_EL[5],T).lon, dj=((jl-sl)%360+360)%360;
+  h+=spCard('🪐',bi('Jupiter ↔ Saturn (Große Konjunktion)','Jupiter ↔ Saturn (Great Conjunction)'),bi('19,86 Jahre · letzte: 21.12.2020','19.86 years · last: 21 Dec 2020'),dj/360,
+    bi(`Winkelabstand (heliozentrisch) ${nf(dj,1)}° – bei 0° stehen beide auf einer Linie mit der Sonne.`,`Angular separation (heliocentric) ${nf(dj,1)}° – at 0° both line up with the Sun.`),
+    (()=>{const R=Math.PI/180; return `<svg viewBox="0 0 96 96" width="96" height="96"><circle cx="48" cy="48" r="20" fill="none" stroke="var(--border2)" stroke-dasharray="2 3"/><circle cx="48" cy="48" r="36" fill="none" stroke="var(--border2)" stroke-dasharray="2 3"/><text x="48" y="52" font-size="12" text-anchor="middle">☀️</text><text x="${(48+Math.cos(dj*R)*20).toFixed(1)}" y="${(52-Math.sin(dj*R)*20).toFixed(1)}" font-size="10" text-anchor="middle">🟠</text><text x="84" y="52" font-size="10" text-anchor="middle">🟡</text></svg>`;})());
+  // 8 Metonischer Zyklus
+  const yi=d.getUTCFullYear(), gold=(yi%19)+1, mf=((yi%19)+ (yr-yi))/19;
+  h+=spCard('🔢',bi('Metonischer Zyklus (Mond ↔ Sonnenjahr)','Metonic cycle (Moon ↔ solar year)'),bi('19 Jahre = 235 Mondmonate','19 years = 235 lunar months'),mf,
+    bi(`Goldene Zahl ${gold} – nach 19 Jahren fallen die Mondphasen wieder auf dieselben Kalendertage (Grundlage der Osterrechnung, hebräischer Kalender).`,`Golden number ${gold} – after 19 years the lunar phases fall on the same calendar dates again (basis of Easter reckoning, Hebrew calendar).`),
+    spDiag(mf*360,{r:32,center:'🌙',body:'☀️',bs:11,dash:'0',ticks:[{a:90,l:'0'}]}));
+  // 9 Präzession
+  const PY=25772, ay=(yr-285)*50.29/3600, pf=(((yr-285)/PY)%1+1)%1;
+  const polar=[{y:-2800,s:'Thuban',c:'✦'},{y:2100,s:'Polaris',c:'⭐'},{y:9000,s:'Deneb',c:'✦'},{y:13700,s:'Vega',c:'✦'}];
+  const pa=y=>90-360*(y-2100)/PY; // Pol wandert rückläufig (im Uhrzeigersinn)
+  let pd=`<svg viewBox="0 0 96 96" width="96" height="96"><circle cx="48" cy="48" r="32" fill="none" stroke="var(--border2)" stroke-dasharray="2 3"/><text x="48" y="52" font-size="12" text-anchor="middle">🌍</text>`;
+  for(const s of polar){ const a=pa(s.y)*Math.PI/180; pd+=`<text x="${(48+Math.cos(a)*32).toFixed(1)}" y="${(51-Math.sin(a)*32).toFixed(1)}" font-size="7" text-anchor="middle" fill="var(--text3)">${s.s}</text>`; }
+  const ca=pa(yr)*Math.PI/180; pd+=`<circle cx="${(48+Math.cos(ca)*32).toFixed(1)}" cy="${(48-Math.sin(ca)*32).toFixed(1)}" r="4" fill="var(--gold)"/></svg>`;
+  h+=spCard('🧭',bi('Erdachsen-Präzession (Platonisches Jahr)','Axial precession (Platonic year)'),bi('≈ 25.772 Jahre (Swarog-Kreis: 25.920)','≈ 25,772 years (Swarog cycle: 25,920)'),pf,
+    bi(`Frühlingspunkt ${nf(ay,1)}° gegenüber dem siderischen Widder-Beginn (Ayanamsa) · Nordpol-Stern jetzt Polaris, in ≈ 11.600 Jahren Vega. Nullpunkt ≈ 285 n.Chr.`,`Vernal point ${nf(ay,1)}° relative to the sidereal start of Aries (ayanamsa) · pole star now Polaris, Vega in ≈ 11,600 years. Zero point ≈ 285 CE.`),pd);
+  document.getElementById('solar-cycles').innerHTML=h;
+}
+function renderSolarTable(pos){
+  const PL=solarPlanets(); let h='';
+  for(const pl of PL){
+    const p=(pos.find(o=>o.pl.id===pl.id)||{p:solarPos(SOLAR_EL.find(e=>e.id===pl.id),spT())}).p;
+    const per=pl.per<1?`${Math.round(pl.per*365.25)} ${bi('Tage','days')}`:`${pl.per.toLocaleString(_lang==='en'?'en-US':'de-DE',{maximumFractionDigits:2})} ${bi('Jahre','years')}`;
+    h+=`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border)"><span style="width:10px;height:10px;border-radius:50%;background:${pl.col};flex-shrink:0"></span><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text)">${pl.name}</span><span style="color:var(--text3)">${p.r.toFixed(2)} ${bi('AE','AU')} · ${per}</span></div>${spBar(p.lon/360,pl.col)}<div style="font-size:9px;color:var(--text3);margin-top:2px">${bi('Länge','Longitude')} ${p.lon.toFixed(1)}°</div></div></div>`;
+  }
+  document.getElementById('solar-planet-table').innerHTML=h;
+}
+function renderSolar(){
+  const inp=document.getElementById('solar-date');
+  if(inp){ const dd=new Date(spMs); inp.value=`${dd.getFullYear()}-${pad(dd.getMonth()+1)}-${pad(dd.getDate())}`; }
+  const pos=renderSolarMap();
+  renderSolarCycles(pos); renderSolarTable(pos);
+  const st=document.getElementById('solar-status'); if(st) st.textContent=fmtDate(new Date(spMs));
+}
+function spSet(ms){ spMs=ms; renderSolar(); }
+function spDateChanged(v){ if(!v) return; const [y,m,dd]=v.split('-').map(Number); const n=new Date(spMs); spSet(new Date(y,m-1,dd,n.getHours(),n.getMinutes()).getTime()); }
+function spStep(days){ spSet(spMs+days*86400000); }
+function spToday(){ spSet(Date.now()); }
+function spStop(){ if(spTimer){ clearInterval(spTimer); spTimer=null; } const b=document.getElementById('solar-play'); if(b) b.textContent='▶'; }
+function spTogglePlay(){
+  if(spTimer){ spStop(); return; }
+  document.getElementById('solar-play').textContent='⏸';
+  spTimer=setInterval(()=>{ const per=parseFloat(document.getElementById('solar-speed').value)||1; spMs+=per*86400000/12; renderSolar(); },83);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
