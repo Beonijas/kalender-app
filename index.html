@@ -92,6 +92,7 @@ body.light-mode .tab-bar{background:rgba(245,243,238,0.97);}
 body.light-mode .clock-card{background:linear-gradient(135deg,#e8e0d0 0%,#f0ebe0 100%);border-color:rgba(138,106,26,0.2);}
 body.light-mode .clock-card::before{background:radial-gradient(circle,rgba(138,106,26,0.07) 0%,transparent 70%);}
 body.light-mode .swarog-clock-canvas-wrap{filter:invert(0);}
+body.light-mode .card[style*="linear-gradient"]{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%)!important;}
 
 /* SETTINGS MODAL */
 .settings-overlay{
@@ -691,7 +692,7 @@ body{display:flex;flex-direction:column;padding-top:var(--safe-top)}
         Die Differenz zum gregorianischen Kalender beträgt <span style="color:var(--gold)">+5.508 Jahre</span>. Das Jahr 2026 n.Chr. entspricht also dem Jahr <span style="color:var(--gold)">7.534 nach EFST</span>.<br><br>
         Das slawisch-vedische Neujahr beginnt nicht am 1. Januar, sondern am <span style="color:var(--text)">Herbstäquinoktium</span> – dem 22. September –, wenn Tag und Nacht gleich lang sind und die Erde in einen neuen kosmischen Zyklus eintritt.
       </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
         <div>
           <div style="font-size:18px;font-weight:300;color:var(--purple)">5.508</div>
           <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px" data-i18n="efst_years_diff">Jahre Differenz</div>
@@ -2291,7 +2292,7 @@ function drawOphiuchusSVG(size=72, color='var(--blue2)') {
 function drawZodiacWheel13(currentZodiacIdx) {
   const n = 13, r = 100, ri = 36, size = 240;
   const cx = size/2, cy = size/2;
-  let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">`;
+  let svg = `<svg viewBox="-30 -8 ${size+60} ${size+16}" width="${size+60}" height="${size+16}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;max-width:100%;height:auto">`;
   ZODIAC_13.forEach((z, i) => {
     const slice = 2*Math.PI/n;
     const a0 = -Math.PI/2 + i*slice, a1 = a0 + slice;
@@ -2303,20 +2304,20 @@ function drawZodiacWheel13(currentZodiacIdx) {
     const x1 = cx+Math.cos(a1)*r, y1 = cy+Math.sin(a1)*r;
     const xi0 = cx+Math.cos(a0)*ri, yi0 = cy+Math.sin(a0)*ri;
     const xi1 = cx+Math.cos(a1)*ri, yi1 = cy+Math.sin(a1)*ri;
-    const fill = isSol ? 'rgba(91,141,238,0.25)' : isCur ? 'rgba(232,200,122,0.2)' : 'rgba(255,255,255,0.04)';
-    const stroke = isSol ? '#5b8dee' : isCur ? '#e8c87a' : 'rgba(255,255,255,0.12)';
-    svg += `<path d="M${xi0},${yi0} L${x0},${y0} A${r},${r} 0 0,1 ${x1},${y1} L${xi1},${yi1} A${ri},${ri} 0 0,0 ${xi0},${yi0} Z" fill="${fill}" stroke="${stroke}" stroke-width="${isSol||isCur?1.5:.5}"/>`;
+    const fill = isSol ? 'rgba(91,141,238,0.25)' : isCur ? 'rgba(232,200,122,0.2)' : 'var(--surface2)';
+    const stroke = isSol ? '#5b8dee' : isCur ? '#e8c87a' : 'var(--border2)';
+    svg += `<path d="M${xi0},${yi0} L${x0},${y0} A${r},${r} 0 0,1 ${x1},${y1} L${xi1},${yi1} A${ri},${ri} 0 0,0 ${xi0},${yi0} Z" style="fill:${fill};stroke:${stroke}" stroke-width="${isSol||isCur?1.5:.5}"/>`;
     // Icon
     const ix = cx+Math.cos(mid)*(r+ri)/2, iy = cy+Math.sin(mid)*(r+ri)/2;
     svg += `<text x="${ix}" y="${iy}" text-anchor="middle" dominant-baseline="central" font-size="${isSol?14:12}" style="user-select:none">${z.icon}</text>`;
     // Name bei Sol extra
     if (isSol) {
-      svg += `<text x="${cx+Math.cos(mid)*128}" y="${cy+Math.sin(mid)*128}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#5b8dee" font-weight="bold" style="user-select:none"><span data-i18n="ophiuchus_label">Ophiuchus</span></text>`;
+      svg += `<text x="${cx+Math.cos(mid)*128}" y="${cy+Math.sin(mid)*128}" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#5b8dee" font-weight="bold" style="user-select:none">${t('ophiuchus_label')}</text>`;
     }
   });
   // Innenkreis
-  svg += `<circle cx="${cx}" cy="${cy}" r="${ri}" fill="#0d0d1a" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>`;
-  svg += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="rgba(255,255,255,0.4)" style="user-select:none">13</text>`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${ri}" style="fill:var(--surface);stroke:var(--border2)" stroke-width="1"/>`;
+  svg += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="10" style="fill:var(--text3);user-select:none">13</text>`;
   svg += '</svg>';
   return svg;
 }
@@ -2556,7 +2557,8 @@ function drawSwarogClock(hi,mih){
   canvas.style.width=size+'px';canvas.style.height=size+'px';
   const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
   const cx=size/2,cy=size/2,r=size/2-4;
-  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fillStyle='#1a1a2e';ctx.fill();
+  const _dark=!document.body.classList.contains('light-mode');
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--surface2').trim()||'#1a1a2e';ctx.fill();
   ctx.strokeStyle='rgba(155,127,232,0.3)';ctx.lineWidth=1.5;ctx.stroke();
   // Sektoren: Abend3h, Nacht4h, Morgen4h, Tag5h rückwärts
   const secs=[3,4,4,5],cols=['#9b7fe8','#4a4a8a','#e8a050','#f0c040'];
@@ -2572,7 +2574,7 @@ function drawSwarogClock(hi,mih){
     ctx.beginPath();
     ctx.moveTo(cx+Math.cos(ang)*(r-2),cy+Math.sin(ang)*(r-2));
     ctx.lineTo(cx+Math.cos(ang)*(r-(maj?11:6)),cy+Math.sin(ang)*(r-(maj?11:6)));
-    ctx.strokeStyle=maj?'rgba(255,255,255,0.5)':'rgba(255,255,255,0.18)';
+    ctx.strokeStyle=_dark?(maj?'rgba(255,255,255,0.5)':'rgba(255,255,255,0.18)'):(maj?'rgba(0,0,0,0.55)':'rgba(0,0,0,0.22)');
     ctx.lineWidth=maj?1.5:0.7;ctx.stroke();
   }
   const ha=-Math.PI/2-(hi+mih/90)*2*Math.PI/16;
@@ -2608,9 +2610,9 @@ function updateSwarogClock(){
   const sdate=document.getElementById('swarog-date-display');
   if(sdate)sdate.innerHTML=`<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span style="font-family:var(--font-display);font-size:22px;color:var(--purple)">${sd.dayOfMonth}. ${mo.ru}</span><span style="font-size:14px;color:var(--text2)">${sd.efstYear} СМЗХ</span></div><div style="font-size:12px;color:var(--text3)">${sd.dayOfMonth}. ${mo.de} · ${t('month_word')} ${sd.month}/9 · ${wd.ru} (${wd.de})</div>`;
   const ww=document.getElementById('swarog-week-display');
-  if(ww)ww.innerHTML=SWAROG_WEEKDAYS.map(w=>{const cur=w.n===sd.weekdayIdx+1;return `<div style="flex:1;text-align:center;padding:5px 2px;border-radius:8px;background:${cur?'rgba(155,127,232,0.25)':w.rest?'rgba(255,255,255,0.04)':'transparent'};border:0.5px solid ${cur?'rgba(155,127,232,0.6)':'rgba(255,255,255,0.07)'}"><div style="font-size:9px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'}">${w.n}</div><div style="font-size:8px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'};margin-top:1px">${w.ru.slice(0,4)}</div>${w.rest?'<div style="font-size:7px;color:var(--gold)">Ruh</div>':''}</div>`;}).join('');
+  if(ww)ww.innerHTML=SWAROG_WEEKDAYS.map(w=>{const cur=w.n===sd.weekdayIdx+1;return `<div style="flex:1;text-align:center;padding:5px 2px;border-radius:8px;background:${cur?'rgba(155,127,232,0.25)':w.rest?'var(--surface2)':'transparent'};border:0.5px solid ${cur?'rgba(155,127,232,0.6)':'var(--border)'}"><div style="font-size:9px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'}">${w.n}</div><div style="font-size:8px;color:${cur?'var(--purple)':w.rest?'var(--gold)':'var(--text3)'};margin-top:1px">${w.ru.slice(0,4)}</div>${w.rest?'<div style="font-size:7px;color:var(--gold)">Ruh</div>':''}</div>`;}).join('');
   const dp=document.getElementById('swarog-dayparts');
-  if(dp&&h){const cp=h.part;dp.innerHTML=SWAROG_DAYPARTS.map(p=>{const act=p.name===cp;return`<div style="background:${act?p.col+'33':'rgba(255,255,255,0.04)'};border:0.5px solid ${act?p.col+'88':'rgba(255,255,255,0.08)'};border-radius:8px;padding:5px 6px;text-align:center"><div style="font-size:10px;color:${act?p.col:'var(--text3)'};font-weight:${act?500:400}">${swT(p.de)}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${p.name}</div></div>`;}).join('');}
+  if(dp&&h){const cp=h.part;dp.innerHTML=SWAROG_DAYPARTS.map(p=>{const act=p.name===cp;return`<div style="background:${act?p.col+'33':'var(--surface2)'};border:0.5px solid ${act?p.col+'88':'var(--border)'};border-radius:8px;padding:5px 6px;text-align:center"><div style="font-size:10px;color:${act?p.col:'var(--text3)'};font-weight:${act?500:400}">${swT(p.de)}</div><div style="font-size:9px;color:var(--text3);margin-top:1px">${p.name}</div></div>`;}).join('');}
   const ef=document.getElementById('swarog-efst-small');
   if(ef)ef.textContent=sd.efstYear;
   drawSwarogClock(st.hourIndex,st.minInHour);
@@ -2625,7 +2627,7 @@ function renderSwarogHoursGrid(){
     const cur=h.n===st.hourNum;
     const sm=(su+(h.n-1)*90)%(24*60);
     const gH=Math.floor((sm/60+off)%24),gM=Math.floor(sm%60);
-    return `<div style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:${cur?h.col+'22':'transparent'};border:0.5px solid ${cur?h.col+'66':'rgba(255,255,255,0.06)'}"><div style="width:22px;height:22px;border-radius:50%;background:${cur?h.col:'rgba(255,255,255,0.08)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${cur?'#fff':'var(--text3)'};flex-shrink:0;font-weight:${cur?600:400}">${h.n}</div><div style="flex:1;min-width:0"><div style="font-size:11px;color:${cur?h.col:'var(--text2)'};font-weight:${cur?500:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.ru}</div><div style="font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.de.split('–')[0].trim()}</div></div><div style="font-size:9px;color:var(--text3);flex-shrink:0">${pad(gH)}:${pad(gM)}</div></div>`;
+    return `<div style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:${cur?h.col+'22':'transparent'};border:0.5px solid ${cur?h.col+'66':'var(--border)'}"><div style="width:22px;height:22px;border-radius:50%;background:${cur?h.col:'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:9px;color:${cur?'#fff':'var(--text3)'};flex-shrink:0;font-weight:${cur?600:400}">${h.n}</div><div style="flex:1;min-width:0"><div style="font-size:11px;color:${cur?h.col:'var(--text2)'};font-weight:${cur?500:400};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.ru}</div><div style="font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.de.split('–')[0].trim()}</div></div><div style="font-size:9px;color:var(--text3);flex-shrink:0">${pad(gH)}:${pad(gM)}</div></div>`;
   }).join('');
 }
 
@@ -2735,7 +2737,7 @@ function renderDaricCalendar() {
     {label:bi('Ahnenkreis','Ancestor circle'), val:`${bi('Jahr','Year')} ${dc.ancestorPos} / 144`, col:'var(--gold)'},
     {label:bi('Monat','Month'), val:`${sdate.month}. ${mo.ru}`, col:'var(--purple)'},
     {label:bi('Tag / Wochentag','Day / weekday'), val:`${sdate.dayOfMonth}. · ${wd.ru}`, col:'var(--text2)'},
-  ].map(item=>`<div style="padding:8px 10px;background:rgba(255,255,255,0.04);border-radius:8px;border:0.5px solid rgba(255,255,255,0.08)">
+  ].map(item=>`<div style="padding:8px 10px;background:var(--surface2);border-radius:8px;border:0.5px solid rgba(255,255,255,0.08)">
     <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">${item.label}</div>
     <div style="font-size:14px;color:${item.col};font-weight:500;margin-top:2px">${item.val}</div>
   </div>`).join('');
@@ -2905,7 +2907,7 @@ function renderJahreskreis(){
       </div>
       <div style="font-size:12px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">${jkf(next,'typ')} · ${jkf(next,'thema').split(' · ')[0]}</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.65">${jkf(next,'beschreibung')}</div>
-      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;color:var(--text3)">
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)">
         ${t('jk_deities')}: <span style="color:var(--text2)">${jkf(next,'gottheiten')}</span> &nbsp;·&nbsp; ${t('jk_christian')}: <span style="color:var(--text2)">${jkf(next,'christl')}</span>
       </div>
     </div>`;
@@ -2954,10 +2956,10 @@ function drawWheel(nextId, today, list, year){
   sorted.forEach((f,i)=>{
     const a0=startAngle+i*slice, a1=a0+slice, mid=a0+slice/2;
     const isPast=f.isoDate<today, isNext=f.id===nextId;
-    const fill=isPast?'rgba(255,255,255,0.04)':f.farbe+(isNext?'55':'22');
-    const stroke=isNext?f.farbe+'cc':'rgba(255,255,255,0.1)';
+    const fill=isPast?'var(--surface2)':f.farbe+(isNext?'55':'22');
+    const stroke=isNext?f.farbe+'cc':'var(--border2)';
     const sw=isNext?2:0.5;
-    paths+=`<path d="${arc(a0,a1,r,ri)}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+    paths+=`<path d="${arc(a0,a1,r,ri)}" style="fill:${fill};stroke:${stroke}" stroke-width="${sw}"/>`;
 
     // emoji icon at 70% radius
     const [ix,iy]=polar(mid,r*0.62);
@@ -2966,8 +2968,8 @@ function drawWheel(nextId, today, list, year){
     // name label at 88% radius, rotated
     const [lx,ly]=polar(mid,r*0.85);
     const rot=(mid*180/Math.PI)+90;
-    const tc=isPast?'rgba(255,255,255,0.25)':isNext?f.farbe:'rgba(255,255,255,0.6)';
-    labels+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.075}" fill="${tc}" transform="rotate(${rot},${lx},${ly})" style="user-select:none">${f.name}</text>`;
+    const tc=isPast?'var(--text3)':isNext?f.farbe:'var(--text2)';
+    labels+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.075}" transform="rotate(${rot},${lx},${ly})" style="fill:${tc};user-select:none">${f.name}</text>`;
   });
 
   // spokes
@@ -2975,13 +2977,13 @@ function drawWheel(nextId, today, list, year){
   sorted.forEach((_,i)=>{
     const a=startAngle+i*slice;
     const [x0,y0]=polar(a,ri), [x1,y1]=polar(a,r);
-    spokes+=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>`;
+    spokes+=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" style="stroke:var(--border2)" stroke-width="0.5"/>`;
   });
 
   container.innerHTML=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;touch-action:pan-y;pointer-events:none">
     ${paths}${spokes}${icons}${labels}
-    <circle cx="${cx}" cy="${cy}" r="${ri}" fill="#1a1a2e" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.1}" fill="rgba(255,255,255,0.4)" style="user-select:none">${year}</text>
+    <circle cx="${cx}" cy="${cy}" r="${ri}" style="fill:var(--surface);stroke:var(--border2)" stroke-width="1"/>
+    <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${r*0.1}" style="fill:var(--text3);user-select:none">${year}</text>
   </svg>`;
 }
 
@@ -4855,7 +4857,7 @@ function drawAztecSunstone(size=180) {
   const cx=size/2, cy=size/2, r=size/2-2;
   let svg=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">`;
   // Äußerer Ring
-  svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1a0800" stroke="#dc6428" stroke-width="2"/>`;
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" style="fill:var(--surface2)" stroke="#dc6428" stroke-width="2"/>`;
   // 20 Tageszeichen-Segmente
   for(let i=0;i<20;i++){
     const a=-Math.PI/2+i*2*Math.PI/20;
