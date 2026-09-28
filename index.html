@@ -5719,8 +5719,11 @@ function _setLang(lang) {
     renderCal();
     renderSolstices();
     tick();
-    // Settings schließen damit man die Änderung sieht
-    closeSettings();
+    // Einstellungen bleiben offen (Nutzer schließt selbst); Tab-Liste in neuer Sprache neu aufbauen
+    if (document.getElementById('settings-overlay').classList.contains('open')) {
+      const sheet = document.getElementById('settings-sheet'); const top = sheet.scrollTop;
+      renderSettingsTabs(); sheet.scrollTop = top;
+    }
 
     // Alle Tabs unterstützen eigene Übersetzungen – aktiven Tab (falls nicht
     // Gregorianisch, der oben bereits neu gerendert wurde) neu rendern.
