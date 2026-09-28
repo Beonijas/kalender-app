@@ -2095,7 +2095,7 @@ function initFeiertageSelects() {
   const sel = document.getElementById('feiertage-year');
   if (!sel || sel.options.length > 0) return;
   const curY = new Date().getFullYear();
-  for (let y = curY - 1; y <= curY + 5; y++) {
+  for (let y = curY - 10; y <= curY + 30; y++) {
     const opt = document.createElement('option');
     opt.value = y; opt.textContent = y;
     if (y === curY) opt.selected = true;
@@ -2155,7 +2155,7 @@ let _feiertageYearForCal = new Date().getFullYear();
 
 // Erweiterte getHolidayMap die Bundesland-Feiertage berücksichtigt
 function getHolidayMapBL(y) {
-  const bl = (y === _feiertageYearForCal) ? _feiertageBLForCal : 'RP';
+  const bl = _feiertageBLForCal || 'RP';
   const all = buildFeiertageForYear(y, bl);
   const map = {};
   for (const h of all) {
@@ -2882,7 +2882,7 @@ function renderJahreskreis(){
   const jkTitleEl=document.getElementById('jk-title');
     const curY=new Date().getFullYear();
   const ySel=document.getElementById('jk-year');
-  if(ySel&&ySel.options.length===0){ for(let yy=curY-2;yy<=curY+10;yy++){ const o=document.createElement('option'); o.value=yy; o.textContent=yy; if(yy===curY)o.selected=true; ySel.appendChild(o);} }
+  if(ySel&&ySel.options.length===0){ for(let yy=curY-10;yy<=curY+30;yy++){ const o=document.createElement('option'); o.value=yy; o.textContent=yy; if(yy===curY)o.selected=true; ySel.appendChild(o);} }
   const y=ySel?(parseInt(ySel.value)||curY):curY;
   if(jkTitleEl)jkTitleEl.textContent=`${t('jk_title')} ${y}`;
   const sorted=jkList(y);
@@ -5919,7 +5919,7 @@ function initJahresuebersicht() {
   const sel = document.getElementById('jue-year');
   if (!sel || sel.options.length > 0) return;
   const cy = new Date().getFullYear();
-  for (let y = cy-1; y <= cy+5; y++) {
+  for (let y = cy-10; y <= cy+30; y++) {
     const opt = document.createElement('option');
     opt.value = y; opt.textContent = y;
     if (y === cy) opt.selected = true;
