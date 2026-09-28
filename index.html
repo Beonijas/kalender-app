@@ -2427,7 +2427,7 @@ const SWAROG_MONTHS = [
 
 // Sonnenuntergang (Jean Meeus Näherung)
 function calcSunsetUTC(date,lat,lon){
-  const n=Math.floor(date.getTime()/86400000)-10956.5;
+  const n=Math.floor(date.getTime()/86400000)-10957;
   const Js=n-lon/360;
   const M=(357.5291+0.98560028*Js)%360;
   const Mr=M*Math.PI/180;
@@ -2448,17 +2448,29 @@ window._swarogLat=null;window._swarogLon=null;
 window._swarogSunsetUTCmin=17*60;
 window._swarogLocationLabel='Standardzeit (18:00 MEZ)';
 
+function applyLocation(lat,lon){
+  window._swarogLat=lat;
+  window._swarogLon=lon;
+  const s=calcSunsetUTC(new Date(),lat,lon);
+  if(s!==null)window._swarogSunsetUTCmin=s;
+  window._swarogLocationLabel=`${lat.toFixed(2)}°N ${lon.toFixed(2)}°E`;
+  try{updateSwarogClock();renderSwarogHoursGrid();}catch(e){}
+  renderSunTimesInCal();
+}
 function requestSwarogLocation(){
   if(!navigator.geolocation)return;
   navigator.geolocation.getCurrentPosition(pos=>{
-    window._swarogLat=pos.coords.latitude;
-    window._swarogLon=pos.coords.longitude;
-    const s=calcSunsetUTC(new Date(),window._swarogLat,window._swarogLon);
-    if(s!==null)window._swarogSunsetUTCmin=s;
-    window._swarogLocationLabel=`${pos.coords.latitude.toFixed(2)}°N ${pos.coords.longitude.toFixed(2)}°E`;
-    updateSwarogClock();renderSwarogHoursGrid();
-    renderSunTimesInCal();
+    applyLocation(pos.coords.latitude,pos.coords.longitude);
+    try{localStorage.setItem('geo',JSON.stringify({lat:pos.coords.latitude,lon:pos.coords.longitude}));}catch(e){}
   },()=>{});
+}
+// Beim Start: zuletzt bekannten Standort sofort nutzen, dann im Hintergrund aktualisieren
+function initLocation(){
+  try{
+    const g=JSON.parse(localStorage.getItem('geo')||'null');
+    if(g&&isFinite(g.lat)&&isFinite(g.lon))applyLocation(g.lat,g.lon);
+  }catch(e){}
+  requestSwarogLocation();
 }
 
 function getSwarogTime(now){
@@ -4925,7 +4937,7 @@ function renderTibetan() {
 function getSunTimes(date, lat, lon) {
   // Sonnenaufgang + Untergang + Dämmerung (Jean Meeus Näherung)
   function calcHour(date, lat, lon, rise) {
-    const n = Math.floor(date.getTime()/86400000) - 10956.5;
+    const n = Math.floor(date.getTime()/86400000) - 10957;
     const Js = n - lon/360;
     const M = (357.5291 + 0.98560028*Js) % 360;
     const Mr = M*Math.PI/180;
@@ -4959,7 +4971,7 @@ function renderSunTimesInCal() {
   const el = document.getElementById('cal-sun-times');
   if(!el) return;
   if(!window._swarogLat) {
-    el.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:6px">${t('noLocation')}</div>`;
+    el.innerHTML=`<div onclick="requestSwarogLocation()" style="font-size:12px;color:var(--text3);text-align:center;padding:6px;cursor:pointer">${t('noLocation')}</div>`;
     return;
   }
   const now=new Date();
@@ -5001,7 +5013,7 @@ const I18N = {
     today:'Heute', sunrise:'Sonnenaufgang', sunset:'Sonnenuntergang', daylength:'Tageslänge',
     countdown:'Countdown', yearview:'Jahresübersicht', dateconv:'Datumsrechner',
     dark:'Dunkler Modus', fontsize:'Schriftgröße', language:'Sprache', tabs:'Aktive Tabs',
-    legal:'gesetzl.', noLocation:'Standort nicht verfügbar – bitte Swarog-Tab öffnen',
+    legal:'gesetzl.', noLocation:'Standort nicht verfügbar – bitte Standortfreigabe erlauben (tippen zum Wiederholen)',
     enterDate:'Datum eingeben', allFests:'Alle Feste', legalOnly:'Nur gesetzliche Feiertage',
     astroOnly:'Nur astronomische', days_word:'Tage', nextEvents:'Nächste Ereignisse',
     tabs_hint:'Deaktivierte Tabs werden ausgeblendet. Der Gregorianische Kalender kann nicht deaktiviert werden.',
@@ -5249,7 +5261,7 @@ const I18N = {
     today:'Today', sunrise:'Sunrise', sunset:'Sunset', daylength:'Day Length',
     countdown:'Countdown', yearview:'Year Overview', dateconv:'Date Converter',
     dark:'Dark Mode', fontsize:'Font Size', language:'Language', tabs:'Active Tabs',
-    legal:'public hol.', noLocation:'Location unavailable – please open Swarog tab',
+    legal:'public hol.', noLocation:'Location unavailable – please allow location access (tap to retry)',
     enterDate:'Enter date', allFests:'All Events', legalOnly:'Public Holidays Only',
     astroOnly:'Astronomical Only', days_word:'days', nextEvents:'Next Events',
     tabs_hint:'Disabled tabs are hidden. The Gregorian calendar cannot be disabled.',
@@ -5974,6 +5986,7 @@ initFeiertageSelects();
 initJahresuebersicht();
 renderCal();
 renderSolstices();
+initLocation();
 checkInstallHint();
 rebuildTabBar();
 // Sprach-Buttons initial markieren
@@ -5986,6 +5999,7 @@ window.toggleGroupExpand = toggleGroupExpand;
 window.toggleTab = toggleTab;
 window.toggleGroup = toggleGroup;
 window.switchTab = switchTab;
+window.requestSwarogLocation = requestSwarogLocation;
 window.openSettings = openSettings;
 window.closeSettings = closeSettings;
 window.closeSettingsOutside = closeSettingsOutside;
